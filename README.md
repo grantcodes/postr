@@ -56,7 +56,7 @@ Configuration can be done in a json file or passed as an object when using this 
 
 #### Options
 
-`permalinkPattern` - String - What your site permalinks look like. Must include year month and day at the moment. Default: `{{siteBaseUrl}}/{{year}}/{{month}}/{{day}}/{{slug}}`
+`permalinkPattern` - String - What your site permalinks look like. Written in express style. Must include year month and day at the moment. Default: `:siteBaseUrl/:year/:month/:day/:slug`
 
 `sendWebmentions` - Boolean - Send webmentions automatically or not. Default: `true`
 
