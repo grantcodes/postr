@@ -87,3 +87,5 @@ Configuration can be done in a json file or passed as an object when using this 
 `dbPassword` - String - The database password
 
 `tokenEndpoint` - String(url) - Your token endpoint. Used for authenticating requests
+
+`dangerousDevMode` - Boolean - Set to true and the endpoint will skip checking tokens. It may do more in the future
