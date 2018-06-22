@@ -89,3 +89,5 @@ Configuration can be done in a json file or passed as an object when using this 
 `tokenEndpoint` - String(url) - Your token endpoint. Used for authenticating requests
 
 `dangerousDevMode` - Boolean - Set to true and the endpoint will skip checking tokens. It may do more in the future
+
+`mediaEndpoint` - String(url) - If you want to post media to a different media endpoint pass the url here and all file storage will be handled by your media endpoint. No image resizing will be done.

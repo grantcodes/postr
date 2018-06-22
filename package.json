@@ -14,6 +14,7 @@
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "file-type": "^8.0.0",
+    "form-data": "^2.3.2",
     "fs-extra": "^6.0.1",
     "get-urls": "^7.2.0",
     "html-to-text": "^4.0.0",
