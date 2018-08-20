@@ -2,6 +2,7 @@ const Collection = require('./lib/db')
 const micropubRouter = require('./lib/router')
 const config = require('./lib/config')
 const generateSearch = require('./lib/generate-search')
+const { use } = require('./lib/plugins')
 
 // Run everything async
 async function init() {
@@ -46,8 +47,6 @@ if (require.main === module) {
 
 module.exports = (options = {}) => {
   try {
-    // When running as a module we definitely need a media base url
-    requiredOptions.push('mediaBaseUrl')
     for (const key in options) {
       if (options.hasOwnProperty(key)) {
         const value = options[key]
@@ -56,6 +55,7 @@ module.exports = (options = {}) => {
     }
     config.required(requiredOptions)
     return {
+      use,
       getCollection: Collection.get,
       router: micropubRouter,
       generateSearch,

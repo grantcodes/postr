@@ -9,8 +9,9 @@
   "author": "Grant Richmond",
   "license": "ISC",
   "dependencies": {
-    "ajv": "^6.5.2",
+    "ajv": "^6.5.3",
     "body-parser": "^1.18.3",
+    "clone": "^2.1.2",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "file-type": "^9.0.0",
@@ -20,7 +21,7 @@
     "html-to-text": "^4.0.0",
     "image-size": "^0.6.3",
     "is-url": "^1.2.4",
-    "marked": "^0.4.0",
+    "marked": "^0.5.0",
     "metaphor": "^3.8.3",
     "microformat-node": "^2.0.1",
     "moment": "^2.22.2",
@@ -28,12 +29,12 @@
     "nconf": "^0.10.0",
     "node-fetch": "^2.2.0",
     "path-to-regexp": "^2.2.1",
-    "pouchdb-adapter-node-websql": "^6.4.3",
-    "rxdb": "^7.7.1",
+    "pouchdb-adapter-node-websql": "^7.0.0",
+    "rxdb": "github:pubkey/rxdb#8.0.0",
     "rxjs": "^6.2.2",
     "send-webmention": "^2.0.0",
-    "sharp": "^0.20.5",
-    "unfluff": "^3.0.1"
+    "sharp": "^0.20.6",
+    "unfluff": "^3.2.0"
   },
   "prettier": {
     "semi": false,
