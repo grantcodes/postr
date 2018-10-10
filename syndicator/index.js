@@ -10,7 +10,6 @@ class Syndicator {
     this.options = options
     this.requireOptions = this.requireOptions.bind(this)
     this.checkShouldSyndicate = this.checkShouldSyndicate.bind(this)
-    this.checkShouldDelete = this.checkShouldDelete.bind(this)
     this.checkShouldSyndicateUpdate = this.checkShouldSyndicateUpdate.bind(this)
     this.deleteSyndication = this.deleteSyndication.bind(this)
     this.syndicate = this.syndicate.bind(this)
@@ -31,7 +30,10 @@ class Syndicator {
    * @param {RxDocument} doc The database document
    * @return {RxDocument} The updated database document
    */
-  async checkShouldSyndicate(doc) {
+  async checkShouldSyndicate(post, doc) {
+    if (!doc) {
+      doc = post
+    }
     let shouldSyndicate = false
     if (
       doc.get('properties.visibility.0') === 'visible' &&
@@ -51,7 +53,7 @@ class Syndicator {
         if (url) {
           const syndication = doc.get('properties.syndication') || []
           syndication.push(url)
-          doc.set('properties.syndication', syndication)
+          await doc.update({ $set: { 'properties.syndication': syndication } })
         }
       } catch (err) {
         console.log(`Error syndicating with ${this.options.name}`, err)
@@ -61,34 +63,44 @@ class Syndicator {
   }
 
   /**
-   * Checks if the syndication should be deleted
-   * @param {RxDocument} doc The database document to delete
-   * @return {RxDocument} The same database document
-   */
-  async checkShouldDelete(doc) {
-    // TODO: Should check if visibility or post-status changed too
-    await this.deleteSyndication(doc.toMf2())
-    return doc
-  }
-
-  /**
    * Checks if the document has updated in some way that should trigger deletion or posting of a syndicated copy
    * @param {RxDocument} doc The database document to check
    * @return {RxDocument} The updated database document
    */
-  async checkShouldSyndicateUpdate(doc) {
-    // TODO: This should check if the visibility changed to visible or post-status changed to published
-    doc = await this.checkShouldSyndicate(doc)
-    // TODO: This should also check for the reverse and delete any existing syndications
+  async checkShouldSyndicateUpdate(post, doc) {
+    if (!doc) {
+      doc = post
+    }
+    if (
+      doc.get('properties.syndication') &&
+      (doc.get('properties.post-status.0') !== 'published' ||
+        doc.get('properties.visibility.0') !== 'visible')
+    ) {
+      // Probably want to delete
+      const deletedUrl = await this.deleteSyndication(doc.toMf2())
+      if (deletedUrl) {
+        await doc.update({
+          $pullAll: { 'properties.syndication': [deletedUrl] },
+        })
+        const newSyndication = doc.get('properties.syndication')
+        if (Array.isArray(newSyndication) && newSyndication.length === 0) {
+          await doc.update({ $unset: { 'properties.syndication': '' } })
+        }
+      }
+    } else if (!post.syndication) {
+      doc = await this.checkShouldSyndicate(doc)
+    }
     return doc
   }
 
-  deleteSyndication(mf2) {
-    // NOTE: Plugin should delete the syndication url in the syndication property
+  async deleteSyndication(mf2) {
+    // NOTE: Plugin should delete the syndication url in the syndication property and return the url of the deleted syndication
+    return null
   }
 
   async syndicate(mf2) {
     // NOTE: Any plugin should provide their own async syndication methods and should check if they have not already syndicated this post
+    return null
   }
 }
 
