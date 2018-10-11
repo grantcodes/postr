@@ -1,6 +1,6 @@
 {
   "name": "micropub-endpoint",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A self contained micropub endpoint",
   "main": "index.js",
   "scripts": {
