@@ -1,3 +1,6 @@
+const { get: getCollection } = require('../lib/db')
+const generateSearch = require('../lib/generate-search')
+
 class Syndicator {
   constructor(options) {
     options = Object.assign(
@@ -13,6 +16,8 @@ class Syndicator {
     this.checkShouldSyndicateUpdate = this.checkShouldSyndicateUpdate.bind(this)
     this.deleteSyndication = this.deleteSyndication.bind(this)
     this.syndicate = this.syndicate.bind(this)
+    this.getCollection = getCollection
+    this.generateSearch = generateSearch
 
     this.requireOptions(['id', 'name'])
   }
