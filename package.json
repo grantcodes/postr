@@ -1,6 +1,6 @@
 {
   "name": "micropub-endpoint",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A self contained micropub endpoint",
   "main": "index.js",
   "scripts": {
@@ -27,9 +27,9 @@
     "microformat-node": "^2.0.1",
     "moment": "^2.22.2",
     "multer": "^1.4.0",
-    "nconf": "^0.10.0",
     "node-fetch": "^2.2.0",
     "path-to-regexp": "^2.4.0",
+    "pouchdb-adapter-idb": "^7.0.0",
     "pouchdb-adapter-leveldb": "^7.0.0",
     "rxdb": "^8.0.2",
     "rxjs": "^6.3.3",
@@ -37,6 +37,17 @@
     "sharp": "^0.21.0",
     "speakingurl": "^14.0.1",
     "unfluff": "^3.2.0"
+  },
+  "browser": {
+    "express": false,
+    "fs-extra": false,
+    "pouchdb-adapter-leveldb": false,
+    "./lib/router": false,
+    "./lib/db-middleware/create-refs": false,
+    "./lib/db-middleware/save-files": false,
+    "./lib/db-middleware/webmention": false,
+    "./lib/db-middleware/format-content": false,
+    "./lib/statics/get-file-buffer": false
   },
   "prettier": {
     "semi": false,

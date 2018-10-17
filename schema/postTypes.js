@@ -34,28 +34,4 @@ const getSchema = doc => {
   }
 }
 
-const postSchema = {
-  version: 0,
-  id: 'post',
-  type: 'object',
-  // oneOf: [hEntry, hEvent, hCite, hProduct, hRecipe],
-  // TODO: hCite schema throws an error
-  // Probably should convert to using definitions instead of nested requires
-  // oneOf: [hEntry, hEvent, hProduct, hRecipe],
-  properties: hEntry.properties,
-  // properties: {
-  //   type: {
-  //     type: 'array',
-  //     items: {
-  //       type: 'string',
-  //     },
-  //   },
-  //   properties: {
-  //     type: 'object',
-  //   },
-  // },
-  // additionalProperties: true,
-  // // TODO: Add some sort of indexing
-}
-
 module.exports = getSchema
