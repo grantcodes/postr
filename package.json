@@ -1,12 +1,14 @@
 {
-  "name": "micropub-endpoint",
+  "name": "@micropub-endpoint/core",
   "version": "1.1.0",
-  "description": "A self contained micropub endpoint",
+  "description": "A micropub endpoint",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Grant Richmond",
+  "homepage": "https://github.com/grantcodes/micropub-endpoint",
+  "bugs": "https://github.com/grantcodes/micropub-endpoint/issues",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
   "license": "ISC",
   "dependencies": {
     "ajv": "^6.5.4",
