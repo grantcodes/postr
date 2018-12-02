@@ -1,0 +1,24 @@
+{
+  "name": "@micropub-endpoint/syndicator-instagram",
+  "version": "1.0.3",
+  "description": "Instagram syndication plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@micropub-endpoint/syndicator": "^1.0.5",
+    "image-size": "^0.6.3",
+    "instagram-private-api": "^0.6.8",
+    "sharp": "^0.21.0"
+  },
+  "homepage": "https://github.com/grantcodes/micropub-endpoint-syndicator",
+  "bugs": "https://github.com/grantcodes/micropub-endpoint-syndicator/issues",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "license": "ISC",
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true
+  }
+}

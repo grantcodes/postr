@@ -1,0 +1,22 @@
+{
+  "name": "@micropub-endpoint/syndicator-superfeedr",
+  "version": "1.0.0",
+  "description": "Superfeedr syndication plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@micropub-endpoint/syndicator": "^1.0.5",
+    "axios": "^0.18.0"
+  },
+  "homepage": "https://github.com/grantcodes/micropub-endpoint-syndicator",
+  "bugs": "https://github.com/grantcodes/micropub-endpoint-syndicator/issues",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "license": "ISC",
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true
+  }
+}
