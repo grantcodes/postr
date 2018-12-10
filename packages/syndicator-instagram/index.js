@@ -82,17 +82,43 @@ class InstagramSyndicator extends BaseSyndicator {
     for (const photo of photoBuffers) {
       const size = sizeOf(photo)
       const aspectRatio = size.width / size.height
-      let newSize = { width: 2000 }
       if (aspectRatio < 0.8 || aspectRatio > 1.91 || photoBuffers.length > 1) {
-        newSize.height = 2000
-        newSize.fit = 'contain'
-      }
-      resizedPhotos.push(
-        await sharp(photo)
-          .resize(newSize)
+        if (this.options.blurBackground) {
+          const mainImage = await sharp(photo)
+            .resize({
+              width: 2000,
+              height: 2000,
+              fit: 'inside',
+            })
+            .toFormat('jpeg')
+            .toBuffer()
+          const backgroundImage = sharp(photo)
+            .resize({ width: 2000, height: 2000 })
+            .blur(300)
+          const imageBuffer = await backgroundImage
+            .overlayWith(mainImage)
+            .toFormat('jpeg')
+            .toBuffer()
+          resizedPhotos.push(imageBuffer)
+        } else {
+          const imageBuffer = await sharp(photo)
+            .resize({
+              width: 2000,
+              height: 2000,
+              fit: 'contain',
+              background: '#fafafa',
+            })
+            .toFormat('jpeg')
+            .toBuffer()
+          resizedPhotos.push(imageBuffer)
+        }
+      } else {
+        const imageBuffer = await sharp(photo)
+          .resize({ width: 2000 })
           .toFormat('jpeg')
           .toBuffer()
-      )
+        resizedPhotos.push(imageBuffer)
+      }
     }
 
     if (resizedPhotos.length === 1) {
