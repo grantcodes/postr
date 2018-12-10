@@ -1,13 +1,13 @@
 {
   "name": "@micropub-endpoint/syndicator-twitter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Twitter syndication plugin",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@micropub-endpoint/syndicator": "^1.0.5",
+    "@micropub-endpoint/syndicator": "^1.0.6",
     "axios": "^0.18.0",
     "brevity": "^0.2.9",
     "twitter": "^1.7.1"

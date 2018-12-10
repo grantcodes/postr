@@ -1,13 +1,13 @@
 {
   "name": "@micropub-endpoint/syndicator-instagram",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Instagram syndication plugin",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@micropub-endpoint/syndicator": "^1.0.5",
+    "@micropub-endpoint/syndicator": "^1.0.6",
     "image-size": "^0.6.3",
     "instagram-private-api": "^0.6.8",
     "sharp": "^0.21.0"
