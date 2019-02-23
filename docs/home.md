@@ -1,39 +1,8 @@
-# Postr
-
-**WARNING: This is very much a work in progress, use at your own risk. Thanks.**
-
-## What is this?
-
-This is a nodejs IndieWeb backend, mainly consisting of a micropub endpoint that can be run as a module in an express project.
-
-It includes a bunch of cool features (or I think they're cool anyway...)
-
-### Features
-
-- Supports micropub posting, actions and queries
-- Media endpoint
-- Automatically downloads images to your local media folder
-- Image resizing
-- Markdown parsing
-- Automatic webmention sending
-- Grabs referenced urls as microformats2
-- Highly exensible via middleware
-- Supports multiple database adapters
-- Realtime updates and data replication
-
-## Behind the scenes
-
-This endpoint is powered by RxDB
-
-Image resizing with sharp
-
-Webmentions with send-webmention
-
-Plain text processing with marked
-
 ## Usage
 
+```bash
 npm install @postr/code
+```
 
 ```js
 const express = require('express')
