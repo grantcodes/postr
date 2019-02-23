@@ -33,7 +33,9 @@ Plain text processing with marked
 
 ## Usage
 
+```bash
 npm install @postr/code
+```
 
 ```js
 const express = require('express')
