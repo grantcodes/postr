@@ -3,7 +3,7 @@ const path = require('path')
 const axios = require('axios')
 const brevity = require('brevity')
 const Twitter = require('twitter')
-const BaseSyndicator = require('@micropub-endpoint/syndicator')
+const BaseSyndicator = require('@postr/syndicator')
 
 const tweetIdFromUrl = tweetUrl => {
   const parsedUrl = url.parse(tweetUrl)

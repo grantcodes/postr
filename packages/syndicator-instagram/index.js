@@ -1,4 +1,4 @@
-const BaseSyndicator = require('@micropub-endpoint/syndicator')
+const BaseSyndicator = require('@postr/syndicator')
 const url = require('url')
 const sharp = require('sharp')
 const sizeOf = require('image-size')

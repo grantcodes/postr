@@ -1,13 +1,13 @@
 {
-  "name": "@micropub-endpoint/core",
+  "name": "@postr/core",
   "version": "1.2.1",
   "description": "A micropub endpoint",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "homepage": "https://github.com/grantcodes/micropub-endpoint",
-  "bugs": "https://github.com/grantcodes/micropub-endpoint/issues",
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
   "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
   "license": "ISC",
   "dependencies": {

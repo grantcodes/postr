@@ -1,5 +1,5 @@
 {
-  "name": "@micropub-endpoint/syndicator-twitter",
+  "name": "@postr/syndicator-twitter",
   "version": "1.0.1",
   "description": "Twitter syndication plugin",
   "main": "index.js",
@@ -7,13 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@micropub-endpoint/syndicator": "^1.0.6",
+    "@postr/syndicator": "^1.0.6",
     "axios": "^0.18.0",
     "brevity": "^0.2.9",
     "twitter": "^1.7.1"
   },
-  "homepage": "https://github.com/grantcodes/micropub-endpoint-syndicator",
-  "bugs": "https://github.com/grantcodes/micropub-endpoint-syndicator/issues",
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
   "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
   "license": "ISC",
   "prettier": {

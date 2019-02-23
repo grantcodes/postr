@@ -1,5 +1,5 @@
 const axios = require('axios')
-const BaseSyndicator = require('@micropub-endpoint/syndicator')
+const BaseSyndicator = require('@postr/syndicator')
 
 class SuperfeedrSyndicator extends BaseSyndicator {
   constructor(options) {

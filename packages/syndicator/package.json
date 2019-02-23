@@ -1,5 +1,5 @@
 {
-  "name": "@micropub-endpoint/syndicator",
+  "name": "@postr/syndicator",
   "version": "1.0.6",
   "description": "The base syndication plugin",
   "main": "build/index.js",
@@ -10,8 +10,8 @@
   "dependencies": {
     "@babel/runtime": "^7.1.2"
   },
-  "homepage": "https://github.com/grantcodes/micropub-endpoint",
-  "bugs": "https://github.com/grantcodes/micropub-endpoint/issues",
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
   "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
   "license": "ISC",
   "prettier": {

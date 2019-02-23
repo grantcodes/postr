@@ -1,10 +1,10 @@
-# Micropub Endpoing
+# Postr
 
-**WARNING: Very very alpha right now do not use. Thanks.**
+**WARNING: This is very much a work in progress, use at your own risk. Thanks.**
 
 ## What is this?
 
-This is a nodejs micropub endpoint that can either be run as a standalone endpoint and data retreived via a rest api, or as a module in an express project.
+This is a nodejs IndieWeb backend, mainly consisting of a micropub endpoint that can be run as a module in an express project.
 
 It includes a bunch of cool features (or I think they're cool anyway...)
 
@@ -33,17 +33,10 @@ Plain text processing with marked
 
 ## Usage
 
-### Standalone
-
-npm install -g grantcodes/micropub-endpoint
-micropub-endpoint --config=/home/user/micropub-endpoint-config.json
-
-### As a node module
-
-npm install grantcodes/micropub-endpoint
+npm install @postr/code
 
 const express = require('express')
-const micropubEndpoint = require('micropub-endpoint')
+const micropubEndpoint = require('@postr/core')
 const app = express()
 const myEndpoint = micropubEndpoint(/_config_/)
 
@@ -52,7 +45,7 @@ app.listen(80)
 
 ### Config
 
-Configuration can be done in a json file or passed as an object when using this as a node module
+Configuration can be passed as an object when using this as a node module
 
 #### Options
 
@@ -74,7 +67,7 @@ Configuration can be done in a json file or passed as an object when using this 
 
 `dbName` - String - The database name. Note: Must adhere to RxDB rules. Default: `micropubendpoint`
 
-`dbAdapter` - String/Object - The database adapter. Note: To use a different adapter you must also load the appropriate RxDB plugin. Default: `websql`
+`dbAdapter` - String/Object - The database adapter. Note: To use a different adapter you must also load the appropriate RxDB plugin. Default: `leveldb`
 
 `imageSizes` - Object - A set of sizes to scale images to. should be in the format `{name: [width, height]}` eg. `{thumbnail: [200, 200], large: [1800, 0]}`, Note: If you pass 0 as the height the image will retain its original ratio. Default: `{}`
 
