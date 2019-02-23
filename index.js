@@ -1,4 +1,3 @@
-const isNode = require('./lib/is-node')
 const Collection = require('./lib/db')
 const config = require('./lib/config')
 const generateSearch = require('./lib/generate-search')
