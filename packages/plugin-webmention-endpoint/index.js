@@ -31,7 +31,6 @@ class WebmentionEndpoint extends PostrPlugin {
       const { source, target } = req.query
       const targetURL = new URL(target)
       const siteURL = new URL(siteUrl)
-      const sourceURL = new URL(source)
 
       if (targetURL.hostname !== siteURL.hostname) {
         // The target url is not on this site so ignore

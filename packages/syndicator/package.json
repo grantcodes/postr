@@ -1,6 +1,6 @@
 {
   "name": "@postr/syndicator",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "The base syndication plugin",
   "main": "build/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "prepare": "babel index.js -d build"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.2"
+    "@babel/runtime": "^7.1.2",
+    "@postr/plugin": "^1.0.0"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",

@@ -1,41 +1,43 @@
-class Syndicator {
-  constructor(options) {
+const PostrPlugin = require('@postr/plugin')
+
+class Syndicator extends PostrPlugin {
+  constructor({ options, imports }) {
     options = Object.assign(
       {
         default: false,
       },
       options
     )
-    this.isSyndicatorPlugin = true
-    this.options = options
-    this.importCoreFunctionality = this.importCoreFunctionality.bind(this)
-    this.requireOptions = this.requireOptions.bind(this)
+    super({ options, imports })
+
+    this.setup = this.setup.bind(this)
     this.checkShouldSyndicate = this.checkShouldSyndicate.bind(this)
     this.checkShouldSyndicateUpdate = this.checkShouldSyndicateUpdate.bind(this)
     this.deleteSyndication = this.deleteSyndication.bind(this)
     this.syndicate = this.syndicate.bind(this)
 
     this.requireOptions(['id', 'name'])
+    this.setup()
   }
 
-  /**
-   * Map core functionality to syndicator class
-   * @param {object} core Micropub core object, uses getCollection and generateSearch properties
-   */
-  importCoreFunctionality({ getCollection, generateSearch }) {
-    this.getCollection = getCollection
-    this.generateSearch = generateSearch
-  }
-
-  /**
-   * Throw error if missing option
-   * @param {array} keys Array of required option keys
-   */
-  requireOptions(keys) {
-    keys.forEach(key => {
-      if (!this.options.hasOwnProperty(key)) {
-        throw new Error(`Missing the ${key} option`)
-      }
+  setup() {
+    const { config, RxDB } = this.imports
+    const syndicationTargets = [
+      ...config.get('syndication'),
+      {
+        uid: this.options.id,
+        name: this.options.name,
+      },
+    ]
+    config.set('syndication', syndicationTargets)
+    RxDB.plugin({
+      rxdb: true,
+      hooks: {
+        createRxCollection: collection => {
+          collection.postSave(this.checkShouldSyndicateUpdate, false)
+          collection.postInsert(this.checkShouldSyndicate, false)
+        },
+      },
     })
   }
 
