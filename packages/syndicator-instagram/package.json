@@ -1,6 +1,6 @@
 {
   "name": "@postr/syndicator-instagram",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Instagram syndication plugin",
   "main": "index.js",
   "scripts": {

@@ -17,7 +17,7 @@ const isTweetUrl = tweetUrl => {
 }
 
 class TwitterSyndicator extends BaseSyndicator {
-  constructor(options) {
+  constructor({ options, imports }) {
     options = Object.assign(
       {
         id: 'twitter',
@@ -26,7 +26,7 @@ class TwitterSyndicator extends BaseSyndicator {
       },
       options
     )
-    super(options)
+    super({ options, imports })
     this.requireOptions([
       'consumerKey',
       'consumerSecret',

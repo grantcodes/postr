@@ -14,7 +14,7 @@ const isInstagramUrl = instaUrl => {
 }
 
 class InstagramSyndicator extends BaseSyndicator {
-  constructor(options) {
+  constructor({ options, imports }) {
     options = Object.assign(
       {
         id: 'instagram',
@@ -23,7 +23,7 @@ class InstagramSyndicator extends BaseSyndicator {
       },
       options
     )
-    super(options)
+    super({ options, imports })
     this.getSession = this.getSession.bind(this)
     this.requireOptions(['username', 'password'])
   }

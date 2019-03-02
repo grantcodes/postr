@@ -1,6 +1,6 @@
 {
   "name": "@postr/syndicator-superfeedr",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Superfeedr syndication plugin",
   "main": "index.js",
   "scripts": {

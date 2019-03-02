@@ -2,7 +2,7 @@ const axios = require('axios')
 const BaseSyndicator = require('@postr/syndicator')
 
 class SuperfeedrSyndicator extends BaseSyndicator {
-  constructor(options) {
+  constructor({ options, imports }) {
     options = Object.assign(
       {
         id: 'superfeedr',
@@ -11,7 +11,7 @@ class SuperfeedrSyndicator extends BaseSyndicator {
       },
       options
     )
-    super(options)
+    super({ options, imports })
     this.requireOptions(['hub', 'domain'])
   }
 
