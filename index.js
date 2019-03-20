@@ -1,7 +1,7 @@
 const Collection = require('./lib/db')
 const config = require('./lib/config')
 const generateSearch = require('./lib/generate-search')
-const { use } = require('./lib/plugins')
+const { use, plugins } = require('./lib/plugins')
 const micropubRouter = require('./lib/router')
 const { addPostTypeDiscovery } = require('./lib/post-type-discovery')
 
@@ -30,6 +30,7 @@ module.exports = (options = {}) => {
     config.required(requiredOptions)
     return {
       use,
+      plugins,
       getCollection: Collection.get,
       router: micropubRouter,
       generateSearch,
