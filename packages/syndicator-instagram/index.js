@@ -42,8 +42,8 @@ class InstagramSyndicator extends BaseSyndicator {
   async postInstagramPhotos(mf2) {
     const session = await this.getSession()
     const permalink = mf2.properties.url[0]
-    const collection = await this.getCollection()
-    const search = this.generateSearch(permalink, true)
+    const collection = await this.imports.getCollection()
+    const search = this.imports.generateSearch(permalink, true)
     const doc = await collection.findOne(search).exec()
 
     // Get buffers from mf2 photos
@@ -167,11 +167,11 @@ class InstagramSyndicator extends BaseSyndicator {
         const session = await this.getSession()
 
         if (mf2.children) {
-          const collection = await this.getCollection()
+          const collection = await this.imports.getCollection()
           // Get child docs in an array
           const docs = []
           for (const permalink of mf2.children) {
-            const search = this.generateSearch(permalink, true)
+            const search = this.imports.generateSearch(permalink, true)
             const doc = await collection.findOne(search).exec()
             if (doc) {
               docs.push(doc)
@@ -274,7 +274,7 @@ class InstagramSyndicator extends BaseSyndicator {
         // Get child docs in an array
         const docs = []
         for (const permalink of mf2.children) {
-          const search = this.generateSearch(permalink, true)
+          const search = this.imports.generateSearch(permalink, true)
           const doc = await collection.findOne(search).exec()
           if (doc) {
             docs.push(doc)
