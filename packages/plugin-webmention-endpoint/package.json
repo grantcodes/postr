@@ -1,6 +1,6 @@
 {
   "name": "@postr/plugin-webmention-endpoint",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Webmention endpoint for Postr",
   "main": "index.js",
   "scripts": {
