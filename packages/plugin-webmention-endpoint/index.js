@@ -27,12 +27,12 @@ class WebmentionEndpoint extends PostrPlugin {
     router.use(bodyParser.json())
 
     router.post('/', async (req, res, next) => {
-      if (!req.query || !req.query.source || !req.query.target) {
+      const { source, target } = req.body
+      if (!source || !target) {
         notifier('Error with the webmention data')
         return res.status(400).send('Missing required webmention data')
       }
 
-      const { source, target } = req.query
       const targetURL = new URL(target)
       const siteURL = new URL(siteUrl)
 
@@ -46,7 +46,7 @@ class WebmentionEndpoint extends PostrPlugin {
 
         // Add a url if it is missing
         if (!sourceEntry.properties.url) {
-          sourceEntry.properties.url = [req.query.source]
+          sourceEntry.properties.url = [source]
         }
 
         // Send notification
