@@ -3,7 +3,7 @@ const config = require('./lib/config')
 const generateSearch = require('./lib/generate-search')
 const { use, plugins } = require('./lib/plugins')
 const micropubRouter = require('./lib/router')
-const { addPostTypeDiscovery } = require('./lib/post-type-discovery')
+const { addPostType } = require('./lib/post-type-discovery')
 
 const requiredOptions = [
   'port',
@@ -34,7 +34,7 @@ module.exports = (options = {}) => {
       getCollection: Collection.get,
       router: micropubRouter,
       generateSearch,
-      addPostTypeDiscovery,
+      addPostType,
       micropubEndpoint: config.get('baseUrl') + '/',
       mediaEndpoint:
         config.get('mediaEndpoint') || config.get('baseUrl') + '/media',
