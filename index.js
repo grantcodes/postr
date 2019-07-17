@@ -6,7 +6,6 @@ const micropubRouter = require('./lib/router')
 const { addPostType } = require('./lib/post-type-discovery')
 
 const requiredOptions = [
-  'port',
   'siteBaseUrl',
   'endpointBaseUrl',
   'permalinkPattern',

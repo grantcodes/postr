@@ -1,0 +1,2 @@
+- [Home](home.md)
+- [Plugins](plugins.md)

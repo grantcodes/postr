@@ -42,8 +42,6 @@
   },
   "browser": {
     "express": false,
-    "metaphor": false,
-    "unfluff": false,
     "@postlight/mercury-parser": false,
     "path": false,
     "fs": false,
