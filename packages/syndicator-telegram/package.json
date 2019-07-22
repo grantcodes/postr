@@ -1,0 +1,23 @@
+{
+  "name": "@postr/syndicator-telegram",
+  "version": "1.0.0",
+  "description": "Telegram syndication plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@postr/syndicator": "^1.1.0",
+    "axios": "^0.19.0",
+    "node-telegram-bot-api": "^0.30.0"
+  },
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "license": "ISC",
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true
+  }
+}
