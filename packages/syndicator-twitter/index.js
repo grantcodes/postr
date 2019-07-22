@@ -71,7 +71,9 @@ class TwitterSyndicator extends BaseSyndicator {
    */
   generateStatus(mf2, permalink, media_ids = false) {
     let content = null
-    if (mf2.properties.name) {
+    if (mf2.properties.summary) {
+      content = mf2.properties.summary[0] + ' ' + mf2.properties.url[0]
+    } else if (mf2.properties.name) {
       content = mf2.properties.name[0]
     } else if (mf2.properties.summary) {
       content = mf2.properties.summary[0]
@@ -212,6 +214,7 @@ class TwitterSyndicator extends BaseSyndicator {
       if (children.length > 4) {
         children = children.slice(0, 4)
       }
+      // TODO: Handle collections correctly
     } else {
       // Check for photos
       let mediaIds = []
@@ -235,7 +238,7 @@ class TwitterSyndicator extends BaseSyndicator {
         return await this.postStatus(status)
       }
     }
-    console.log('Unknown error posting to twitter')
+    console.error('Unknown error posting to twitter')
     return false
   }
 
