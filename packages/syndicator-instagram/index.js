@@ -2,8 +2,11 @@ const BaseSyndicator = require('@postr/syndicator')
 const url = require('url')
 const sharp = require('sharp')
 const sizeOf = require('image-size')
-const Clients = require('instagram-private-api')
-const Client = Clients.V1
+const { IgApiClient } = require('instagram-private-api')
+const {
+  // instagramIdToUrlSegment,
+  urlSegmentToInstagramId,
+} = require('instagram-id-to-url-segment')
 
 const isInstagramUrl = instaUrl => {
   const parsedUrl = url.parse(instaUrl)
@@ -11,6 +14,15 @@ const isInstagramUrl = instaUrl => {
     parsedUrl.hostname === 'instagram.com' ||
     parsedUrl.hostname === 'www.instagram.com'
   )
+}
+
+const instagramUrlToId = instaUrl => {
+  const parsedUrl = url.parse(instaUrl)
+  const shortcode = parsedUrl.pathname
+    .split('/')
+    .filter(part => !!part)
+    .pop()
+  return urlSegmentToInstagramId(shortcode)
 }
 
 class InstagramSyndicator extends BaseSyndicator {
@@ -29,28 +41,39 @@ class InstagramSyndicator extends BaseSyndicator {
   }
 
   async getSession() {
-    const device = new Client.Device(this.options.username)
-    const storage = new Client.CookieFileStorage(__dirname + '/instagram.json')
-    return await Client.Session.create(
-      device,
-      storage,
-      this.options.username,
-      this.options.password
-    )
+    const ig = new IgApiClient()
+    ig.state.generateDevice(this.options.username)
+    await ig.account.login(this.options.username, this.options.password)
+    return ig
+  }
+
+  async postInstagramPhoto({ file, ...options }) {
+    try {
+      const ig = await this.getSession()
+      const res = await ig.publish.photo({ file, ...options })
+      const igUrl = 'https://www.instagram.com/p/' + res.media.code + '/'
+      return igUrl
+    } catch (err) {
+      console.error('[Error posting instagram photo]', err)
+      return null
+    }
   }
 
   async postInstagramPhotos(mf2) {
-    const session = await this.getSession()
     const permalink = mf2.properties.url[0]
     const collection = await this.imports.getCollection()
-    const search = this.imports.generateSearch(permalink, true)
+    let search = this.imports.generateSearch(permalink, true)
+    search['properties.post-status.0'] = { $ne: 'deleted' }
     const doc = await collection.findOne(search).exec()
 
     // Get buffers from mf2 photos
-
     let photoBuffers = []
     for (const photo of mf2.properties.photo) {
       photoBuffers.push(await doc.getFileBuffer(photo))
+    }
+    photoBuffers = photoBuffers.filter(buffer => !!buffer)
+    if (!photoBuffers.length) {
+      throw new Error('Could not get photo buffers from post')
     }
 
     // Generate caption
@@ -96,7 +119,7 @@ class InstagramSyndicator extends BaseSyndicator {
             .resize({ width: 2000, height: 2000 })
             .blur(300)
           const imageBuffer = await backgroundImage
-            .overlayWith(mainImage)
+            .composite([{ input: mainImage }])
             .toFormat('jpeg')
             .toBuffer()
           resizedPhotos.push(imageBuffer)
@@ -123,31 +146,29 @@ class InstagramSyndicator extends BaseSyndicator {
 
     if (resizedPhotos.length === 1) {
       // Post single photo
-      const upload = await Client.Upload.photo(session, resizedPhotos[0])
-      const medium = await Client.Media.configurePhoto(
-        session,
-        upload.params.uploadId,
-        caption
-      )
-      return medium.params.webLink
+      const syndicatedUrl = await this.postInstagramPhoto({
+        file: resizedPhotos[0],
+        caption,
+      })
+      return syndicatedUrl
     } else {
       // Post multi-photo as album
       const photoMedias = []
-      for (const photo of photos) {
+      for (const photo of resizedPhotos) {
         const size = sizeOf(photo)
         photoMedias.push({
-          type: 'photo',
-          size: [size.width, size.height],
-          data: photo,
+          width: size.width,
+          height: size.height,
+          file: photo,
         })
       }
 
-      const payload = await Client.Upload.album(session, photoMedias)
-      await Client.Media.configureAlbum(session, payload, caption, false)
-      const account = await session.getAccount()
-      const myFeed = new Client.Feed.UserMedia(session, account.id, 1)
-      const medias = await myFeed.get()
-      const url = medias[0].params.webLink
+      const ig = await this.getSession()
+      const res = await ig.publish.album({
+        caption,
+        items: photoMedias,
+      })
+      const url = 'https://www.instagram.com/p/' + res.media.code + '/'
       return url
     }
   }
@@ -164,7 +185,7 @@ class InstagramSyndicator extends BaseSyndicator {
         // There is already a instagram syndication for this post. So lets skip it
         return null
       } else {
-        const session = await this.getSession()
+        const ig = await this.getSession()
 
         if (mf2.children) {
           const collection = await this.imports.getCollection()
@@ -215,11 +236,13 @@ class InstagramSyndicator extends BaseSyndicator {
           isInstagramUrl(mf2.properties['like-of'][0])
         ) {
           // Is instagram like.
-          const media = await Client.Media.getByUrl(
-            session,
-            mf2.properties['like-of'][0]
-          )
-          await Client.Like.create(session, media.id)
+          const mediaId = instagramUrlToId(mf2.properties['like-of'][0])
+          await ig.media.like({
+            mediaId,
+            moduleInfo: {
+              module_name: 'profile',
+            },
+          })
           return (
             mf2.properties['like-of'][0] + '#likedby-' + this.options.username
           )
@@ -234,14 +257,14 @@ class InstagramSyndicator extends BaseSyndicator {
         }
       }
     } catch (err) {
-      console.log('Error syndicating to instagram', err)
+      console.error('[Error syndicating to instagram]', err)
       return null
     }
   }
 
   async deleteSyndication(mf2) {
     try {
-      const session = await this.getSession()
+      const ig = await this.getSession()
       const instaSyndicationUrl = mf2.properties.syndication
         ? mf2.properties.syndication.find(syndicationUrl =>
             isInstagramUrl(syndicationUrl)
@@ -254,19 +277,18 @@ class InstagramSyndicator extends BaseSyndicator {
           isInstagramUrl(mf2.properties['like-of'][0])
         ) {
           // Is like
-          const media = await Client.Media.getByUrl(
-            session,
-            mf2.properties['like-of'][0]
-          )
-          await Client.Like.destroy(session, media.id)
+          const mediaId = instagramUrlToId(mf2.properties['like-of'][0])
+          await ig.media.unlike({
+            mediaId,
+            moduleInfo: {
+              module_name: 'profile',
+            },
+          })
           return instaSyndicationUrl
         } else {
           // Probably is regular post
-          const media = await Client.Media.getByUrl(
-            session,
-            instaSyndicationUrl
-          )
-          await Client.Media.delete(session, media.id)
+          const mediaId = instagramUrlToId(instaSyndicationUrl)
+          await ig.media.delete({ mediaId })
           return instaSyndicationUrl
         }
       } else if (mf2.children) {
@@ -293,8 +315,8 @@ class InstagramSyndicator extends BaseSyndicator {
 
           if (childInstaUrl) {
             // Has a insta url so lets delete it
-            const media = await Client.Media.getByUrl(session, childInstaUrl)
-            await Client.Media.delete(session, media.id)
+            const mediaId = instagramUrlToId(childInstaUrl)
+            await ig.media.delete({ mediaId })
             await doc.update({
               $pullAll: { 'properties.syndication': [childInstaUrl] },
             })
@@ -308,7 +330,7 @@ class InstagramSyndicator extends BaseSyndicator {
         return null
       }
     } catch (err) {
-      console.log('Error deleting instagram syndication', err)
+      console.error('[Error deleting instagram syndication]', err)
     }
     return null
   }
