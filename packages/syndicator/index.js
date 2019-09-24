@@ -34,8 +34,8 @@ class Syndicator extends PostrPlugin {
       rxdb: true,
       hooks: {
         createRxCollection: collection => {
-          collection.postSave(this.checkShouldSyndicateUpdate, false)
-          collection.postInsert(this.checkShouldSyndicate, false)
+          collection.postSave(this.checkShouldSyndicateUpdate, true)
+          collection.postInsert(this.checkShouldSyndicate, true)
         },
       },
     })
