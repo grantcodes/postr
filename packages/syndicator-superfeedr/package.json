@@ -1,13 +1,13 @@
 {
   "name": "@postr/syndicator-superfeedr",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Superfeedr syndication plugin",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@postr/syndicator": "^1.1.0",
+    "@postr/syndicator": "^1.2.0",
     "axios": "^0.18.0"
   },
   "homepage": "https://github.com/grantcodes/postr",

@@ -1,13 +1,13 @@
 {
   "name": "@postr/syndicator-twitter",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Twitter syndication plugin",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@postr/syndicator": "^1.1.0",
+    "@postr/syndicator": "^1.2.0",
     "axios": "^0.18.0",
     "brevity": "^0.2.9",
     "twitter": "^1.7.1"
