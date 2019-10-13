@@ -201,8 +201,9 @@ class InstagramSyndicator extends BaseSyndicator {
 
           // Then publish every post
           docs.forEach((doc, index) => {
-            // If there is more that 60 posts we will hit a timout issue, so wait for just over an hour
-            const timeout = Math.floor((index + 1) / 60) * 1000 * 60 * 70
+            // If there is more that 60 posts we will hit a timeout issue, so wait for just over an hour + 30 seconds per image
+            const timeout =
+              Math.floor((index + 1) / 60) * 1000 * 60 * 70 + index * 30 * 1000
             setTimeout(async () => {
               const childMf2 = doc.toMf2()
               // Check that this child has not already been syndicated to instagram
