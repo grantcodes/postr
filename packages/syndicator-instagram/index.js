@@ -42,6 +42,9 @@ class InstagramSyndicator extends BaseSyndicator {
 
   async getSession() {
     const ig = new IgApiClient()
+    if (this.options.proxy) {
+      ig.state.proxyUrl = this.options.proxy
+    }
     ig.state.generateDevice(this.options.username)
     await ig.simulate.preLoginFlow()
     await ig.account.login(this.options.username, this.options.password)
