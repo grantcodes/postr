@@ -43,7 +43,9 @@ class InstagramSyndicator extends BaseSyndicator {
   async getSession() {
     const ig = new IgApiClient()
     ig.state.generateDevice(this.options.username)
+    await ig.simulate.preLoginFlow()
     await ig.account.login(this.options.username, this.options.password)
+    process.nextTick(async () => await ig.simulate.postLoginFlow())
     return ig
   }
 
