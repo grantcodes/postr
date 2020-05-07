@@ -1,0 +1,27 @@
+{
+  "name": "@postr/plugin-feeds",
+  "version": "0.0.1",
+  "description": "A plugin for Postr to automatically provide a variety of feeds",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grantcodes/postr.git"
+  },
+  "dependencies": {
+    "@postr/plugin": "^1.0.0",
+    "express": "^4.17.1",
+    "feed": "^4.1.0"
+  },
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "license": "ISC",
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true
+  }
+}
