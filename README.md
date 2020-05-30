@@ -65,6 +65,7 @@ const options = {
   dbPassword: '', // (String)* The database password
   tokenEndpoint: '', // (String)* Your token endpoint. Used for authenticating requests
   dangerousDevMode: false, // (Boolean) Set to true and the endpoint will skip checking tokens. It may do more in the future
+  dangerousPermanentToken: '', // (String) A permanent auth token that may be useful if you are using your own tools to communicate with your site
   mediaEndpoint: '', // (String) If you want to post media to a different media endpoint pass the url here and all file storage will be handled by your media endpoint. No image resizing will be done.
 }
 ```
