@@ -57,7 +57,6 @@ class WebmentionEndpoint extends PostrPlugin {
             notificationTitle + ': ' + notification.properties.name[0]
         }
         notification.properties.name = [notificationTitle]
-        notifier(notification)
 
         // Save the comment to the database
         if (
@@ -82,10 +81,10 @@ class WebmentionEndpoint extends PostrPlugin {
             }
 
             // Checks a property to see if it contains the post url (or syndicated url)
-            const isReplyType = type => {
+            const isReplyType = (type) => {
               if (sourceEntry.properties[type]) {
                 const mentionValues = sourceEntry.properties[type]
-                return mentionValues.some(mentionUrl => {
+                return mentionValues.some((mentionUrl) => {
                   const mentionURL = new URL(mentionUrl)
                   return (
                     targetURL.host + targetURL.pathname + targetURL.search ===
@@ -114,7 +113,7 @@ class WebmentionEndpoint extends PostrPlugin {
               existingResponseIndex = post.properties[
                 mentionProperty
               ].findIndex(
-                response => response.properties.url.indexOf(source) > -1
+                (response) => response.properties.url.indexOf(source) > -1
               )
             }
 
@@ -127,10 +126,11 @@ class WebmentionEndpoint extends PostrPlugin {
               })
               return res.status(202).send('Webmention update accepted')
             } else {
-              // New response so push it to an array
+              // New response so push it to an array and send notification
               doc.update({
                 $push: { [`properties.${mentionProperty}`]: sourceEntry },
               })
+              notifier(notification)
               return res.status(202).send('Webmention accepted')
             }
           }
@@ -175,7 +175,7 @@ class WebmentionEndpoint extends PostrPlugin {
           let existing = doc.get(`properties.${property}`)
           if (existing) {
             const existingIndex = existing.findIndex(
-              post =>
+              (post) =>
                 post.properties &&
                 post.properties.url &&
                 post.properties.url[0] === source
