@@ -1,6 +1,6 @@
 {
   "name": "@postr/plugin-feeds",
-  "version": "0.0.1",
+  "version": "1.0.0-beta.2",
   "description": "A plugin for Postr to automatically provide a variety of feeds",
   "main": "index.js",
   "scripts": {

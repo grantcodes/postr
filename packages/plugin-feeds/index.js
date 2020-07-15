@@ -37,9 +37,17 @@ class FeedPlugin extends PostrPlugin {
     router.get('/mf2json/:postType/page/:page', this.mf2json)
 
     router.get('/jf2', this.jf2)
+    router.get('/jf2/category/:category', this.jf2)
+    router.get('/jf2/type/:postType', this.jf2)
     router.get('/rss', this.rss)
+    router.get('/rss/category/:category', this.rss)
+    router.get('/rss/type/:postType', this.rss)
     router.get('/atom', this.atom)
+    router.get('/atom/category/:category', this.atom)
+    router.get('/atom/type/:postType', this.atom)
     router.get('/json', this.json)
+    router.get('/json/category/:category', this.json)
+    router.get('/json/type/:postType', this.json)
 
     return router
   }
@@ -51,7 +59,7 @@ class FeedPlugin extends PostrPlugin {
     const limit = 50
     let skip = 0
     const { getCollection, generateSearch } = this.imports
-    const { page, postType } = req.params
+    const { page, postType, category } = req.params
     const collection = await getCollection()
     let search = {}
 
@@ -61,6 +69,12 @@ class FeedPlugin extends PostrPlugin {
 
     if (postType) {
       search['cms.postType'] = postType
+    }
+
+    if (category) {
+      search['properties.category'] = {
+        $in: [category],
+      }
     }
 
     search = generateSearch(search)
