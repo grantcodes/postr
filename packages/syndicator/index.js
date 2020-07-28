@@ -27,13 +27,14 @@ class Syndicator extends PostrPlugin {
       {
         uid: this.options.id,
         name: this.options.name,
+        checked: this.options.default,
       },
     ]
     config.set('syndication', syndicationTargets)
     RxDB.plugin({
       rxdb: true,
       hooks: {
-        createRxCollection: collection => {
+        createRxCollection: (collection) => {
           collection.postSave(this.checkShouldSyndicateUpdate, true)
           collection.postInsert(this.checkShouldSyndicate, true)
         },
