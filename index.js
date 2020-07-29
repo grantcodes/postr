@@ -40,6 +40,6 @@ module.exports = (options = {}) => {
     }
   } catch (err) {
     console.log('Micropub setup err', err)
-    return new Error(err)
+    throw new Error(err)
   }
 }

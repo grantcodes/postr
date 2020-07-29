@@ -4,7 +4,7 @@
   "description": "A micropub endpoint",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
@@ -60,5 +60,9 @@
     "semi": false,
     "trailingComma": "es5",
     "singleQuote": true
+  },
+  "devDependencies": {
+    "jest": "^26.1.0",
+    "@types/jest": "^26.0.7"
   }
 }
