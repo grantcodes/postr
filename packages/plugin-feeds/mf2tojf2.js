@@ -45,10 +45,10 @@ const mf2ToJf2 = (item) => {
           jf2[property] = arrayValue
         }
       } else {
-        console.log(
-          property + ' property is not an array:',
-          item.properties[property]
-        )
+        // console.log(
+        //   property + ' property is not an array:',
+        //   item.properties[property]
+        // )
       }
     }
   }

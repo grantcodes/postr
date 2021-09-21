@@ -162,17 +162,18 @@ class FeedPlugin extends PostrPlugin {
       if (!item.content) {
         // This is a post type without a summary, name or content
         // TODO: Handle contentless posts like likes and reposts better.
-        console.warn(
-          '[Postr Feeds]',
-          'Item is currently not supported',
-          doc.toMf2()
-        )
+        // console.warn(
+        //   '[Postr Feeds]',
+        //   'Item is currently not supported',
+        //   doc.toMf2()
+        // )
         return null
       } else {
         item.title =
           doc.get('properties.content.0.value').substring(0, 50) + '…'
       }
-      console.log('No title or description for rss', item)
+      // NOTE: This runs a lottt...
+      // console.log('No title or description for rss', item)
     }
 
     // Set content fallback from title
