@@ -1,6 +1,6 @@
 {
   "name": "@postr/syndicator-instagram",
-  "version": "2.0.7",
+  "version": "2.1.1-beta.0",
   "description": "Instagram syndication plugin",
   "main": "index.js",
   "scripts": {
@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "@postr/syndicator": "^1.2.0",
-    "image-size": "^0.8.2",
+    "image-size": "^1.0.0",
     "instagram-id-to-url-segment": "0.0.0",
-    "instagram-private-api": "^1.29.0",
-    "sharp": "^0.23.0"
+    "instagram-private-api": "^1.45.2",
+    "sharp": "^0.29.3"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",

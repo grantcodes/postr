@@ -8,7 +8,7 @@ const {
   urlSegmentToInstagramId,
 } = require('instagram-id-to-url-segment')
 
-const isInstagramUrl = instaUrl => {
+const isInstagramUrl = (instaUrl) => {
   const parsedUrl = url.parse(instaUrl)
   return (
     parsedUrl.hostname === 'instagram.com' ||
@@ -16,11 +16,11 @@ const isInstagramUrl = instaUrl => {
   )
 }
 
-const instagramUrlToId = instaUrl => {
+const instagramUrlToId = (instaUrl) => {
   const parsedUrl = url.parse(instaUrl)
   const shortcode = parsedUrl.pathname
     .split('/')
-    .filter(part => !!part)
+    .filter((part) => !!part)
     .pop()
   return urlSegmentToInstagramId(shortcode)
 }
@@ -76,7 +76,7 @@ class InstagramSyndicator extends BaseSyndicator {
     for (const photo of mf2.properties.photo) {
       photoBuffers.push(await doc.getFileBuffer(photo))
     }
-    photoBuffers = photoBuffers.filter(buffer => !!buffer)
+    photoBuffers = photoBuffers.filter((buffer) => !!buffer)
     if (!photoBuffers.length) {
       throw new Error('Could not get photo buffers from post')
     }
@@ -183,7 +183,7 @@ class InstagramSyndicator extends BaseSyndicator {
       // If there is an existing syndication to instagram do not syndicate this post
       if (
         mf2.properties.syndication &&
-        mf2.properties.syndication.find(syndicationUrl =>
+        mf2.properties.syndication.find((syndicationUrl) =>
           isInstagramUrl(syndicationUrl)
         )
       ) {
@@ -214,7 +214,7 @@ class InstagramSyndicator extends BaseSyndicator {
               // Check that this child has not already been syndicated to instagram
               if (
                 !childMf2.properties.syndication ||
-                !childMf2.properties.syndication.find(syndicationUrl =>
+                !childMf2.properties.syndication.find((syndicationUrl) =>
                   isInstagramUrl(syndicationUrl)
                 )
               ) {
@@ -272,7 +272,7 @@ class InstagramSyndicator extends BaseSyndicator {
     try {
       const ig = await this.getSession()
       const instaSyndicationUrl = mf2.properties.syndication
-        ? mf2.properties.syndication.find(syndicationUrl =>
+        ? mf2.properties.syndication.find((syndicationUrl) =>
             isInstagramUrl(syndicationUrl)
           )
         : null
@@ -310,11 +310,11 @@ class InstagramSyndicator extends BaseSyndicator {
         }
 
         // Then publish every post
-        docs.forEach(async doc => {
+        docs.forEach(async (doc) => {
           const childMf2 = doc.toMf2()
           // Check that this child has already been syndicated to instagram
           const childInstaUrl = childMf2.properties.syndication
-            ? childMf2.properties.syndication.find(syndicationUrl =>
+            ? childMf2.properties.syndication.find((syndicationUrl) =>
                 isInstagramUrl(syndicationUrl)
               )
             : null
