@@ -1,10 +1,11 @@
 {
   "name": "@postr/core",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "A micropub endpoint",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-server": "node tests/server.js"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
