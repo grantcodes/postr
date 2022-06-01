@@ -11,7 +11,7 @@
     "image-size": "^1.0.0",
     "instagram-id-to-url-segment": "0.0.0",
     "instagram-private-api": "^1.45.2",
-    "sharp": "^0.29.3"
+    "sharp": "^0.30.5"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
