@@ -1,6 +1,6 @@
 {
   "name": "@postr/core",
-  "version": "1.10.2",
+  "version": "1.10.3",
   "description": "A micropub endpoint",
   "main": "index.js",
   "scripts": {
