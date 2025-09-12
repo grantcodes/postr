@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@postr/syndicator": "^1.2.0",
-    "axios": "^0.21.2",
+    "axios": "^1.12.0",
     "brevity": "^0.2.9",
     "twitter": "^1.7.1"
   },
