@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@postr/syndicator": "^1.2.0",
-    "axios": "^0.21.2",
+    "axios": "^0.30.2",
     "node-telegram-bot-api": "^0.30.0"
   },
   "homepage": "https://github.com/grantcodes/postr",
