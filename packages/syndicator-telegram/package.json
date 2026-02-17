@@ -9,7 +9,7 @@
   "dependencies": {
     "@postr/syndicator": "^1.2.0",
     "axios": "^0.21.2",
-    "node-telegram-bot-api": "^0.30.0"
+    "node-telegram-bot-api": "^0.67.0"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
