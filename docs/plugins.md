@@ -6,27 +6,6 @@ Postr is highly extensible via plugins.
 
 There are a number of readymade syndication plugins.
 
-### Twitter
-
-```bash
-npm install @postr/syndicator-twitter
-```
-
-```js
-const Postr = require('@postr/core')
-const TwitterSyndicator = require('@postr/syndicator-twitter')
-
-const postr = new Postr(options)
-postr.use(TwitterSyndicator, {
-  handle: 'grantcodes',
-  consumerKey: 'consumerkey',
-  consumerSecret: 'consumersecret',
-  accessToken: 'accesstoken',
-  secretToken: 'secrettoken',
-  default: true, // Syndicate to twitter even if no syndication is set
-})
-```
-
 ### Instagram
 
 ```bash
