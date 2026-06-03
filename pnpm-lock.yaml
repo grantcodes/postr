@@ -203,21 +203,6 @@ importers:
         specifier: ^0.30.0
         version: 0.30.0
 
-  packages/syndicator-twitter:
-    dependencies:
-      '@postr/syndicator':
-        specifier: workspace:^1.2.0
-        version: link:../syndicator
-      axios:
-        specifier: ^0.21.2
-        version: 0.21.4
-      brevity:
-        specifier: ^0.2.9
-        version: 0.2.9
-      twitter:
-        specifier: ^1.7.1
-        version: 1.7.1
-
 packages:
 
   '@babel/cli@7.29.7':
@@ -1691,9 +1676,6 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  brevity@0.2.9:
-    resolution: {integrity: sha512-Zi3wZiW7cEfp/QTL+C3R9L9hcYc+ZEgYBgeXvdK2hMrWQkjYq1zeM9OCwPRMrYjHXCVYIoJEuZGjxaimu+152Q==}
-
   broadcast-channel@3.1.0:
     resolution: {integrity: sha512-zrjTunJRva1aFW9UlLtoMnB05tu8hbb7qbv3PxXXGnxp3t9VA/KcTIwcC0+u7oLBdlXSnv0yy7pB+UemLjANyQ==}
 
@@ -1955,10 +1937,6 @@ packages:
   deep-equal@2.2.3:
     resolution: {integrity: sha512-ZIwpnevOurS8bpT4192sqAowWM76JDKSHYzMLty3BZGSswgq6pBaH3DhCSW5xVAZICZyKdOBPjwww5wfgT/6PA==}
     engines: {node: '>= 0.4'}
-
-  deep-extend@0.5.1:
-    resolution: {integrity: sha512-N8vBdOa+DF7zkRrDCsaOXoCs/E2fJfx9B9MrKnnSiHNh4ws7eSys6YQE4KvT1cecKmOASYQBhbKjeuDD9lT81w==}
-    engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
   deep-extend@0.6.0:
     resolution: {integrity: sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==}
@@ -4011,9 +3989,6 @@ packages:
   tweetnacl@0.14.5:
     resolution: {integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==}
 
-  twitter@1.7.1:
-    resolution: {integrity: sha512-Do7l/WzFnUZC14ABtZfDiOHKl6M9Ft5tE4YF0ev9XLm4yh7m8R98D82rzeDAMjbjMZk2R/tb6sgXXb3sPKoaVw==}
-
   type-check@0.3.2:
     resolution: {integrity: sha512-ZCmOJdvOWDBYJlzAoFkC+Q0+bUyEOS1ltgp1MGU03fqHG+dbi9tBFU2Rd9QKiDZFAYrhPh2JUf7rZRIuHRKtOg==}
     engines: {node: '>= 0.8.0'}
@@ -5778,8 +5753,6 @@ snapshots:
       fill-range: 7.1.1
     optional: true
 
-  brevity@0.2.9: {}
-
   broadcast-channel@3.1.0:
     dependencies:
       '@babel/runtime': 7.29.7
@@ -6107,8 +6080,6 @@ snapshots:
       which-boxed-primitive: 1.1.1
       which-collection: 1.0.2
       which-typed-array: 1.1.21
-
-  deep-extend@0.5.1: {}
 
   deep-extend@0.6.0: {}
 
@@ -8670,11 +8641,6 @@ snapshots:
       - utf-8-validate
 
   tweetnacl@0.14.5: {}
-
-  twitter@1.7.1:
-    dependencies:
-      deep-extend: 0.5.1
-      request: 2.88.2
 
   type-check@0.3.2:
     dependencies:

@@ -75,9 +75,6 @@ jobs:
           - name: syndicator-telegram
             filter: '@postr/syndicator-telegram'
             build: ''
-          - name: syndicator-twitter
-            filter: '@postr/syndicator-twitter'
-            build: ''
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
