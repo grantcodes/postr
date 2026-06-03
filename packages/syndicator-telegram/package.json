@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": ">=24"
+  },
   "dependencies": {
     "@postr/syndicator": "workspace:^1.2.0",
     "node-telegram-bot-api": "^0.30.0"
