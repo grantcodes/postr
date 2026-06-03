@@ -1,5 +1,4 @@
 const url = require('url')
-const axios = require('axios')
 const TelegramBot = require('node-telegram-bot-api')
 const BaseSyndicator = require('@postr/syndicator')
 
@@ -91,19 +90,21 @@ class TelegramSyndicator extends BaseSyndicator {
               if (typeof fileUrl !== 'string' && fileUrl.value) {
                 fileUrl = fileUrl.value
               }
-              const res = await axios.get(fileUrl, {
-                responseType: 'arraybuffer',
-              })
-              const buffer = Buffer.from(res.data)
+              const res = await fetch(fileUrl)
+              if (!res.ok) throw new Error(
+                `Failed to download media: ${res.status} ${res.statusText}`
+              )
+              const buffer = Buffer.from(await res.arrayBuffer())
               await bot.sendPhoto(this.options.channel, buffer)
             }
           }
           if (mf2.properties.audio) {
             for (const fileUrl of mf2.properties.audio) {
-              const res = await axios.get(fileUrl, {
-                responseType: 'arraybuffer',
-              })
-              const buffer = Buffer.from(res.data)
+              const res = await fetch(fileUrl)
+              if (!res.ok) throw new Error(
+                `Failed to download media: ${res.status} ${res.statusText}`
+              )
+              const buffer = Buffer.from(await res.arrayBuffer())
               await bot.sendAudio(this.options.channel, buffer)
             }
           }
@@ -112,19 +113,21 @@ class TelegramSyndicator extends BaseSyndicator {
               if (typeof fileUrl !== 'string' && fileUrl.value) {
                 fileUrl = fileUrl.value
               }
-              const res = await axios.get(fileUrl, {
-                responseType: 'arraybuffer',
-              })
-              const buffer = Buffer.from(res.data)
+              const res = await fetch(fileUrl)
+              if (!res.ok) throw new Error(
+                `Failed to download media: ${res.status} ${res.statusText}`
+              )
+              const buffer = Buffer.from(await res.arrayBuffer())
               await bot.sendPhoto(this.options.channel, buffer)
             }
           }
           if (mf2.properties.video) {
             for (const fileUrl of mf2.properties.video) {
-              const res = await axios.get(fileUrl, {
-                responseType: 'arraybuffer',
-              })
-              const buffer = Buffer.from(res.data)
+              const res = await fetch(fileUrl)
+              if (!res.ok) throw new Error(
+                `Failed to download media: ${res.status} ${res.statusText}`
+              )
+              const buffer = Buffer.from(await res.arrayBuffer())
               await bot.sendVideo(this.options.channel, buffer)
             }
           }

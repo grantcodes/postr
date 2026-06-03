@@ -1,4 +1,3 @@
-const axios = require('axios')
 const BaseSyndicator = require('@postr/syndicator')
 
 class SuperfeedrSyndicator extends BaseSyndicator {
@@ -22,7 +21,10 @@ class SuperfeedrSyndicator extends BaseSyndicator {
       let url = `${hub}?hub.mode=publish&hub.url=${domain}`
       // Do this after a timeout so we are sure it was created.
       setTimeout(async () => {
-        await axios.post(url)
+        const res = await fetch(url, { method: 'POST' })
+        if (!res.ok) throw new Error(
+          `Superfeedr publish failed: ${res.status} ${res.statusText}`
+        )
       }, 5000)
     }
     return null

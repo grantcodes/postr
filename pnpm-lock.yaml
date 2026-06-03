@@ -169,18 +169,12 @@ importers:
       '@postr/syndicator':
         specifier: workspace:^1.2.0
         version: link:../syndicator
-      axios:
-        specifier: ^0.21.2
-        version: 0.21.4
 
   packages/syndicator-telegram:
     dependencies:
       '@postr/syndicator':
         specifier: workspace:^1.2.0
         version: link:../syndicator
-      axios:
-        specifier: ^0.21.2
-        version: 0.21.4
       node-telegram-bot-api:
         specifier: ^0.30.0
         version: 0.30.0
@@ -1521,9 +1515,6 @@ packages:
 
   aws4@1.13.2:
     resolution: {integrity: sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==}
-
-  axios@0.21.4:
-    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
 
   b4a@1.8.1:
     resolution: {integrity: sha512-aiqre1Nr0B/6DgE2N5vwTc+2/oQZ4Wh1t4NznYY4E00y8LCt6NqdRv81so00oo27D8MVKTpUa/MwUUtBLXCoDw==}
@@ -5569,12 +5560,6 @@ snapshots:
   aws-sign2@0.7.0: {}
 
   aws4@1.13.2: {}
-
-  axios@0.21.4:
-    dependencies:
-      follow-redirects: 1.16.0
-    transitivePeerDependencies:
-      - debug
 
   b4a@1.8.1: {}
 
