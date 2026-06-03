@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc && cp lib/db.js dist/lib/ && cp lib/plugins.js dist/lib/ && cp lib/router.js dist/lib/ && cp -r lib/middlewear dist/lib/ && cp -r lib/db-middleware dist/lib/",
+    "build": "rm -rf dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "packageManager": "pnpm@11.3.0",

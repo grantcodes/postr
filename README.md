@@ -29,15 +29,17 @@ An example site is available to play around with on glitch at https://glitch.com
 npm install @postr/core
 ```
 
+Once installed, `@postr/core` resolves as a bare specifier inside any ESM module in your project — no `createRequire` or relative path needed.
+
 ## Usage
 
 ```js
-const express = require('express')
-const micropubEndpoint = require('@postr/core')
-const app = express()
-const myEndpoint = micropubEndpoint(/_config_/)
+import express from 'express'
+import { postr } from '@postr/core'
 
-app.use('/micropub', myEndpoint.router)
+const app = express()
+const endpoint = postr({ /* config */ })
+app.use('/micropub', endpoint.router)
 app.listen(80)
 ```
 
@@ -48,6 +50,11 @@ Configuration can be passed as an object when using postr as a JavaScript module
 #### Options
 
 ```js
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
 const options = {
   permalinkPattern: ':siteBaseUrl/:year/:month/:day/:slug', // (String) What your site permalinks look like. Written in express style. Must include year month and day at the moment
   sendWebmentions: true, // (Boolean) Send webmentions automatically or not
@@ -101,7 +108,7 @@ The root `npm test` script intentionally exits with an error — do not use it a
 
 ### Publishing
 
-All packages in this workspace publish modern CommonJS source directly — no transpile step is required. The root `build` script is a no-op placeholder retained for backward compatibility with verification aliases.
+All packages in this workspace publish ESM source, with TypeScript-compiled output where applicable (`@postr/core`, `@postr/plugin`). The root `build` script compiles the packages that need it and is a no-op for source-only packages.
 
 ### Package verification
 
@@ -109,7 +116,7 @@ All packages in this workspace publish modern CommonJS source directly — no tr
 pnpm run check
 ```
 
-This is a convenience alias that runs the no-op build placeholder followed by `pnpm -r pack --dry-run` to verify all workspace packages are in publishable shape.
+This builds all packages (compiling TypeScript where needed) then runs `pnpm -r pack --dry-run` to verify every workspace package is in publishable shape.
 
 You can also run dry-run packing independently:
 
@@ -124,7 +131,7 @@ If you have [Vite+](https://viteplus.dev) installed, `vp` can serve as an altern
 ```bash
 vp install          # install all dependencies
 vp run test-server  # start smoke-test server
-vp run build        # no-op placeholder (packages publish source directly)
+vp run build        # compiles TS packages, no-op for source-only packages
 vp exec <cmd>       # run a command from node_modules/.bin
 vp pm pack -r -- --dry-run # verify all packages are publishable
 ```
@@ -135,4 +142,4 @@ This repo intentionally does **not** add a `vite.config.ts` yet. Vite+ is curren
 
 ### CI / publish
 
-See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, smoke test, verify packaging) before publishing each workspace package individually via `pnpm --filter <package> publish`. No build step is needed — all packages publish modern CommonJS source directly.
+See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, build, verify packaging) before publishing each workspace package individually via `pnpm --filter <package> publish`.

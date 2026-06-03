@@ -32,12 +32,12 @@ npm install @postr/core
 ## Usage
 
 ```js
-const express = require('express')
-const micropubEndpoint = require('@postr/core')
-const app = express()
-const myEndpoint = micropubEndpoint(/_config_/)
+import express from 'express'
+import { postr } from '@postr/core'
 
-app.use('/micropub', myEndpoint.router)
+const app = express()
+const endpoint = postr({ /* config */ })
+app.use('/micropub', endpoint.router)
 app.listen(80)
 ```
 
@@ -48,6 +48,11 @@ Configuration can be passed as an object when using postr as a JavaScript module
 #### Options
 
 ```js
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
 const options = {
   permalinkPattern: ':siteBaseUrl/:year/:month/:day/:slug', // (String) What your site permalinks look like. Written in express style. Must include year month and day at the moment
   sendWebmentions: true, // (Boolean) Send webmentions automatically or not
