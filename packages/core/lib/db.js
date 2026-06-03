@@ -1,13 +1,9 @@
 const RxDB = require('rxdb/plugins/core')
-const isNode = require('./is-node')
 const validateMiddleware = require('./db-middleware/validate')
 const setDefaultsMiddleware = require('./db-middleware/set-defaults')
 const getFixPermalinkConflictMiddleware = require('./db-middleware/fix-permalink-conflicts')
 const getPopulateChildrenMiddleware = require('./db-middleware/populate-children')
-const staticMethods = require('./statics')
-const schema = require('../schema/base')
-const migrationStrategies = require('../schema/migration-strategies')
-const config = require('./config')
+const { isNode, staticMethods, schema, migrationStrategies, config } = globalThis.__postr
 
 const emptyMiddleware = () => {}
 

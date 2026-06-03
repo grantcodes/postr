@@ -1,10 +1,7 @@
 const RxDB = require('rxdb/plugins/core')
 const { get: getCollection } = require('./db')
-const generateSearch = require('./generate-search')
-const config = require('./config')
-const isNode = require('./is-node')
 const router = require('./router')
-const getHEntry = require('./get-hentry')
+const { generateSearch, config, isNode, getHEntry } = globalThis.__postr
 const usedPlugins = {}
 
 const use = (plugin, options = {}) => {

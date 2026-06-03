@@ -1,7 +1,5 @@
 const { isRxDocument } = require('rxdb')
-const getUrlsFromMf2 = require('../get-urls-from-mf2')
-const getHEntry = require('../get-hentry')
-const config = require('../config')
+const { getUrlsFromMf2, getHEntry, config } = globalThis.__postr
 const siteBaseUrl = config.get('siteBaseUrl')
 
 // This will only work with an rxdoc, should be run in parallel to prevent it slowing down other databse stuff

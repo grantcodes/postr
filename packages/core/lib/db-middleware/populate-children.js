@@ -1,6 +1,5 @@
 const { isRxDocument } = require('rxdb')
-const placeholders = require('../placeholders')
-const generateSearch = require('../generate-search')
+const { placeholders, generateSearch } = globalThis.__postr
 
 /**
  * Gets the post children ids and saves them to the database for faster retrieval

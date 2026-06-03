@@ -1,4 +1,4 @@
-const config = require('../config')
+const config = globalThis.__postr.config
 
 /**
  * Checks if the current authenticated token contains a specified scope. Automatically handles "post" and "create" as the same thing

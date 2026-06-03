@@ -1,7 +1,6 @@
 const Ajv = require('ajv')
-const getSchema = require('../../schema/postTypes')
 const { isRxDocument } = require('rxdb')
-const { replaceMf2 } = require('../placeholders')
+const { getPostSchema: getSchema, replaceMf2 } = globalThis.__postr
 const ajv = new Ajv({ schemaId: 'auto', allErrors: true })
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'))
 

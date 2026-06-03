@@ -1,6 +1,6 @@
 const Collection = require('../db')
-const generateSearch = require('../generate-search')
 const hasScope = require('./has-scope')
+const generateSearch = globalThis.__postr.generateSearch
 
 /**
  * Express middlewear to handle micropub actions (update, delete, etc.)

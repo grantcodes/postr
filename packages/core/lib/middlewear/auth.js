@@ -1,5 +1,5 @@
 const { parse: parseQuerystring } = require('querystring')
-const config = require('../config')
+const config = globalThis.__postr.config
 
 /**
  * Express middlewear that checks for a valid access token.

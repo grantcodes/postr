@@ -2,12 +2,21 @@
   "name": "@postr/core",
   "version": "1.10.3",
   "description": "A micropub endpoint",
-  "main": "index.js",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
   "files": [
-    "index.js",
-    "lib",
-    "schema"
+    "dist"
   ],
+  "scripts": {
+    "build": "rm -rf dist && tsc && cp lib/db.js dist/lib/ && cp lib/plugins.js dist/lib/ && cp lib/router.js dist/lib/ && cp -r lib/middlewear dist/lib/ && cp -r lib/db-middleware dist/lib/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "packageManager": "pnpm@11.3.0",
   "engines": {
     "node": ">=24"
@@ -41,19 +50,8 @@
     "send-webmention": "^2.0.0",
     "sharp": "^0.34.5"
   },
-  "browser": {
-    "express": false,
-    "@postlight/mercury-parser": false,
-    "path": false,
-    "fs": false,
-    "pouchdb-adapter-leveldb": false,
-    "./lib/router": false,
-    "./lib/save-file": false,
-    "./lib/get-hentry": false,
-    "./lib/db-middleware/create-refs": false,
-    "./lib/db-middleware/save-files": false,
-    "./lib/db-middleware/webmention": false,
-    "./lib/db-middleware/format-content": false,
-    "./lib/statics/get-file-buffer": false
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
   }
 }

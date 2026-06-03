@@ -1,7 +1,6 @@
 const { isRxDocument } = require('rxdb')
-const saveFileFromUrl = require('../save-file-from-url')
 const isUrl = require('is-url')
-const config = require('../config')
+const { saveFileFromUrl, config } = globalThis.__postr
 const mediaBaseUrl = config.get('mediaBaseUrl')
 
 /**

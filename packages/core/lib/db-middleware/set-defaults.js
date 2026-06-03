@@ -1,8 +1,6 @@
 const { isRxDocument } = require('rxdb')
 const slugify = require('@sindresorhus/slugify')
-const config = require('../config')
-const placeholders = require('../placeholders')
-const { getPostType } = require('../post-type-discovery')
+const { config, placeholders, getPostType } = globalThis.__postr
 const siteBaseUrl = config.get('siteBaseUrl')
 
 const generateSlug = post => {

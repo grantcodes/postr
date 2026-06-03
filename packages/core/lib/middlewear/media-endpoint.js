@@ -1,6 +1,5 @@
-const saveFile = require('../save-file')
 const hasScope = require('./has-scope')
-const placeholders = require('../placeholders')
+const { saveFile, placeholders } = globalThis.__postr
 
 /**
  * Micropub media endpoint as an express middlewear

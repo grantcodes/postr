@@ -1,5 +1,5 @@
 const clone = require('clone')
-const saveFile = require('../save-file')
+const saveFile = globalThis.__postr.saveFile
 
 /**
  * Express middlewear to format a micropub request.

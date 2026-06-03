@@ -1,6 +1,5 @@
 const { isRxDocument } = require('rxdb')
-const getPermalink = require('../get-permalink-from-mf2')
-const generateSearch = require('../generate-search')
+const { getPermalink, generateSearch } = globalThis.__postr
 
 /**
  * A function that returns a database middlewear function

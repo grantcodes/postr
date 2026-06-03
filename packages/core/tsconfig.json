@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": false,
+    "declaration": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.mts"]
+}

@@ -1,7 +1,5 @@
 const Collection = require('../db')
-const config = require('../config')
-const generateSearch = require('../generate-search')
-const { getAvailablePostTypes } = require('../post-type-discovery')
+const { config, generateSearch, getAvailablePostTypes } = globalThis.__postr
 
 const getMicropubConfig = async () => {
   const defaultMicropubConfig = {

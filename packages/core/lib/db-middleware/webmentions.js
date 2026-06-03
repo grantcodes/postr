@@ -1,7 +1,6 @@
 const { isRxDocument } = require('rxdb')
 const sendWebmention = require('send-webmention')
-const getPermalink = require('../get-permalink-from-mf2')
-const getUrlsFromMf2 = require('../get-urls-from-mf2')
+const { getPermalink, getUrlsFromMf2 } = globalThis.__postr
 
 /**
  * Will send any webmentions for a given RxDoc or mf2 object.
