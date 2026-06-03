@@ -52,7 +52,7 @@ jobs:
       matrix:
         entry:
           - name: core
-            filter: ''
+            filter: '@postr/core'
             build: ''
           - name: plugin
             filter: '@postr/plugin'
@@ -93,12 +93,6 @@ jobs:
         if: ${{ matrix.entry.build != '' }}
         run: pnpm --filter ${{ matrix.entry.filter }} run ${{ matrix.entry.build }}
       - name: Publish workspace package
-        if: ${{ matrix.entry.filter != '' }}
         run: pnpm --filter ${{ matrix.entry.filter }} publish --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
-      - name: Publish root package
-        if: ${{ matrix.entry.filter == '' }}
-        run: pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}

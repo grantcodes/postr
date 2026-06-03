@@ -1,15 +1,15 @@
 # AGENTS.md
 
 ## Repo shape
-- This repo is a **pnpm workspace monorepo** (see `pnpm-workspace.yaml`). Root `package.json` is `@postr/core`; each package under `packages/` has its own `package.json`.
+- This repo is a **pnpm workspace monorepo** (see `pnpm-workspace.yaml`). The repo root is a non-publishable workspace/meta root with orchestration scripts only. The `@postr/core` package lives in `packages/core/`; each package under `packages/` has its own `package.json`.
 - All internal package references use `workspace:^` protocol — pnpm resolves these from the workspace automatically.
 - Legacy `package-lock.json` files have been removed; `pnpm-lock.yaml` is the single source of truth.
 
 ## Runtime entrypoints
-- Core entrypoint is `index.js`, which wires config, RxDB collection setup, plugin loading, and the shared Express router.
-- HTTP behavior lives in `lib/router.js`: `GET /` handles Micropub queries, `POST /` handles Micropub actions/posts, and `POST /media` is the media endpoint.
-- Database setup is centralized in `lib/db.js`; it creates the `posts` RxDB collection and registers the pre/post hooks for validation, defaults, permalink conflict handling, media downloads, ref parsing, and webmentions.
-- Plugin registration lives in `lib/plugins.js`. Class-based plugins receive `{ RxDB, config, getCollection, generateSearch, router, getHEntry, isNode }` via `imports`.
+- Core entrypoint is `packages/core/index.js`, which wires config, RxDB collection setup, plugin loading, and the shared Express router.
+- HTTP behavior lives in `packages/core/lib/router.js`: `GET /` handles Micropub queries, `POST /` handles Micropub actions/posts, and `POST /media` is the media endpoint.
+- Database setup is centralized in `packages/core/lib/db.js`; it creates the `posts` RxDB collection and registers the pre/post hooks for validation, defaults, permalink conflict handling, media downloads, ref parsing, and webmentions.
+- Plugin registration lives in `packages/core/lib/plugins.js`. Class-based plugins receive `{ RxDB, config, getCollection, generateSearch, router, getHEntry, isNode }` via `imports`.
 
 ## Commands that matter
 - Root install: `pnpm install` (or `vp install` if Vite+ is available)

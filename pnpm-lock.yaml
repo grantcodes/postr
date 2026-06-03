@@ -7,6 +7,12 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      vite-plus:
+        specifier: ^0.1.24
+        version: 0.1.24(@types/node@25.9.1)(jsdom@11.12.0)(vite@8.0.16(@types/node@25.9.1))
+
+  packages/core:
     dependencies:
       '@postlight/mercury-parser':
         specifier: ^2.2.1
@@ -92,10 +98,6 @@ importers:
       sharp:
         specifier: ^0.32.6
         version: 0.32.6
-    devDependencies:
-      vite-plus:
-        specifier: ^0.1.24
-        version: 0.1.24(@types/node@25.9.1)(jsdom@11.12.0)(vite@8.0.16(@types/node@25.9.1))
 
   packages/plugin:
     dependencies:
@@ -5780,7 +5782,7 @@ snapshots:
 
   broadcast-channel@3.1.0:
     dependencies:
-      '@babel/runtime': 7.9.2
+      '@babel/runtime': 7.29.7
       detect-node: 2.1.0
       js-sha3: 0.8.0
       microseconds: 0.2.0
@@ -6193,7 +6195,7 @@ snapshots:
 
   domutils@1.5.1:
     dependencies:
-      dom-serializer: 0.1.1
+      dom-serializer: 0.2.2
       domelementtype: 1.3.1
 
   domutils@1.7.0:
@@ -8746,7 +8748,7 @@ snapshots:
 
   unload@2.2.0:
     dependencies:
-      '@babel/runtime': 7.9.2
+      '@babel/runtime': 7.29.7
       detect-node: 2.1.0
 
   unpipe@1.0.0: {}

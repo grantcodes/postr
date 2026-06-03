@@ -72,7 +72,7 @@ const options = {
 
 ## Development
 
-This repository is a [pnpm workspace](https://pnpm.io/workspaces) monorepo containing the root `@postr/core` package and several publishable packages under `packages/`.
+This repository is a [pnpm workspace](https://pnpm.io/workspaces) monorepo. The repo root is a non-publishable workspace/meta root with orchestration scripts only. The publishable `@postr/core` package lives in `packages/core/`, alongside several other publishable packages under `packages/`.
 
 ### Prerequisites
 
@@ -141,4 +141,4 @@ This repo intentionally does **not** add a `vite.config.ts` yet. Vite+ is curren
 
 ### CI / publish
 
-See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, build, smoke test, dry-run pack) before publishing the root package and each nested package individually.
+See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, build, smoke test, dry-run pack) before publishing each workspace package individually via `pnpm --filter <package> publish`.

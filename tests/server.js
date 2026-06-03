@@ -1,5 +1,7 @@
-const express = require('express')
-const postr = require('../index')
+const { createRequire } = require('module')
+const requireCore = createRequire(require.resolve('../packages/core/package.json'))
+const express = requireCore('express')
+const postr = require('../packages/core')
 const mf2 = require('./_data')
 const app = express()
 
