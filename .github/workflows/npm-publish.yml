@@ -18,10 +18,6 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Build publish-sensitive packages
-        run: |
-          pnpm --filter @postr/plugin run prepare
-          pnpm --filter @postr/syndicator run build
       - name: Smoke test
         run: |
           pnpm run test-server &
@@ -56,7 +52,7 @@ jobs:
             build: ''
           - name: plugin
             filter: '@postr/plugin'
-            build: 'prepare'
+            build: ''
           - name: plugin-feeds
             filter: '@postr/plugin-feeds'
             build: ''
@@ -65,7 +61,7 @@ jobs:
             build: ''
           - name: syndicator
             filter: '@postr/syndicator'
-            build: 'build'
+            build: ''
           - name: syndicator-instagram
             filter: '@postr/syndicator-instagram'
             build: ''

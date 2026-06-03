@@ -3,7 +3,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "test-server": "vp exec node tests/server.js",
-    "build": "vp run @postr/plugin#build && vp run @postr/syndicator#build",
+    "build": "echo 'All packages publish modern CommonJS directly; no build step required'",
     "check": "vp run build && vp pm pack -r -- --dry-run"
   },
   "packageManager": "pnpm@11.3.0",

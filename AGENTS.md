@@ -14,16 +14,15 @@
 ## Commands that matter
 - Root install: `pnpm install` (or `vp install` if Vite+ is available)
 - Root smoke server: `pnpm run test-server`
-- Build publish-sensitive packages: `pnpm run build`
+- No-op build placeholder (packages publish source directly): `pnpm run build`
 - Verify all packages: `pnpm run check` (build + dry-run pack)
 - Dry-run pack independently: `pnpm -r pack --dry-run`
 - Do not use `npm test` at root or in packages as a verification step unless you first replace the placeholder script; the checked-in script intentionally exits with an error.
 - `npm run test-server` (or its `pnpm`/`vp` equivalent) starts an Express app on `http://localhost:3000/micropub`, uses `tests/_tmp/` for LevelDB/media output, seeds sample posts on first run, and enables `dangerousDevMode`.
 
 ## Package-specific gotchas
-- `packages/plugin` and `packages/syndicator` publish from `build/index.js`, but the repo only tracks source `index.js`. After editing either package, run its local build/prepare step so `build/` exists before any pack/publish-style verification.
-- Other nested packages publish directly from `index.js`.
-- Because these packages use `workspace:^` references, pnpm links them automatically during `pnpm install`. After changing `@postr/plugin` or `@postr/syndicator`, rebuild them with `pnpm run build` so consumers pick up the latest build output.
+- All packages publish modern CommonJS source directly. There is no transpile or `build/` artifact step for any package.
+- Because these packages use `workspace:^` references, pnpm links them automatically during `pnpm install`. Source edits to `@postr/plugin` or `@postr/syndicator` are picked up immediately by workspace consumers via pnpm symlinks — no rebuild step is needed.
 
 ## Env and compatibility
 - Local Node version is pinned to `24` in `.node-version` for Vite+ / `vp env`; `package.json` enforces `"node": ">=24"`.

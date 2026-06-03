@@ -99,15 +99,9 @@ pnpm run test-server
 
 The root `npm test` script intentionally exits with an error — do not use it as a verification path.
 
-### Building publish-sensitive packages
+### Publishing
 
-`packages/plugin` and `packages/syndicator` require a Babel build step to produce the `build/index.js` publish artifact:
-
-```bash
-pnpm run build
-```
-
-This runs `pnpm --filter @postr/plugin run build && pnpm --filter @postr/syndicator run build`.
+All packages in this workspace publish modern CommonJS source directly — no transpile step is required. The root `build` script is a no-op placeholder retained for backward compatibility with verification aliases.
 
 ### Package verification
 
@@ -115,7 +109,7 @@ This runs `pnpm --filter @postr/plugin run build && pnpm --filter @postr/syndica
 pnpm run check
 ```
 
-This is a convenience alias that runs the build step followed by `pnpm -r pack --dry-run` to verify all workspace packages are in publishable shape.
+This is a convenience alias that runs the no-op build placeholder followed by `pnpm -r pack --dry-run` to verify all workspace packages are in publishable shape.
 
 You can also run dry-run packing independently:
 
@@ -130,7 +124,7 @@ If you have [Vite+](https://viteplus.dev) installed, `vp` can serve as an altern
 ```bash
 vp install          # install all dependencies
 vp run test-server  # start smoke-test server
-vp run build        # build publish-sensitive packages
+vp run build        # no-op placeholder (packages publish source directly)
 vp exec <cmd>       # run a command from node_modules/.bin
 vp pm pack -r -- --dry-run # verify all packages are publishable
 ```
@@ -141,4 +135,4 @@ This repo intentionally does **not** add a `vite.config.ts` yet. Vite+ is curren
 
 ### CI / publish
 
-See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, build, smoke test, dry-run pack) before publishing each workspace package individually via `pnpm --filter <package> publish`.
+See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, smoke test, verify packaging) before publishing each workspace package individually via `pnpm --filter <package> publish`. No build step is needed — all packages publish modern CommonJS source directly.
