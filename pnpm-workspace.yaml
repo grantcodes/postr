@@ -1,0 +1,18 @@
+packages:
+  # All publishable packages under packages/*
+  - 'packages/*'
+
+# pnpm v11 stores project-level config in this file rather than .npmrc or
+# the deprecated "pnpm" key in package.json.
+# See https://pnpm.io/settings
+
+# Allow git-resolved subdependencies (needed by @postlight/mercury-parser@2.2.1)
+# which depends on difflib and browser-request from github:postlight forks.
+blockExoticSubdeps: false
+
+# Approve specific packages to run build scripts
+allowBuilds:
+  core-js: false
+  leveldown: false
+  rxdb: false
+  sharp: false

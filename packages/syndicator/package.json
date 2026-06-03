@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.1.2",
-    "@postr/plugin": "^1.0.0"
+    "@postr/plugin": "workspace:^1.0.0"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",

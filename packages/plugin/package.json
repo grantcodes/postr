@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel index.js -d build",
     "prepare": "babel index.js -d build"
   },
   "dependencies": {

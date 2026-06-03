@@ -1,4 +1,6 @@
 node_modules
+.pnpm-debug.log*
 config.json
 .vscode
 tests/_tmp
+.planning/

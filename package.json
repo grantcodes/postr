@@ -3,9 +3,19 @@
   "version": "1.10.3",
   "description": "A micropub endpoint",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "lib"
+  ],
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test-server": "node tests/server.js"
+    "test-server": "vp exec node tests/server.js",
+    "build": "vp run @postr/plugin#build && vp run @postr/syndicator#build",
+    "check": "vp run build && vp pm pack -r -- --dry-run"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
@@ -61,5 +71,8 @@
     "semi": false,
     "trailingComma": "es5",
     "singleQuote": true
+  },
+  "devDependencies": {
+    "vite-plus": "^0.1.24"
   }
 }

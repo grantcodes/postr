@@ -69,3 +69,76 @@ const options = {
   mediaEndpoint: '', // (String) If you want to post media to a different media endpoint pass the url here and all file storage will be handled by your media endpoint. No image resizing will be done.
 }
 ```
+
+## Development
+
+This repository is a [pnpm workspace](https://pnpm.io/workspaces) monorepo containing the root `@postr/core` package and several publishable packages under `packages/`.
+
+### Prerequisites
+
+- Node.js 24+ (pinned in `.node-version` for Vite+ / `vp env`)
+- [pnpm](https://pnpm.io/installation) 11+
+
+### Quick start
+
+```bash
+# Install all dependencies
+pnpm install
+
+# Or, if you have Vite+ (vp) installed:
+vp install
+```
+
+### Smoke testing
+
+The real smoke test is `pnpm run test-server`, which starts an Express app on `http://localhost:3000/micropub` using test fixtures in `tests/_tmp/`.
+
+```bash
+pnpm run test-server
+```
+
+The root `npm test` script intentionally exits with an error — do not use it as a verification path.
+
+### Building publish-sensitive packages
+
+`packages/plugin` and `packages/syndicator` require a Babel build step to produce the `build/index.js` publish artifact:
+
+```bash
+pnpm run build
+```
+
+This runs `pnpm --filter @postr/plugin run build && pnpm --filter @postr/syndicator run build`.
+
+### Package verification
+
+```bash
+pnpm run check
+```
+
+This is a convenience alias that runs the build step followed by `pnpm -r pack --dry-run` to verify all workspace packages are in publishable shape.
+
+You can also run dry-run packing independently:
+
+```bash
+pnpm -r pack --dry-run
+```
+
+### Using Vite+ (`vp`)
+
+If you have [Vite+](https://viteplus.dev) installed, `vp` can serve as an alternative orchestration layer that delegates to pnpm:
+
+```bash
+vp install          # install all dependencies
+vp run test-server  # start smoke-test server
+vp run build        # build publish-sensitive packages
+vp exec <cmd>       # run a command from node_modules/.bin
+vp pm pack -r -- --dry-run # verify all packages are publishable
+```
+
+`vp` respects the same workspace configuration and works transparently alongside `pnpm` commands.
+
+This repo intentionally does **not** add a `vite.config.ts` yet. Vite+ is currently used as an orchestration/runtime layer here, not as a Vite app/library config surface.
+
+### CI / publish
+
+See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, build, smoke test, dry-run pack) before publishing the root package and each nested package individually.

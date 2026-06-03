@@ -11,7 +11,7 @@
     "url": "git+https://github.com/grantcodes/postr.git"
   },
   "dependencies": {
-    "@postr/plugin": "^1.0.0",
+    "@postr/plugin": "workspace:^1.0.0",
     "express": "^4.17.1",
     "feed": "^4.1.0"
   },
