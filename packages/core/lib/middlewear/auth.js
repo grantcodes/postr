@@ -1,5 +1,4 @@
 const { parse: parseQuerystring } = require('querystring')
-const fetch = require('node-fetch')
 const config = require('../config')
 
 /**

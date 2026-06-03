@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-const moment = require('moment')
 const Microformats = require('microformat-node')
 // const mf2ExpandUrls = require('./mf2-expand-urls')
 const MicropubError = require('./error')
@@ -62,7 +60,7 @@ async function getHEntry(url, storeFiles = true) {
     const bufferToFile = async (type, mime) => {
       if (saveFile && mimeType.indexOf(mime + '/') === 0) {
         if (storeFiles) {
-          const buffer = await response.buffer()
+          const buffer = Buffer.from(await response.arrayBuffer())
           const fileUrl = await saveFile(
             buffer,
             basename(parseUrl(url).pathname)
@@ -137,8 +135,8 @@ async function getHEntry(url, storeFiles = true) {
       }
 
       if (meta.date_published) {
-        const published = moment(meta.date_published)
-        if (published.isValid()) {
+        const published = new Date(meta.date_published)
+        if (!isNaN(published.getTime())) {
           mf2.properties.published = [published.toISOString()]
         }
       }

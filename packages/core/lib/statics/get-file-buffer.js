@@ -1,6 +1,5 @@
 const path = require('path')
-const fs = require('fs-extra')
-const fetch = require('node-fetch')
+const fs = require('fs')
 const config = require('../config')
 
 module.exports = async function(file) {
@@ -34,7 +33,7 @@ module.exports = async function(file) {
             } else {
               // File is remote, read it from the url
               const res = await fetch(fileUrl, { method: 'get' })
-              const buffer = await res.buffer()
+              const buffer = Buffer.from(await res.arrayBuffer())
               return buffer
             }
           } catch (err) {

@@ -20,7 +20,7 @@ function getImageDetails(photoUrl) {
 
   if (isNode) {
     const path = require('path')
-    const fs = require('fs-extra')
+    const fs = require('fs')
     const imageSize = require('image-size')
 
     const photoFileLoc = path.join(

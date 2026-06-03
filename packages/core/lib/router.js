@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const cors = require('cors')
 const multer = require('multer')
 
@@ -21,8 +20,8 @@ const upload = multer({
   limits: { fileSize: 500 * 1024 * 1024 },
 })
 
-router.use(bodyParser.urlencoded({ extended: true }))
-router.use(bodyParser.json())
+router.use(express.urlencoded({ extended: true }))
+router.use(express.json())
 
 // Enable cors requests
 router.use(cors())

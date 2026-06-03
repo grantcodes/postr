@@ -1,5 +1,4 @@
 const { isRxDocument } = require('rxdb')
-const moment = require('moment')
 const slugify = require('@sindresorhus/slugify')
 const config = require('../config')
 const placeholders = require('../placeholders')
@@ -7,7 +6,11 @@ const { getPostType } = require('../post-type-discovery')
 const siteBaseUrl = config.get('siteBaseUrl')
 
 const generateSlug = post => {
-  let slugString = moment().format('hh-mm-ss')
+  const now = new Date()
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  let slugString = `${hours}-${minutes}-${seconds}`
   if (post.properties.name && post.properties.name[0]) {
     slugString = post.properties.name[0]
   } else if (post.properties.summary && post.properties.summary[0]) {

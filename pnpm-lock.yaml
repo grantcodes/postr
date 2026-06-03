@@ -23,9 +23,6 @@ importers:
       ajv:
         specifier: ^6.12.6
         version: 6.15.0
-      body-parser:
-        specifier: ^1.19.1
-        version: 1.20.5
       clone:
         specifier: ^2.1.2
         version: 2.1.2
@@ -41,12 +38,6 @@ importers:
       file-type:
         specifier: ^12.4.2
         version: 12.4.2
-      form-data:
-        specifier: ^2.5.1
-        version: 2.5.5
-      fs-extra:
-        specifier: ^8.1.0
-        version: 8.1.0
       get-urls:
         specifier: ^9.2.1
         version: 9.2.1
@@ -65,15 +56,9 @@ importers:
       microformat-node:
         specifier: ^2.0.1
         version: 2.0.4
-      moment:
-        specifier: ^2.29.1
-        version: 2.30.1
       multer:
         specifier: ^1.4.4
         version: 1.4.4
-      node-fetch:
-        specifier: ^2.6.6
-        version: 2.7.0(encoding@0.1.13)
       oembed-providers:
         specifier: ^1.0.20211208
         version: 1.0.20260421
@@ -135,9 +120,6 @@ importers:
       '@postr/plugin':
         specifier: workspace:^1.0.0
         version: link:../plugin
-      body-parser:
-        specifier: ^1.18.3
-        version: 1.20.5
       express:
         specifier: ^4.16.4
         version: 4.22.2
@@ -2346,10 +2328,6 @@ packages:
   fs-constants@1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
 
-  fs-extra@8.1.0:
-    resolution: {integrity: sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==}
-    engines: {node: '>=6 <7 || >=8'}
-
   fs-readdir-recursive@1.1.0:
     resolution: {integrity: sha512-GNanXlVr2pf02+sPN40XN8HG+ePaNcvM0q5mZBd668Obwb0yD5GiUbZOFgwn8kGMY6I3mdyDJzieUy3PTYyTRA==}
 
@@ -2773,9 +2751,6 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
-
-  jsonfile@4.0.0:
-    resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
 
   jsonpointer@4.1.0:
     resolution: {integrity: sha512-CXcRvMyTlnR53xMcKnuMzfCA5i/nfblTnnr74CZb6C4vG39eu6w51t7nKmU5MfLfbTgGItliNyjO/ciNPDqClg==}
@@ -4042,10 +4017,6 @@ packages:
   unicode-property-aliases-ecmascript@2.2.0:
     resolution: {integrity: sha512-hpbDzxUY9BFwX+UeBnxv3Sh1q7HFxj48DTmXchNgRa46lO8uj3/1iEn3MiNUYTg1g9ctIqXCCERn8gYZhHC5lQ==}
     engines: {node: '>=4'}
-
-  universalify@0.1.2:
-    resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
-    engines: {node: '>= 4.0.0'}
 
   universalify@0.2.0:
     resolution: {integrity: sha512-CJ1QgKmNg3CwvAv/kOFmtnEN05f0D/cn9QntgNOQlQF9dgvVTHj3t+8JPdjqawCHk7V/KA+fbUqzZ9XWhcqPUg==}
@@ -6588,12 +6559,6 @@ snapshots:
 
   fs-constants@1.0.0: {}
 
-  fs-extra@8.1.0:
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 4.0.0
-      universalify: 0.1.2
-
   fs-readdir-recursive@1.1.0: {}
 
   fs.realpath@1.0.0: {}
@@ -7101,10 +7066,6 @@ snapshots:
   json-stringify-safe@5.0.1: {}
 
   json5@2.2.3: {}
-
-  jsonfile@4.0.0:
-    optionalDependencies:
-      graceful-fs: 4.2.11
 
   jsonpointer@4.1.0: {}
 
@@ -8707,8 +8668,6 @@ snapshots:
   unicode-match-property-value-ecmascript@2.2.1: {}
 
   unicode-property-aliases-ecmascript@2.2.0: {}
-
-  universalify@0.1.2: {}
 
   universalify@0.2.0: {}
 

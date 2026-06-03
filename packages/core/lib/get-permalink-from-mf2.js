@@ -1,4 +1,3 @@
-const moment = require('moment')
 const config = require('./config')
 
 /**
@@ -20,10 +19,10 @@ module.exports = function(post) {
     dateString = post.properties.published[0]
   }
 
-  const date = moment(dateString || Date.now())
-  const year = date.format('YYYY')
-  const month = date.format('MM')
-  const day = date.format('DD')
+  const date = new Date(dateString || Date.now())
+  const year = date.getFullYear().toString()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
   const slug = post.properties['mp-slug'][0]
 
   return pattern

@@ -17,14 +17,14 @@ class WebmentionEndpoint extends PostrPlugin {
   }
 
   router() {
-    const router = require('express').Router()
-    const bodyParser = require('body-parser')
+    const express = require('express')
+    const router = express.Router()
     const { notifier } = this.options
     const { getHEntry, config, generateSearch, getCollection } = this.imports
     const siteUrl = config.get('siteBaseUrl')
 
-    router.use(bodyParser.urlencoded({ extended: false }))
-    router.use(bodyParser.json())
+    router.use(express.urlencoded({ extended: false }))
+    router.use(express.json())
 
     router.post('/', async (req, res, next) => {
       const { source, target } = req.body

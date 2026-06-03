@@ -1,7 +1,5 @@
 const path = require('path')
-const fs = require('fs-extra')
-const fetch = require('node-fetch')
-const FormData = require('form-data')
+const fs = require('fs')
 const fileType = require('file-type')
 const sizeOf = require('image-size')
 const config = require('./config')
@@ -24,37 +22,31 @@ module.exports = async (buffer, filename) => {
 
   // Send to media endpoint if there is one set
   if (config.get('mediaEndpoint')) {
-    let token = config.get('rawToken')
+    const token = config.get('rawToken')
     if (!token) {
-      return reject('Missing token to save file to media endpoint')
+      throw new Error('Missing token to save file to media endpoint')
     }
-    // Save to media endpoint
+    // Save to media endpoint using native FormData
+    const mime = fileType(buffer).mime
     const form = new FormData()
-    form.append('file', buffer, {
-      filename,
-      contentType: fileType(buffer).mime,
-    })
-    let request = {
+    form.append('file', new Blob([buffer], { type: mime }), filename)
+
+    const res = await fetch(config.get('mediaEndpoint'), {
       method: 'POST',
       body: form,
-      headers: Object.assign(
-        {
-          Authorization: 'Bearer ' + token,
-          Accept: '*/*',
-        },
-        form.getHeaders()
-      ),
-    }
-
-    const res = fetch(config.get('mediaEndpoint'), request)
+      headers: {
+        Authorization: 'Bearer ' + token,
+        Accept: '*/*',
+      },
+    })
     if (res.status !== 201) {
-      throw 'Error creating media on micropub endpoint'
+      throw new Error('Error creating media on micropub endpoint')
     }
     const location = res.headers.get('Location') || res.headers.get('location')
     if (location) {
       return location
     } else {
-      throw 'Media endpoint did not return a location'
+      throw new Error('Media endpoint did not return a location')
     }
   } else {
     // Save locally
@@ -66,7 +58,7 @@ module.exports = async (buffer, filename) => {
     // and return a url
     // But would also need to hook into the function that provides the resized image urls (image-sizes.js)
     // Create the folder
-    fs.mkdirsSync(folder)
+    fs.mkdirSync(folder, { recursive: true })
     // Check file doesn't already exist
     let fileIndex = 0
     while (fs.existsSync(fileLoc)) {
@@ -80,9 +72,11 @@ module.exports = async (buffer, filename) => {
     fs.writeFileSync(fileLoc, buffer)
     const url = '{{mediaBaseUrl}}' + '/' + dateFolder + '/' + filename
 
+    const detectedType = fileType(buffer)
     if (
       config.get('imageSizes') &&
-      fileType(buffer).mime.startsWith('image/')
+      detectedType &&
+      detectedType.mime.startsWith('image/')
     ) {
       const sharp = require('sharp')
       const imageSizes = config.get('imageSizes')
