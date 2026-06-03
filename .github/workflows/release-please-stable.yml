@@ -1,0 +1,88 @@
+# Stable release workflow: release-please + OIDC publish to npm tag `latest`
+#
+# Flow:
+#   - Pushes to `master` ⟶ release-please opens/updates a Release PR against `master`
+#   - Merging that Release PR to `master` ⟶ release-please creates GitHub Releases + tags
+#   - Only when releases_created=true do we publish to npm with tag `latest`
+#   - Uses npm trusted publishing via OIDC (no long-lived tokens)
+#
+# Reference: https://github.com/googleapis/release-please-action
+
+name: release-please-stable
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Verify packaging
+        run: pnpm run check
+
+      # ── OIDC guard ────────────────────────────────────────────────
+
+      - name: Guard - No npm token-based auth (must use OIDC only)
+        run: |
+          if [ -n "${NODE_AUTH_TOKEN:-}" ] || [ -n "${NPM_TOKEN:-}" ]; then
+            echo 'ERROR: npm token environment variables detected. Stable release must use OIDC trusted publishing only.'
+            exit 1
+          fi
+          echo 'OK: No npm token environment variables present'
+
+      - name: Guard - OIDC prerequisites available
+        run: |
+          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ] && [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo 'ERROR: OIDC token request env vars not found. Ensure id-token: write permission is set.'
+            exit 1
+          fi
+          echo 'OK: OIDC environment available'
+
+      # ── Release-please (stable config, no prerelease) ──────────────
+
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          manifest: true
+          target-branch: master
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # ── Publish released packages to npm tag `latest` ─────────────
+
+      - name: Publish released packages to latest
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
+        env:
+          PATHS_RELEASED: ${{ steps.release.outputs.paths_released }}
+        run: node scripts/publish-release-please-packages.mjs latest

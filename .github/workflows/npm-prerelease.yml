@@ -1,0 +1,95 @@
+# Dev prerelease workflow: release-please + OIDC publish to npm tag `next`
+#
+# Flow:
+#   - Pushes to `dev` ⟶ release-please opens/updates a Release PR against `dev`
+#   - Merging that Release PR to `dev` ⟶ release-please creates GitHub Releases + tags
+#   - Only when releases_created=true do we publish to npm with tag `next`
+#   - Uses npm trusted publishing via OIDC (no long-lived tokens)
+#
+# NOTE — version suffix vs dist-tag:
+#   The release-please config uses `"prerelease": true` (boolean), which derives
+#   the prerelease identifier from the branch name. On the `dev` branch the version
+#   suffix is `-dev.N` (e.g. 1.10.4-dev.0). The npm dist-tag is independently set
+#   to `next` in the publish script below. These are orthogonal concerns: consumers
+#   install with `npm i @postr/core@next` and get the latest dev build.
+#
+# Reference: https://github.com/googleapis/release-please-action
+
+name: npm-prerelease
+
+on:
+  push:
+    branches:
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Verify packaging
+        run: pnpm run check
+
+      # ── OIDC guard ────────────────────────────────────────────────
+
+      - name: Guard - No npm token-based auth (must use OIDC only)
+        run: |
+          if [ -n "${NODE_AUTH_TOKEN:-}" ] || [ -n "${NPM_TOKEN:-}" ]; then
+            echo 'ERROR: npm token environment variables detected. Dev release must use OIDC trusted publishing only.'
+            exit 1
+          fi
+          echo 'OK: No npm token environment variables present'
+
+      - name: Guard - OIDC prerequisites available
+        run: |
+          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ] && [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo 'ERROR: OIDC token request env vars not found. Ensure id-token: write permission is set.'
+            exit 1
+          fi
+          echo 'OK: OIDC environment available'
+
+      # ── Release-please ─────────────────────────────────────────────
+
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          manifest: true
+          target-branch: dev
+          config-file: release-please-config.dev.json
+          manifest-file: .release-please-manifest.json
+
+      # ── Publish released packages to npm tag `next` ───────────────
+
+      - name: Publish released packages to next
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
+        env:
+          PATHS_RELEASED: ${{ steps.release.outputs.paths_released }}
+        run: node scripts/publish-release-please-packages.mjs next

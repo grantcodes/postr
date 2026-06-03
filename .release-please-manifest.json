@@ -1,0 +1,10 @@
+{
+  "packages/core": "1.10.3",
+  "packages/plugin": "1.0.0",
+  "packages/plugin-feeds": "1.0.0-beta.3",
+  "packages/plugin-webmention-endpoint": "1.0.3",
+  "packages/syndicator": "1.3.0",
+  "packages/syndicator-instagram": "2.1.1-beta.0",
+  "packages/syndicator-superfeedr": "2.0.2",
+  "packages/syndicator-telegram": "1.0.1"
+}

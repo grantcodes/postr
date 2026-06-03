@@ -1,0 +1,29 @@
+{
+  "plugins": ["node-workspace"],
+  "packages": {
+    "packages/core": {
+      "release-type": "node"
+    },
+    "packages/plugin": {
+      "release-type": "node"
+    },
+    "packages/plugin-feeds": {
+      "release-type": "node"
+    },
+    "packages/plugin-webmention-endpoint": {
+      "release-type": "node"
+    },
+    "packages/syndicator": {
+      "release-type": "node"
+    },
+    "packages/syndicator-instagram": {
+      "release-type": "node"
+    },
+    "packages/syndicator-superfeedr": {
+      "release-type": "node"
+    },
+    "packages/syndicator-telegram": {
+      "release-type": "node"
+    }
+  }
+}

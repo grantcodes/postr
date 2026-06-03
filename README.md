@@ -142,4 +142,6 @@ This repo intentionally does **not** add a `vite.config.ts` yet. Vite+ is curren
 
 ### CI / publish
 
-See `.github/workflows/npm-publish.yml` for the automated publish workflow. It validates all packages (install, build, verify packaging) before publishing each workspace package individually via `pnpm --filter <package> publish`.
+See `.github/workflows/npm-prerelease.yml` (prerelease, `dev` branch → `next` tag) and `.github/workflows/release-please-stable.yml` (stable, `master` branch → `latest` tag) for the automated publish workflows. Both use release-please in manifest mode with OIDC trusted publishing (no npm tokens). See `release-please-config.json` / `release-please-config.dev.json` for the per-package configuration.
+
+Note on prerelease versioning: the `-dev.N` version suffix is derived from the branch name by release-please's `"prerelease": true` config. The npm dist-tag is independently `next` — these are orthogonal concerns.
