@@ -1,6 +1,7 @@
-const PostrPlugin = require('@postr/plugin')
-const { Feed } = require('feed')
-const mf2ToJf2 = require('./mf2tojf2')
+import express from 'express'
+import { PostrPlugin } from '@postr/plugin'
+import { Feed } from 'feed'
+import { mf2ToJf2 } from './mf2tojf2.js'
 
 class FeedPlugin extends PostrPlugin {
   constructor({ options, imports }) {
@@ -29,7 +30,7 @@ class FeedPlugin extends PostrPlugin {
    * Gets the express router for the plugin
    */
   router() {
-    const router = require('express').Router()
+    const router = express.Router()
 
     router.get('/mf2json', this.mf2json)
     router.get('/mf2json/page/:page', this.mf2json)
@@ -299,4 +300,4 @@ class FeedPlugin extends PostrPlugin {
   }
 }
 
-module.exports = FeedPlugin
+export { FeedPlugin }

@@ -1,4 +1,4 @@
-const PostrPlugin = require('@postr/plugin')
+import { PostrPlugin } from '@postr/plugin'
 
 class Syndicator extends PostrPlugin {
   constructor({ options, imports }) {
@@ -122,4 +122,4 @@ class Syndicator extends PostrPlugin {
   }
 }
 
-module.exports = Syndicator
+export { Syndicator }

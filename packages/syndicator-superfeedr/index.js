@@ -1,4 +1,4 @@
-const BaseSyndicator = require('@postr/syndicator')
+import { Syndicator as BaseSyndicator } from '@postr/syndicator'
 
 class SuperfeedrSyndicator extends BaseSyndicator {
   constructor({ options, imports }) {
@@ -31,4 +31,4 @@ class SuperfeedrSyndicator extends BaseSyndicator {
   }
 }
 
-module.exports = SuperfeedrSyndicator
+export { SuperfeedrSyndicator }

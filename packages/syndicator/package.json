@@ -2,7 +2,11 @@
   "name": "@postr/syndicator",
   "version": "1.3.0",
   "description": "The base syndication plugin",
+  "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

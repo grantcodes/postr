@@ -82,4 +82,4 @@ const mf2ToJf2 = (item) => {
   return jf2
 }
 
-module.exports = mf2ToJf2
+export { mf2ToJf2 }

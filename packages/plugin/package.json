@@ -2,8 +2,15 @@
   "name": "@postr/plugin",
   "version": "1.0.0",
   "description": "The base syndication plugin",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],

@@ -2,7 +2,11 @@
   "name": "@postr/plugin-webmention-endpoint",
   "version": "1.0.3",
   "description": "Webmention endpoint for Postr",
+  "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

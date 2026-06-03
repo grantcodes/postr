@@ -2,7 +2,11 @@
   "name": "@postr/syndicator-instagram",
   "version": "2.1.1-beta.0",
   "description": "Instagram syndication plugin",
+  "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

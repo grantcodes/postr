@@ -2,7 +2,11 @@
   "name": "@postr/syndicator-superfeedr",
   "version": "2.0.2",
   "description": "Superfeedr syndication plugin",
+  "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -75,4 +75,4 @@ namespace PostrPlugin {
   }
 }
 
-export = PostrPlugin
+export { PostrPlugin }

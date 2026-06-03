@@ -1,12 +1,9 @@
-const BaseSyndicator = require('@postr/syndicator')
-const url = require('url')
-const sharp = require('sharp')
-const sizeOf = require('image-size')
-const { IgApiClient } = require('instagram-private-api')
-const {
-  // instagramIdToUrlSegment,
-  urlSegmentToInstagramId,
-} = require('instagram-id-to-url-segment')
+import { Syndicator as BaseSyndicator } from '@postr/syndicator'
+import url from 'url'
+import sharp from 'sharp'
+import sizeOf from 'image-size'
+import { IgApiClient } from 'instagram-private-api'
+import { urlSegmentToInstagramId } from 'instagram-id-to-url-segment'
 
 const isInstagramUrl = (instaUrl) => {
   const parsedUrl = url.parse(instaUrl)
@@ -342,4 +339,4 @@ class InstagramSyndicator extends BaseSyndicator {
   }
 }
 
-module.exports = InstagramSyndicator
+export { InstagramSyndicator }

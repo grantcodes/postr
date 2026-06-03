@@ -1,4 +1,5 @@
-const PostrPlugin = require('@postr/plugin')
+import express from 'express'
+import { PostrPlugin } from '@postr/plugin'
 
 class WebmentionEndpoint extends PostrPlugin {
   constructor({ options, imports }) {
@@ -17,7 +18,6 @@ class WebmentionEndpoint extends PostrPlugin {
   }
 
   router() {
-    const express = require('express')
     const router = express.Router()
     const { notifier } = this.options
     const { getHEntry, config, generateSearch, getCollection } = this.imports
@@ -202,4 +202,4 @@ class WebmentionEndpoint extends PostrPlugin {
   }
 }
 
-module.exports = WebmentionEndpoint
+export { WebmentionEndpoint }

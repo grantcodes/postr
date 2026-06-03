@@ -1,6 +1,6 @@
-const url = require('url')
-const TelegramBot = require('node-telegram-bot-api')
-const BaseSyndicator = require('@postr/syndicator')
+import url from 'url'
+import TelegramBot from 'node-telegram-bot-api'
+import { Syndicator as BaseSyndicator } from '@postr/syndicator'
 
 const isTelegramUrl = telegramUrl => {
   const parsedUrl = url.parse(telegramUrl)
@@ -175,4 +175,4 @@ class TelegramSyndicator extends BaseSyndicator {
   }
 }
 
-module.exports = TelegramSyndicator
+export { TelegramSyndicator }

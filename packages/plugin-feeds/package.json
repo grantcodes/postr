@@ -2,7 +2,11 @@
   "name": "@postr/plugin-feeds",
   "version": "1.0.0-beta.3",
   "description": "A plugin for Postr to automatically provide a variety of feeds",
+  "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
