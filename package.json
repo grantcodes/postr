@@ -2,9 +2,9 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test-server": "vp exec node tests/server.js",
-    "build": "echo 'All packages publish modern CommonJS directly; no build step required'",
-    "check": "vp run build && vp pm pack -r -- --dry-run"
+    "test-server": "node tests/server.js",
+    "build": "pnpm -r build",
+    "check": "pnpm run build && pnpm -r pack --dry-run"
   },
   "packageManager": "pnpm@11.3.0",
   "engines": {

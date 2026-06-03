@@ -12,17 +12,17 @@
 - Plugin registration lives in `packages/core/lib/plugins.js`. Class-based plugins receive `{ RxDB, config, getCollection, generateSearch, router, getHEntry, isNode }` via `imports`.
 
 ## Commands that matter
-- Root install: `pnpm install` (or `vp install` if Vite+ is available)
+- Root install: `pnpm install` (or `vp install` if using Vite+)
 - Root smoke server: `pnpm run test-server`
-- No-op build placeholder (packages publish source directly): `pnpm run build`
+- Build all packages (compiles TS sources where needed): `pnpm run build`
 - Verify all packages: `pnpm run check` (build + dry-run pack)
 - Dry-run pack independently: `pnpm -r pack --dry-run`
 - Do not use `npm test` at root or in packages as a verification step unless you first replace the placeholder script; the checked-in script intentionally exits with an error.
-- `npm run test-server` (or its `pnpm`/`vp` equivalent) starts an Express app on `http://localhost:3000/micropub`, uses `tests/_tmp/` for LevelDB/media output, seeds sample posts on first run, and enables `dangerousDevMode`.
+- `pnpm run test-server` starts an Express app on `http://localhost:3000/micropub`, uses `tests/_tmp/` for LevelDB/media output, seeds sample posts on first run, and enables `dangerousDevMode`.
 
 ## Package-specific gotchas
-- All packages publish modern CommonJS source directly. There is no transpile or `build/` artifact step for any package.
-- Because these packages use `workspace:^` references, pnpm links them automatically during `pnpm install`. Source edits to `@postr/plugin` or `@postr/syndicator` are picked up immediately by workspace consumers via pnpm symlinks — no rebuild step is needed.
+- All packages publish modern CommonJS source directly. There is no transpile or `build/` artifact step for any package, except `@postr/plugin` which compiles from TypeScript (`packages/plugin/src/` → `dist/`) via `pnpm -r build` or the `prepare` lifecycle hook.
+- Because these packages use `workspace:^` references, pnpm links them automatically during `pnpm install`. Source edits to JS-only packages are picked up immediately by workspace consumers via pnpm symlinks. For `@postr/plugin`, run `pnpm run build` or `pnpm --filter @postr/plugin build` to recompile after changing `.ts` source.
 
 ## Env and compatibility
 - Local Node version is pinned to `24` in `.node-version` for Vite+ / `vp env`; `package.json` enforces `"node": ">=24"`.
@@ -30,10 +30,10 @@
 - `config.json` is gitignored. `lib/config.js` also checks `MICROPUB_ENDPOINT_CONFIG` and `--config=...`, but the `require(configFile)` path is currently disabled, so runtime config effectively comes from the options object passed into `require('@postr/core')(options)`.
 
 ## Vite+ (`vp`) awareness
-- `vp` (Vite+) is available as an alternative orchestration layer. It delegates to pnpm and respects the same workspace configuration.
+- `vp` (Vite+) is optionally available as a secondary orchestration layer. It delegates to pnpm and respects the same workspace configuration.
 - Useful commands: `vp install`, `vp run <script>`, `vp exec <cmd>`, `vp pm pack -r -- --dry-run`.
+- No root scripts depend on `vp` — all build, check, and test-server workflows use bare `pnpm`/`node` commands.
 - Do not add a `vite.config.ts` unless the repo actually needs Vite+ config features such as `run`, `staged`, lint/test/pack config, or template defaults.
-- `vp` is not required — all workflows work identically with bare `pnpm` commands.
 - The repo does not adopt Vite+ app-style conventions (no `vite.config`, no `vitest`, no `vp check` expectations) — it is a Node library monorepo, not a Vite app.
 
 ## Safe working assumptions
