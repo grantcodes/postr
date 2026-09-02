@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@postr/plugin": "^1.0.0",
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4"
+    "body-parser": "^2.3.0",
+    "express": "^5.2.1"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
