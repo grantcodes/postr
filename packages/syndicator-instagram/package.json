@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@postr/syndicator": "^1.2.0",
-    "image-size": "^1.0.0",
+    "image-size": "npm:image-size-next@1.2.2",
     "instagram-id-to-url-segment": "0.0.0",
     "instagram-private-api": "^1.45.2",
     "sharp": "^0.30.5"
