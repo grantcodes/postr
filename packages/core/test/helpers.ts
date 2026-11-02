@@ -40,11 +40,16 @@ export function testPostr(options: Partial<PostrOptions> = {}) {
   })
 }
 
-export function micropub(
+/** Responses in tests are read as loosely typed JSON. */
+export interface TestResponse extends Response {
+  json(): Promise<any>
+}
+
+export async function micropub(
   postr: ReturnType<typeof testPostr>,
   path: string,
   init: RequestInit & { token?: string | null } = {},
-) {
+): Promise<TestResponse> {
   const headers = new Headers(init.headers)
   const token = init.token === undefined ? 'test-token' : init.token
   if (token) headers.set('Authorization', `Bearer ${token}`)
