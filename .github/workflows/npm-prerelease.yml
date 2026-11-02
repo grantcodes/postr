@@ -92,4 +92,4 @@ jobs:
         if: ${{ steps.release.outputs.releases_created == 'true' }}
         env:
           PATHS_RELEASED: ${{ steps.release.outputs.paths_released }}
-        run: node scripts/publish-release-please-packages.mjs next
+        run: node scripts/publish-release-please-packages.ts next

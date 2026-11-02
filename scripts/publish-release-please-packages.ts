@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * publish-release-please-packages.mjs
+ * publish-release-please-packages.ts
  *
  * Publishes only the packages that release-please just released.
  * Called from CI after release-please-action creates releases.
  *
  * Usage:
- *   node scripts/publish-release-please-packages.mjs <next|latest>
+ *   node scripts/publish-release-please-packages.ts <next|latest>
  *
  * Environment:
  *   PATHS_RELEASED  – JSON array of released package paths, e.g.
@@ -27,12 +27,10 @@ const ROOT = resolve(__dirname, '..')
 // Include ALL publishable workspace packages so we can validate/reject
 // unknown released paths. The paths here must match the keys in
 // .release-please-manifest.json and release-please-config.json.
-const PACKAGE_MAP = {
+const PACKAGE_MAP: Record<string, string> = {
   'packages/core': '@postr/core',
-  'packages/plugin': '@postr/plugin',
   'packages/plugin-feeds': '@postr/plugin-feeds',
   'packages/plugin-webmention-endpoint': '@postr/plugin-webmention-endpoint',
-  'packages/syndicator': '@postr/syndicator',
   'packages/syndicator-instagram': '@postr/syndicator-instagram',
   'packages/syndicator-superfeedr': '@postr/syndicator-superfeedr',
   'packages/syndicator-telegram': '@postr/syndicator-telegram',
@@ -42,21 +40,24 @@ const VALID_TAGS = ['next', 'latest']
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
-function fail(msg) {
+function fail(msg: string): never {
   console.error(`ERROR: ${msg}`)
   process.exit(1)
 }
 
-function getPackageVersion(pkgPath) {
+function getPackageVersion(pkgPath: string): string {
   const manifestPath = resolve(ROOT, pkgPath, 'package.json')
   if (!existsSync(manifestPath)) {
     fail(`Package manifest not found at ${manifestPath}`)
   }
-  const pkg = JSON.parse(readFileSync(manifestPath, 'utf8'))
-  return pkg.version
+  try {
+    return JSON.parse(readFileSync(manifestPath, 'utf8')).version
+  } catch (err) {
+    fail(`Could not read ${manifestPath}: ${(err as Error).message}`)
+  }
 }
 
-function isPrereleaseVersion(version) {
+function isPrereleaseVersion(version: string) {
   return version.includes('-')
 }
 
@@ -80,11 +81,11 @@ function main() {
          'or the workflow guard is misconfigured.')
   }
 
-  let releasedPaths
+  let releasedPaths: unknown
   try {
     releasedPaths = JSON.parse(pathsReleased)
   } catch (err) {
-    fail(`PATHS_RELEASED is not valid JSON: ${err.message}\n  Raw value: ${pathsReleased}`)
+    fail(`PATHS_RELEASED is not valid JSON: ${(err as Error).message}\n  Raw value: ${pathsReleased}`)
   }
   if (!Array.isArray(releasedPaths)) {
     fail(`PATHS_RELEASED is not a JSON array. Got: ${typeof releasedPaths}`)
@@ -131,7 +132,7 @@ function main() {
       )
       console.log(`  ✓ ${pkgName}@${version} published to tag "${distTag}"`)
     } catch (err) {
-      fail(`Failed to publish ${pkgName}@${version}: ${err.message}`)
+      fail(`Failed to publish ${pkgName}@${version}: ${(err as Error).message}`)
     }
   }
 
