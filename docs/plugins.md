@@ -1,177 +1,120 @@
 # Plugins
 
-Postr is highly extensible via plugins.
+Plugins are passed to `createPostr({ plugins: [...] })`. Each package exports a function that
+returns a plugin.
 
-## Syndication
-
-There are a number of readymade syndication plugins.
-
-### Instagram
+## Feeds
 
 ```bash
-npm install @postr/syndicator-instagram
+npm install @postr/plugin-feeds
 ```
 
-```js
-import { postr } from '@postr/core'
-import { InstagramSyndicator } from '@postr/syndicator-instagram'
+```ts
+import { feeds } from '@postr/plugin-feeds'
 
-const endpoint = postr(options)
-endpoint.use(InstagramSyndicator, {
-  username: 'instagramusername',
-  password: 'instagrampassword',
-  default: true, // Syndicate to instagram even if no syndication is set
-  blurBackground: false, // If true, adds a blurred background to resized images
-})
+createPostr({ ...options, plugins: [feeds({ author: { name: 'Grant', photo: 'https://example.com/me.jpg' } })] })
 ```
 
-### Superfeedr
+Serves public posts at `<endpoint>/plugin/feeds/<format>` where format is `rss`, `atom`, `json`
+(JSON Feed), `jf2` or `mf2json`. Append `/type/<post-type>`, `/category/<category>` or
+`/page/<n>` to filter or page. Options: `author` (required), `title`, `limit` (default 50).
 
-```bash
-npm install @postr/syndicator-superfeedr
-```
-
-```js
-import { postr } from '@postr/core'
-import { SuperfeedrSyndicator } from '@postr/syndicator-superfeedr'
-
-const endpoint = postr(options)
-endpoint.use(SuperfeedrSyndicator, {
-  hub: 'superfeedrhub',
-  domain: 'superfeedrdomain',
-  default: true, // Syndicate to Superfeedr even if no syndication is set
-})
-```
-
-## Webmention Endpoint
+## Webmention endpoint
 
 ```bash
 npm install @postr/plugin-webmention-endpoint
 ```
 
-```js
-import { postr } from '@postr/core'
-import { WebmentionEndpoint } from '@postr/plugin-webmention-endpoint'
+```ts
+import { webmentionEndpoint } from '@postr/plugin-webmention-endpoint'
 
-const endpoint = postr(options)
-endpoint.use(WebmentionEndpoint, {
-  notifier: function(notification) {
-    // Handle sending notifications somehow.
-    // The notification variable can be a simple string or a mf2 object
-  }
-})
+createPostr({ ...options, plugins: [webmentionEndpoint({ notify: (entry, post) => console.log(entry) })] })
 ```
 
-## Developing a plugin
+Receives webmentions at `<endpoint>/plugin/webmention`. The source must link to the target. Its
+h-entry is stored on the target post as `like`, `repost`, `bookmark`, `comment` or `mention`;
+repeated mentions replace the stored copy, and a `410 Gone` source removes it.
 
-To develop a plugin you can extend a base plugin and hook into the RxDB database and express router.
+## Syndication
 
-```bash
-npm install @postr/plugin
+Syndicators appear in `q=config` as `syndicate-to` targets. A post is syndicated when it is
+published and public and either the client sends `mp-syndicate-to` with the target's uid or,
+without `mp-syndicate-to`, the target is a default. The returned URL is added to
+`syndication`. Failures are retried with backoff.
+
+### Telegram
+
+```ts
+import { telegram } from '@postr/syndicator-telegram'
+
+telegram({ token: 'BOT_TOKEN', channel: '@mychannel', default: true })
 ```
 
-```js
-import { PostrPlugin } from '@postr/plugin'
-import { Router } from 'express'
+Uploads `featured`, `photo`, `audio` and `video` files, then posts the text. Likes and bookmarks
+are skipped.
 
-class MyPlugin extends PostrPlugin {
-  // Plugins must have a constuctor that sets at least an id and name and any other default options
-  constructor({ options, imports }) {
-    options = Object.assign(
-      {
-        id: 'my-plugin',
-        name: 'My Postr Plugin',
+### Instagram
+
+```ts
+import { instagram } from '@postr/syndicator-instagram'
+
+instagram({ username: 'me', password: 'secret', blurBackground: false })
+```
+
+Publishes photo posts (up to 10 photos as an album, resized to fit) and likes `instagram.com`
+posts. For collections, each child photo post is published. Uses the unofficial
+`instagram-private-api`, so it may break when Instagram changes.
+
+### Superfeedr / WebSub
+
+```ts
+import { superfeedr } from '@postr/syndicator-superfeedr'
+
+superfeedr({ hub: 'https://example.superfeedr.com/', topic: ['https://example.com/', 'https://example.com/feed'] })
+```
+
+Sends a WebSub `publish` ping for the topics after each published post.
+
+## Writing a plugin
+
+A plugin is an object. Every field except `id` is optional.
+
+```ts
+import type { PostrPlugin } from '@postr/core'
+
+export function myPlugin(): PostrPlugin {
+  return {
+    id: 'my-plugin',
+    name: 'My plugin',
+    // Extra post types, checked before the built-in discovery.
+    postTypes: [{ type: 'weather', name: 'Weather', discovery: (item) => Boolean(item.properties.temperature) }],
+    // Transform a post before it is stored. Return the (new) mf2 item; do not write anything.
+    beforeSave(item, ctx) {
+      return item
+    },
+    // React to a committed create/update/delete/undelete.
+    async afterSave(event, ctx) {
+      if (event.origin === 'plugin:my-plugin') return
+      await ctx.postr.posts.update(event.post.id, { add: { category: ['seen'] } }, { origin: 'plugin:my-plugin' })
+    },
+    // Routes mounted at <endpoint>/plugin/my-plugin
+    routes(app, ctx) {
+      app.get('/', (c) => c.json({ ok: true }))
+    },
+    // Make it a syndication target.
+    syndication: {
+      default: false,
+      async syndicate(post, ctx) {
+        return 'https://elsewhere.example/copy'
       },
-      options
-    )
-    super({ options, imports })
-
-    // A bunch of dependencies from the postr instance are available via the imports object (also this.imports)
-    const { RxDB, config, getCollection, generateSearch, router, getHEntry, isNode } = imports
-
-    // Register a router to handle network requests
-    this.router = this.router.bind(this)
-    this.addRouter(this.router())
-
-    // Custom hook into RxDB
-    this.rxdb = this.rxdb.bind(this)
-  }
-
-
-  router() {
-    const router = Router()
-
-    router.get('/', (req, res, next) => {
-      // Handle router request however you wish
-    })
-
-    return router
-  }
-
-  rxdb() {
-    const { RxDB } = this.imports
-
-    RxDB.plugin({
-      rxdb: true,
-      hooks: {
-        createRxCollection: collection => {
-          // Do something with the collection here
-          // RxDB Plugin documentation is available here: https://rxdb.info/plugins.html
-        },
-      },
-    })
+    },
   }
 }
-
-export default MyPlugin
 ```
 
-### Developing a syndication plugin
+`ctx` gives access to `postr`, `siteUrl`, `endpointUrl`, `log` and `fetch`.
 
-Since syndication plugins all follow a similar pattern they have a more structured base syndicator module that can be extended.
-
-```bash
-npm install @postr/syndicator
-```
-
-```js
-import { Syndicator } from '@postr/syndicator'
-
-class MySyndicator extends Syndicator {
-  // Constructor that sets at least an id, name and if the syndication should be considered default or not
-  constructor({ options, imports }) {
-    options = Object.assign(
-      {
-        id: 'my-syndicator',
-        name: 'My Syndicator',
-        default: true,
-      },
-      options
-    )
-    super({ options, imports })
-
-    // If you require the user to input options (such as keys and usernames)
-    // you can use the requireOptions method to throw an error if the option is missing
-    this.requireOptions(['myServiceKey'])
-  }
-
-  async syndicate(mf2) {
-    // Handle publishing the mf2 object however you want here.
-
-    // Return the url of the syndicated copy to save it to the `syndication` property of the post
-    // Return null if there is no url or you do not wish to save it for some reason
-    return syndicatedUrl
-  }
-
-  async deleteSyndication(mf2) {
-    // Handle deleting this syndicated post from the service
-    // You will probably want to check the mf2.properties.syndication array for the url of the syndicated post on your service
-
-    // Return the url of the syndicated post after deletion and it will be removed from the syndication property
-    return syndicatedUrl
-  }
-}
-
-export default MySyndicator
-
-```
+Every write records an `origin`: `user` for Micropub and API calls unless you pass another.
+Built-in side effects (webmentions, reference fetching, syndication) only run for `user` changes,
+and a plugin that writes back should use its own origin and ignore events with it, so writes
+cannot loop.
