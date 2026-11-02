@@ -47,6 +47,14 @@ export interface WriteOptions {
   origin?: string
 }
 
+/** Lets imports keep a post's existing identity. */
+export interface CreateOptions extends WriteOptions {
+  id?: string
+  /** Exact permalink path to use instead of the pattern; fails if another post has it. */
+  path?: string
+  deletedAt?: string
+}
+
 export interface PostServiceDeps {
   db: Database
   siteUrl: string
@@ -169,6 +177,7 @@ export function createPostService(deps: PostServiceDeps) {
     post: NormalizedPost,
     previous: Post | undefined,
     deletedAt: string | null,
+    fixedPath?: string,
   ): Promise<Post> {
     const unchangedPath =
       previous &&
@@ -176,7 +185,13 @@ export function createPostService(deps: PostServiceDeps) {
       previous.published.slice(0, 10) === post.published.slice(0, 10)
     const { slug, path } = unchangedPath
       ? { slug: previous.slug, path: previous.path }
-      : await uniquePath(post, id)
+      : fixedPath
+        ? { slug: post.slug, path: fixedPath }
+        : await uniquePath(post, id)
+    if (fixedPath) {
+      const [conflict] = await db.select({ id: posts.id }).from(posts).where(eq(posts.path, path))
+      if (conflict) throw new PostrError('invalid_request', `Path already in use: ${path}`)
+    }
     const row: PostRow = { ...post, id, slug, path, deletedAt }
 
     const links = getLinks(post.properties, siteUrl)
@@ -210,13 +225,17 @@ export function createPostService(deps: PostServiceDeps) {
     return post
   }
 
-  async function create(input: Mf2Input, options: WriteOptions = {}) {
+  async function create(input: Mf2Input, options: CreateOptions = {}) {
     const parsed = mf2InputSchema.safeParse(input)
     if (!parsed.success) {
       throw new PostrError('invalid_request', `Invalid post: ${parsed.error.message}`)
     }
+    const id = options.id ?? randomUUID()
+    if (options.id && (await get(options.id))) {
+      throw new PostrError('invalid_request', `Post id already in use: ${id}`)
+    }
     const { post, commands } = await prepare(parsed.data, 'create')
-    const saved = await write(randomUUID(), post, undefined, null)
+    const saved = await write(id, post, undefined, options.deletedAt ?? null, options.path)
     return emit('create', saved, undefined, commands, options)
   }
 

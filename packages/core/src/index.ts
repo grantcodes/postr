@@ -12,7 +12,7 @@ export type {
   SaveAction,
   SyndicationTarget,
 } from './plugins.ts'
-export type { Post, ListOptions, WriteOptions, PostService } from './posts/service.ts'
+export type { Post, ListOptions, WriteOptions, CreateOptions, PostService } from './posts/service.ts'
 export type { PostStatus, PostVisibility } from './posts/normalize.ts'
 export type { PostTypeDefinition } from './posts/post-type.ts'
 export {
@@ -28,3 +28,9 @@ export {
 export { fetchEntry, FetchError } from './services/fetch-entry.ts'
 export { sendWebmention, discoverEndpoint } from './services/webmention.ts'
 export { htmlToText } from './posts/content.ts'
+export {
+  importLegacyPosts,
+  type LegacyDoc,
+  type LegacyImportOptions,
+  type LegacyImportReport,
+} from './legacy-import.ts'

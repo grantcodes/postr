@@ -51,5 +51,8 @@
     "sharp": {
       "optional": true
     }
+  },
+  "bin": {
+    "postr-import-legacy": "./dist/bin/import-legacy.js"
   }
 }
