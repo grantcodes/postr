@@ -1,4 +1,5 @@
 export { createPostr, type Postr } from './postr.ts'
+export type { Hono, Context } from 'hono'
 export type { PostrOptions, Logger } from './options.ts'
 export { PostrError, type PostrErrorCode } from './errors.ts'
 export type { AuthOptions, TokenInfo } from './micropub/auth.ts'

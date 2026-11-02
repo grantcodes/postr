@@ -3,27 +3,33 @@
   "version": "1.0.3",
   "description": "Webmention endpoint for Postr",
   "type": "module",
-  "main": "index.js",
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test \"test/**/*.test.ts\""
   },
   "engines": {
     "node": ">=24"
-  },
-  "dependencies": {
-    "@postr/plugin": "workspace:^1.0.0",
-    "express": "^4.16.4"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
   "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
   "license": "ISC",
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true
+  "peerDependencies": {
+    "@postr/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@postr/core": "workspace:^",
+    "@types/node": "^24.19.2",
+    "typescript": "^6.0.3"
   }
 }

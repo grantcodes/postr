@@ -1,10 +1,11 @@
 {
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test-server": "node tests/server.mjs",
     "build": "pnpm -r build",
-    "check": "pnpm run build && pnpm -r pack --dry-run"
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test-server": "node tests/server.ts",
+    "check": "pnpm run build && pnpm run typecheck && pnpm run test && pnpm -r pack --dry-run"
   },
   "packageManager": "pnpm@11.3.0",
   "engines": {

@@ -234,9 +234,7 @@ export function createPostService(deps: PostServiceDeps) {
 
     const { replace = {}, add = {}, delete: remove } = parsed.data
     for (const [key, values] of Object.entries(replace)) properties[key] = values
-    for (const [key, values] of Object.entries(add)) {
-      properties[key] = [...(properties[key] ?? []), ...values]
-    }
+    // Delete before add, so one update can swap a value for a new version of it.
     if (Array.isArray(remove)) {
       for (const key of remove) delete properties[key]
     } else if (remove) {
@@ -247,6 +245,9 @@ export function createPostService(deps: PostServiceDeps) {
         if (kept.length) properties[key] = kept
         else delete properties[key]
       }
+    }
+    for (const [key, values] of Object.entries(add)) {
+      properties[key] = [...(properties[key] ?? []), ...values]
     }
 
     const { post, commands } = await prepare(item, 'update', previous)

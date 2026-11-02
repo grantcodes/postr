@@ -8,7 +8,7 @@ export type Mf2Value = string | number | boolean | Mf2Object
 
 export type Mf2Properties = Record<string, Mf2Value[]>
 
-export interface Mf2Item {
+export interface Mf2Item extends Mf2Object {
   type: string[]
   properties: Mf2Properties
   children?: Array<string | Mf2Item>

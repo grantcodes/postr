@@ -4,3 +4,4 @@ config.json
 .vscode
 tests/_tmp
 .planning/
+dist

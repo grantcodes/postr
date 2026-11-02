@@ -3,30 +3,37 @@
   "version": "2.1.1-beta.0",
   "description": "Instagram syndication plugin",
   "type": "module",
-  "main": "index.js",
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test \"test/**/*.test.ts\""
   },
   "engines": {
     "node": ">=24"
-  },
-  "dependencies": {
-    "@postr/syndicator": "workspace:^1.2.0",
-    "image-size": "^1.0.0",
-    "instagram-id-to-url-segment": "0.0.0",
-    "instagram-private-api": "^1.45.2",
-    "sharp": "^0.30.5"
   },
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
   "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
   "license": "ISC",
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true
+  "peerDependencies": {
+    "@postr/core": "workspace:^"
+  },
+  "dependencies": {
+    "instagram-private-api": "^1.46.1",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@postr/core": "workspace:^",
+    "@types/node": "^24.19.2",
+    "typescript": "^6.0.3"
   }
 }
