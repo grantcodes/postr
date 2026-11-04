@@ -24,7 +24,7 @@
 
 ## Commands that matter
 
-- `pnpm install`, `pnpm run build`, `pnpm test`, `vp check` (format, lint, type check), `pnpm run check` (vp check + build + test + dry-run pack).
+- `pnpm install`, `pnpm run build`, `pnpm test`, `vp check` (format, lint, type check), `pnpm run check` (vp check + build + test + `check:packages`). `check:packages` packs every package and runs `publint --strict` and `attw --profile esm-only` on the tarball.
 - `pnpm run test-server` starts `tests/server.ts` on `http://localhost:3000/micropub` (`PORT` overrides; port 3000 may be taken locally), data in `tests/_tmp/`, token `token`.
 - `postr-import-legacy` (core bin) imports a 1.x `collection.dump()` JSON file.
 

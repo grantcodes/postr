@@ -10,12 +10,15 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "test-server": "node tests/server.ts",
-    "check": "vp check && pnpm run build && pnpm run test && pnpm -r pack --dry-run"
+    "check": "vp check && pnpm run build && pnpm run test && pnpm run check:packages",
+    "check:packages": "pnpm -r exec publint --strict && pnpm -r exec attw --pack . --profile esm-only --no-summary"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@hono/node-server": "^2.1.6",
     "@types/node": "^24.19.2",
     "hono": "^4.13.16",
+    "publint": "^0.3.25",
     "typescript": "^7.0.2",
     "vite-plus": "^1.4.0"
   },
