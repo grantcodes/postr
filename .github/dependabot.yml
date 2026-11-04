@@ -1,0 +1,40 @@
+version: 2
+updates:
+  - package-ecosystem: npm # also handles the pnpm workspace and lockfile
+    directory: /
+    schedule:
+      interval: weekly
+    # Matches the PR title check: "chore(deps): bump …"
+    commit-message:
+      prefix: chore
+      include: scope
+    cooldown:
+      default-days: 3
+      semver-major-days: 7
+    groups:
+      tooling:
+        patterns:
+          - typescript
+          - vite-plus
+          - '@types/*'
+          - publint
+          - '@arethetypeswrong/cli'
+          - drizzle-kit
+          - '@hono/node-server'
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    cooldown:
+      default-days: 3
+    groups:
+      actions:
+        patterns:
+          - '*'
