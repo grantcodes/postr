@@ -8,7 +8,8 @@ export type PostrErrorCode =
 const statuses: Record<PostrErrorCode, number> = {
   invalid_request: 400,
   unauthorized: 401,
-  insufficient_scope: 403,
+  // Micropub returns 401 here, unlike OAuth's 403.
+  insufficient_scope: 401,
   forbidden: 403,
   not_found: 404,
 }

@@ -65,7 +65,9 @@ export function webmentionEndpoint(options: WebmentionEndpointOptions = {}): Pos
         const body = await c.req.parseBody()
         const source = typeof body.source === 'string' ? body.source : ''
         const target = typeof body.target === 'string' ? body.target : ''
-        if (!URL.canParse(source) || !URL.canParse(target)) {
+        // Webmention §3.2.1: only http(s) source and target URLs are valid.
+        const isHttp = (url: string) => /^https?:$/.test(URL.parse(url)?.protocol ?? '')
+        if (!isHttp(source) || !isHttp(target)) {
           return c.text('Missing or invalid source and target', 400)
         }
         if (samePage(source, target)) return c.text('Source and target are the same', 400)

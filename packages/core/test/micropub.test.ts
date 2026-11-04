@@ -42,7 +42,7 @@ describe('Micropub auth', () => {
       ...json({ action: 'delete', url: created.headers.get('location') }),
       token: 'good',
     })
-    assert.equal(deleted.status, 403)
+    assert.equal(deleted.status, 401)
     assert.equal((await deleted.json()).error, 'insufficient_scope')
   })
 

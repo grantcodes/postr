@@ -10,6 +10,7 @@
 
 - Every package is strict TypeScript ESM: `.ts` only, `"type": "module"`, settings in `tsconfig.base.json` (`nodenext`, `verbatimModuleSyntax`, `erasableSyntaxOnly`, `rewriteRelativeImportExtensions`).
 - Relative imports use the `.ts` extension; `tsc` rewrites them to `.js` in `dist/`. Each package has `tsconfig.json` (src + test, no emit; used by `vp check` for type checking) and `tsconfig.build.json` (emit `src` → `dist`).
+- `packages/core/test/conformance/` ports the micropub.rocks server tests and webmention.rocks discovery tests (numbered as on the sites); the webmention.rocks receiver tests live in the webmention-endpoint plugin. Keep them passing when changing Micropub or webmention behaviour.
 - Tests are `test/**/*.test.ts`, run directly by `node --test` (Node type stripping). No erasable-incompatible syntax (enums, namespaces, parameter properties).
 - Core's `exports` has an `@postr/source` condition pointing at `src/index.ts`. Plugin tests run with `node --conditions=@postr/source` and `tsconfig.base.json` sets it as a `customConditions`, so tests and `vp check` use core's source without a build. `tsconfig.build.json` clears it so `dist` types resolve against core's published `dist`.
 

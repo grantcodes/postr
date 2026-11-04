@@ -23,11 +23,16 @@ const mediaProperties = new Set(['photo', 'video', 'audio'])
 
 function bearerToken(c: Context, body?: Body): string | undefined {
   const header = c.req.header('authorization')?.trim()
+  const fromBody = asArray(body?.access_token)[0]
+  // RFC 6750 §2: a request must not use more than one way to send the token.
+  if (header && fromBody !== undefined) {
+    throw new PostrError(
+      'invalid_request',
+      'Send the access token in the header or the body, not both'
+    )
+  }
   if (header) return header.split(/\s+/)[1]
-  const fromBody = body?.access_token
-  if (typeof fromBody === 'string') return fromBody
-  if (Array.isArray(fromBody) && typeof fromBody[0] === 'string') return fromBody[0]
-  return undefined
+  return typeof fromBody === 'string' ? fromBody : undefined
 }
 
 function asArray<T>(value: T | T[] | undefined): T[] {
