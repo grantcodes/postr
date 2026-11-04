@@ -15,6 +15,7 @@ import type { SaveAction, SaveEvent } from '../plugins.ts'
 import { getLinks } from './links.ts'
 import { normalizePost, type NormalizedPost } from './normalize.ts'
 import { buildPath } from './permalink.ts'
+import { ftsTable, searchFields, toMatchQuery } from './search.ts'
 import type { PostTypeDefinition } from './post-type.ts'
 
 export interface Post extends NormalizedPost {
@@ -40,6 +41,8 @@ export interface ListOptions {
   properties?: Record<string, string>
   /** Include drafts and unlisted/private posts. Deleted posts are never listed. */
   includeHidden?: boolean
+  /** Full-text search of name, summary, content and category; every word must match as a prefix. */
+  search?: string
 }
 
 export interface WriteOptions {
@@ -181,6 +184,7 @@ export function createPostService(deps: PostServiceDeps) {
     const row: PostRow = { ...post, id, slug, path, deletedAt }
 
     const links = getLinks(post.properties, siteUrl)
+    const text = searchFields(post.properties)
     db.transaction((tx) => {
       if (previous) tx.update(posts).set(row).where(eq(posts.id, id)).run()
       else tx.insert(posts).values(row).run()
@@ -190,6 +194,9 @@ export function createPostService(deps: PostServiceDeps) {
           .values(links.map((link) => ({ postId: id, ...link })))
           .run()
       }
+      tx.run(sql`delete from ${ftsTable} where post_id = ${id}`)
+      tx.run(sql`insert into ${ftsTable} (post_id, name, summary, content, category)
+        values (${id}, ${text.name}, ${text.summary}, ${text.content}, ${text.category})`)
     })
     return toPost(row)
   }
@@ -274,6 +281,13 @@ export function createPostService(deps: PostServiceDeps) {
       conditions.push(eq(posts.status, 'published'), eq(posts.visibility, 'public'))
     }
     if (options.postType) conditions.push(eq(posts.postType, options.postType))
+    if (options.search?.trim()) {
+      const match = toMatchQuery(options.search)
+      if (!match) return []
+      conditions.push(
+        sql`${posts.id} in (select post_id from ${ftsTable} where ${ftsTable} match ${match})`
+      )
+    }
     const contains = (key: string, value: string) =>
       sql`exists (select 1 from json_each(${posts.properties}, ${propertyPath(key)}) where value = ${value})`
     if (options.category) conditions.push(contains('category', options.category))

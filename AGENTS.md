@@ -17,7 +17,7 @@
 ## Core architecture (`packages/core/src`)
 
 - `postr.ts` — `createPostr(options)`: opens SQLite (`node:sqlite` + Drizzle 1.0 RC, migrations in `packages/core/drizzle/`), wires the post service, plugins, job queue and the Hono Micropub app. Returns `{ posts, app, fetch, media, jobs, close }`.
-- `db/schema.ts` — `posts` (mf2 `properties` JSON + columns for `path`, `slug`, `status`, `visibility`, `published`, `publishedAt`, `updated`, `deletedAt`), `refs`, `post_refs`, `jobs`. After changing it run `pnpm --filter @postr/core db:generate`.
+- `db/schema.ts` — `posts` (mf2 `properties` JSON + columns for `path`, `slug`, `status`, `visibility`, `published`, `publishedAt`, `updated`, `deletedAt`), `refs`, `post_refs`, `jobs`. After changing it run `pnpm --filter @postr/core db:generate`. Full-text search uses the FTS5 table `posts_fts` (created by the custom `search` migration, written in `write()` via `posts/search.ts`); it is not in `schema.ts`, so keep the migration's backfill SQL and `searchFields()` in step.
 - `posts/service.ts` — create/update/delete/undelete/get/getByUrl/list/categories/references/toMf2. `posts/normalize.ts` splits mf2 into columns, applies defaults and drops `mp-*` commands.
 - `micropub/app.ts` — Micropub + media routes; `micropub/auth.ts` — token verification and scopes.
 - `side-effects.ts` — built-in plugin: external media download (beforeSave) and queued reference fetching, webmentions and syndication (afterSave, only for `origin: 'user'`). `jobs.ts` retries with backoff.

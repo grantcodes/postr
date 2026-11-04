@@ -18,6 +18,7 @@ await postr.posts.undelete(post.url)
 await postr.posts.get(post.id)
 await postr.posts.getByUrl(post.url)
 await postr.posts.list({ postType: 'note', category: 'indieweb', limit: 20, offset: 0 })
+await postr.posts.list({ search: 'creme brul' }) // full-text search
 await postr.posts.categories()
 await postr.posts.references(post) // fetched h-entries of the URLs the post responds to
 postr.posts.toMf2(post) // full mf2 JSON, as returned by q=source
@@ -26,3 +27,7 @@ postr.posts.toMf2(post) // full mf2 JSON, as returned by q=source
 `list()` returns published, public posts by default; pass `includeHidden: true` to include
 drafts, unlisted and private posts. Deleted posts are never listed. Other filters: `exists`,
 `notExists`, `properties` (property contains a value) and `order` (`desc` by default).
+
+`search` matches the words of `name`, `summary`, `content` and `category`, using SQLite's
+full-text index. Every word must match, as a prefix, ignoring case and accents; results stay in
+date order. Micropub clients get the same through `q=source&search=<text>`.

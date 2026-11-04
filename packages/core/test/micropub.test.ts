@@ -223,6 +223,9 @@ describe('Micropub queries', () => {
     assert.deepEqual(next.items[0].properties.url, [first.url])
     const articles = await (await micropub(postr, '?q=source&post-type=article')).json()
     assert.equal(articles.items.length, 1)
+    const found = await (await micropub(postr, '?q=source&search=cat')).json()
+    assert.deepEqual(found.items[0].properties.url, [first.url])
+    assert.equal(found.items.length, 1)
 
     const categories = await (await micropub(postr, '?q=category&search=CA')).json()
     assert.deepEqual(categories, { categories: ['Cats'] })
