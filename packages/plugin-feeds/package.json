@@ -37,6 +37,6 @@
   "devDependencies": {
     "@postr/core": "workspace:^",
     "@types/node": "^24.19.2",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }

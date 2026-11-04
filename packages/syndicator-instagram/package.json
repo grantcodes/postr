@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "instagram-private-api": "^1.46.1",
-    "sharp": "^0.34.5"
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@postr/core": "workspace:^",
     "@types/node": "^24.19.2",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }
