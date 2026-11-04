@@ -36,7 +36,9 @@ function mentionProperty(entry: Mf2Item, targets: string[]) {
 }
 
 const isFromSource = (source: string) => (value: unknown) =>
-  typeof value === 'object' && value !== null && 'properties' in value &&
+  typeof value === 'object' &&
+  value !== null &&
+  'properties' in value &&
   urlValues((value as Mf2Item).properties, 'url').includes(source)
 
 /**
@@ -96,7 +98,7 @@ export function webmentionEndpoint(options: WebmentionEndpointOptions = {}): Pos
           existing
             ? { delete: { [property]: [existing] }, add: { [property]: [entry] } }
             : { add: { [property]: [entry] } },
-          { origin },
+          { origin }
         )
         if (!existing) await options.notify?.(entry, post)
         return c.text(existing ? 'Webmention update accepted' : 'Webmention accepted', 202)

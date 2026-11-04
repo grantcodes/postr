@@ -28,7 +28,7 @@ function sameSite(a: string, b: string) {
 async function verifyWithTokenEndpoint(
   endpoint: string,
   token: string,
-  fetchFn: typeof fetch,
+  fetchFn: typeof fetch
 ): Promise<TokenInfo | null> {
   const response = await fetchFn(endpoint, {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
@@ -58,7 +58,7 @@ export function createAuthenticator(options: AuthOptions, siteUrl: string, fetch
     if (!token) {
       throw new PostrError(
         'unauthorized',
-        'Missing "Authorization" header or "access_token" parameter',
+        'Missing "Authorization" header or "access_token" parameter'
       )
     }
     if (options.dangerousToken && token === options.dangerousToken) return full

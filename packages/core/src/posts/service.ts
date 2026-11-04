@@ -61,11 +61,7 @@ export interface PostServiceDeps {
   permalinkPattern: string
   formatContent: boolean
   postTypes: () => PostTypeDefinition[]
-  beforeSave: (
-    item: Mf2Item,
-    action: 'create' | 'update',
-    previous?: Post,
-  ) => Promise<Mf2Item>
+  beforeSave: (item: Mf2Item, action: 'create' | 'update', previous?: Post) => Promise<Mf2Item>
   afterSave: (event: SaveEvent) => Promise<void>
 }
 
@@ -110,10 +106,7 @@ export function createPostService(deps: PostServiceDeps) {
   }
 
   /** Finds a post by its permalink (query string, fragment and trailing slash are ignored). */
-  async function getByUrl(
-    url: string,
-    { includeDeleted = false } = {},
-  ): Promise<Post | undefined> {
+  async function getByUrl(url: string, { includeDeleted = false } = {}): Promise<Post | undefined> {
     if (!url.startsWith(siteUrl)) return undefined
     const path = url.slice(siteUrl.length).replace(/[?#].*$/, '')
     const candidates = [path, path.replace(/\/$/, ''), `${path}/`].filter(Boolean)
@@ -121,10 +114,7 @@ export function createPostService(deps: PostServiceDeps) {
       .select()
       .from(posts)
       .where(
-        and(
-          inArray(posts.path, candidates),
-          includeDeleted ? undefined : isNull(posts.deletedAt),
-        ),
+        and(inArray(posts.path, candidates), includeDeleted ? undefined : isNull(posts.deletedAt))
       )
     return row && toPost(row)
   }
@@ -150,11 +140,7 @@ export function createPostService(deps: PostServiceDeps) {
     }
   }
 
-  async function prepare(
-    item: Mf2Item,
-    action: 'create' | 'update',
-    previous?: Post,
-  ) {
+  async function prepare(item: Mf2Item, action: 'create' | 'update', previous?: Post) {
     const options = {
       siteUrl,
       formatContent: deps.formatContent,
@@ -166,7 +152,7 @@ export function createPostService(deps: PostServiceDeps) {
     const hooked = await deps.beforeSave(
       toMf2({ ...first.post, id: '', url: '', path: '', deletedAt: null }),
       action,
-      previous,
+      previous
     )
     const { post } = normalizePost(hooked, { ...options, slug: first.post.slug })
     return { post, commands: first.commands }
@@ -177,7 +163,7 @@ export function createPostService(deps: PostServiceDeps) {
     post: NormalizedPost,
     previous: Post | undefined,
     deletedAt: string | null,
-    fixedPath?: string,
+    fixedPath?: string
   ): Promise<Post> {
     const unchangedPath =
       previous &&
@@ -213,7 +199,7 @@ export function createPostService(deps: PostServiceDeps) {
     post: Post,
     previous: Post | undefined,
     commands: Mf2Properties,
-    options: WriteOptions,
+    options: WriteOptions
   ) {
     await deps.afterSave({
       action,
@@ -259,7 +245,7 @@ export function createPostService(deps: PostServiceDeps) {
     } else if (remove) {
       for (const [key, values] of Object.entries(remove)) {
         const kept = (properties[key] ?? []).filter(
-          (value) => !values.some((v) => sameValue(v, value)),
+          (value) => !values.some((v) => sameValue(v, value))
         )
         if (kept.length) properties[key] = kept
         else delete properties[key]
@@ -274,11 +260,7 @@ export function createPostService(deps: PostServiceDeps) {
     return emit('update', saved, previous, commands, options)
   }
 
-  async function setDeleted(
-    urlOrId: string,
-    deleted: boolean,
-    options: WriteOptions,
-  ) {
+  async function setDeleted(urlOrId: string, deleted: boolean, options: WriteOptions) {
     const previous = await find(urlOrId)
     const deletedAt = deleted ? new Date().toISOString() : null
     await db.update(posts).set({ deletedAt }).where(eq(posts.id, previous.id))
@@ -340,10 +322,8 @@ export function createPostService(deps: PostServiceDeps) {
   return {
     create,
     update,
-    delete: (urlOrId: string, options: WriteOptions = {}) =>
-      setDeleted(urlOrId, true, options),
-    undelete: (urlOrId: string, options: WriteOptions = {}) =>
-      setDeleted(urlOrId, false, options),
+    delete: (urlOrId: string, options: WriteOptions = {}) => setDeleted(urlOrId, true, options),
+    undelete: (urlOrId: string, options: WriteOptions = {}) => setDeleted(urlOrId, false, options),
     get,
     getByUrl,
     list,

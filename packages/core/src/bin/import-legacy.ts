@@ -34,7 +34,9 @@ try {
   console.error(`Could not read ${values.dump}: ${(err as Error).message}`)
   process.exit(1)
 }
-const docs = (Array.isArray(dump) ? dump : (dump as { docs?: LegacyDoc[] }).docs) as LegacyDoc[] | undefined
+const docs = (Array.isArray(dump) ? dump : (dump as { docs?: LegacyDoc[] }).docs) as
+  | LegacyDoc[]
+  | undefined
 if (!Array.isArray(docs)) {
   console.error('The dump must be an array of posts or an object with a "docs" array.')
   process.exit(1)

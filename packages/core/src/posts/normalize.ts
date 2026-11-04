@@ -1,11 +1,6 @@
 import slugify from '@sindresorhus/slugify'
 import { PostrError } from '../errors.ts'
-import {
-  firstString,
-  type Mf2Item,
-  type Mf2Properties,
-  type Mf2Value,
-} from '../mf2.ts'
+import { firstString, type Mf2Item, type Mf2Properties, type Mf2Value } from '../mf2.ts'
 import { formatContent } from './content.ts'
 import { generateSlug } from './permalink.ts'
 import { discoverPostType, type PostTypeDefinition } from './post-type.ts'
@@ -53,7 +48,7 @@ function oneOf<T extends string>(
   allowed: readonly T[],
   value: string | undefined,
   fallback: T,
-  name: string,
+  name: string
 ): T {
   if (value === undefined) return fallback
   if ((allowed as readonly string[]).includes(value)) return value as T
@@ -76,14 +71,14 @@ export function normalizePost(item: Mf2Item, options: NormalizeOptions) {
 
   if (properties.photo) {
     properties.photo = properties.photo.map((photo): Mf2Value =>
-      typeof photo === 'string' ? { value: photo } : photo,
+      typeof photo === 'string' ? { value: photo } : photo
     )
   }
 
   // The permalink is derived from `path`; only external canonical URLs are kept.
   if (properties.url) {
     const external = properties.url.filter(
-      (url) => typeof url !== 'string' || !url.startsWith(options.siteUrl),
+      (url) => typeof url !== 'string' || !url.startsWith(options.siteUrl)
     )
     if (external.length) properties.url = external
     else delete properties.url
@@ -114,7 +109,7 @@ export function normalizePost(item: Mf2Item, options: NormalizeOptions) {
     type,
     postType: discoverPostType(
       { type: [type], properties, children: children ?? undefined },
-      options.postTypes,
+      options.postTypes
     ),
     slug,
     status,

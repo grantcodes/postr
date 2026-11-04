@@ -76,16 +76,20 @@ function main() {
   // 2. Read released paths
   const pathsReleased = (process.env.PATHS_RELEASED || '').trim()
   if (!pathsReleased) {
-    fail('PATHS_RELEASED is empty, but this step only runs when releases_created=true. ' +
-         'Either releases were created without reported paths (a release-please bug) ' +
-         'or the workflow guard is misconfigured.')
+    fail(
+      'PATHS_RELEASED is empty, but this step only runs when releases_created=true. ' +
+        'Either releases were created without reported paths (a release-please bug) ' +
+        'or the workflow guard is misconfigured.'
+    )
   }
 
   let releasedPaths: unknown
   try {
     releasedPaths = JSON.parse(pathsReleased)
   } catch (err) {
-    fail(`PATHS_RELEASED is not valid JSON: ${(err as Error).message}\n  Raw value: ${pathsReleased}`)
+    fail(
+      `PATHS_RELEASED is not valid JSON: ${(err as Error).message}\n  Raw value: ${pathsReleased}`
+    )
   }
   if (!Array.isArray(releasedPaths)) {
     fail(`PATHS_RELEASED is not a JSON array. Got: ${typeof releasedPaths}`)
@@ -95,19 +99,25 @@ function main() {
   // 3. Validate every released path
   for (const pkgPath of releasedPaths) {
     if (!PACKAGE_MAP[pkgPath]) {
-      fail(`Unknown released path "${pkgPath}". Allowed paths: ${Object.keys(PACKAGE_MAP).join(', ')}`)
+      fail(
+        `Unknown released path "${pkgPath}". Allowed paths: ${Object.keys(PACKAGE_MAP).join(', ')}`
+      )
     }
     const version = getPackageVersion(pkgPath)
     console.log(`  ${pkgPath} → ${PACKAGE_MAP[pkgPath]}@${version}`)
 
     // Guard: dev (next tag) must produce prerelease versions
     if (distTag === 'next' && !isPrereleaseVersion(version)) {
-      fail(`Package ${PACKAGE_MAP[pkgPath]}@${version} is NOT a prerelease version but dist-tag is "next". Refusing to publish.`)
+      fail(
+        `Package ${PACKAGE_MAP[pkgPath]}@${version} is NOT a prerelease version but dist-tag is "next". Refusing to publish.`
+      )
     }
 
     // Guard: stable (latest tag) must NOT produce prerelease versions
     if (distTag === 'latest' && isPrereleaseVersion(version)) {
-      fail(`Package ${PACKAGE_MAP[pkgPath]}@${version} IS a prerelease version but dist-tag is "latest". Refusing to publish.`)
+      fail(
+        `Package ${PACKAGE_MAP[pkgPath]}@${version} IS a prerelease version but dist-tag is "latest". Refusing to publish.`
+      )
     }
   }
 

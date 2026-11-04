@@ -1,10 +1,4 @@
-import {
-  index,
-  integer,
-  primaryKey,
-  sqliteTable,
-  text,
-} from 'drizzle-orm/sqlite-core'
+import { index, integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import type { Mf2Item, Mf2Properties } from '../mf2.ts'
 
 export const posts = sqliteTable(
@@ -26,15 +20,13 @@ export const posts = sqliteTable(
     publishedAt: integer('published_at').notNull(),
     updated: text('updated').notNull(),
     deletedAt: text('deleted_at'),
-    properties: text('properties', { mode: 'json' })
-      .$type<Mf2Properties>()
-      .notNull(),
+    properties: text('properties', { mode: 'json' }).$type<Mf2Properties>().notNull(),
     children: text('children', { mode: 'json' }).$type<string[]>(),
   },
   (t) => [
     index('posts_published_at_idx').on(t.publishedAt),
     index('posts_post_type_idx').on(t.postType),
-  ],
+  ]
 )
 
 /** Fetched snapshots of external pages that posts reference. */
@@ -55,10 +47,7 @@ export const postRefs = sqliteTable(
     rel: text('rel').notNull(),
     url: text('url').notNull(),
   },
-  (t) => [
-    primaryKey({ columns: [t.postId, t.rel, t.url] }),
-    index('post_refs_url_idx').on(t.url),
-  ],
+  (t) => [primaryKey({ columns: [t.postId, t.rel, t.url] }), index('post_refs_url_idx').on(t.url)]
 )
 
 export const jobs = sqliteTable(
@@ -72,7 +61,7 @@ export const jobs = sqliteTable(
     runAt: integer('run_at').notNull(),
     lastError: text('last_error'),
   },
-  (t) => [index('jobs_run_at_idx').on(t.runAt)],
+  (t) => [index('jobs_run_at_idx').on(t.runAt)]
 )
 
 export type PostRow = typeof posts.$inferSelect

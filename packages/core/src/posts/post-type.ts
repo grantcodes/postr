@@ -31,10 +31,7 @@ export const builtInPostTypes: PostTypeDefinition[] = [
 const singleEmoji = /^\p{RGI_Emoji}$/v
 
 /** Post type discovery: https://ptd.spec.indieweb.org/ plus the extra types postr has always used. */
-export function discoverPostType(
-  post: Mf2Item,
-  custom: PostTypeDefinition[] = [],
-): string {
+export function discoverPostType(post: Mf2Item, custom: PostTypeDefinition[] = []): string {
   for (const definition of custom) {
     if (definition.discovery?.(post)) return definition.type
   }

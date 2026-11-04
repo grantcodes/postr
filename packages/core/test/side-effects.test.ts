@@ -14,7 +14,9 @@ describe('references', () => {
   it('fetches h-entry snapshots of replied-to posts', async () => {
     const fetch = fakeFetch({
       'https://them.example/post': () =>
-        html('<article class="h-entry"><h1 class="p-name">Their post</h1><a class="u-url" href="/post">x</a></article>'),
+        html(
+          '<article class="h-entry"><h1 class="p-name">Their post</h1><a class="u-url" href="/post">x</a></article>'
+        ),
     })
     const postr = testPostr({ fetch, sendWebmentions: false })
     const post = await postr.posts.create({
@@ -65,7 +67,9 @@ describe('webmentions', () => {
     const post = await postr.posts.create({
       type: ['h-entry'],
       properties: {
-        content: [{ html: '<a href="https://a.example/">a</a> <a href="https://c.example/">c</a>' }],
+        content: [
+          { html: '<a href="https://a.example/">a</a> <a href="https://c.example/">c</a>' },
+        ],
         'like-of': ['https://b.example/'],
       },
     })
@@ -163,9 +167,12 @@ describe('external media', () => {
       json({
         type: ['h-entry'],
         properties: {
-          photo: [{ value: 'https://cdn.example.org/pic.png', alt: 'Pic' }, 'https://missing.example/x.png'],
+          photo: [
+            { value: 'https://cdn.example.org/pic.png', alt: 'Pic' },
+            'https://missing.example/x.png',
+          ],
         },
-      }),
+      })
     )
     const { item } = await res.json()
     const [saved, missing] = item.properties.photo

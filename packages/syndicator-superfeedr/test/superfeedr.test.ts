@@ -17,11 +17,20 @@ describe('superfeedr syndicator', () => {
       database: ':memory:',
       auth: { dangerousToken: 't' },
       runJobs: false,
-      logger: { info() {}, warn: (...args) => void warnings.push(args), error: (...args) => void warnings.push(args) },
+      logger: {
+        info() {},
+        warn: (...args) => void warnings.push(args),
+        error: (...args) => void warnings.push(args),
+      },
       fetch: fakeFetch,
       fetchReferences: false,
       sendWebmentions: false,
-      plugins: [superfeedr({ hub: 'https://hub.example/', topic: ['https://example.com/', 'https://example.com/feed'] })],
+      plugins: [
+        superfeedr({
+          hub: 'https://hub.example/',
+          topic: ['https://example.com/', 'https://example.com/feed'],
+        }),
+      ],
     })
     const post = await postr.posts.create({ type: ['h-entry'], properties: { content: ['x'] } })
     await postr.jobs.runDue()

@@ -1,7 +1,5 @@
 {
-  "plugins": [
-    "node-workspace"
-  ],
+  "plugins": ["node-workspace"],
   "packages": {
     "packages/core": {
       "release-type": "node",

@@ -63,14 +63,19 @@ export function createSideEffects(options: SideEffectOptions): PostrPlugin {
       await ctx().postr.posts.update(
         postId,
         { add: { syndication: [url] } },
-        { origin: `syndication:${target}` },
+        { origin: `syndication:${target}` }
       )
     }
   })
 
   async function downloadMedia(value: Mf2Value): Promise<Mf2Value> {
     const media = options.media
-    const url = typeof value === 'string' ? value : value && typeof value === 'object' ? value.value : undefined
+    const url =
+      typeof value === 'string'
+        ? value
+        : value && typeof value === 'object'
+          ? value.value
+          : undefined
     if (!media || typeof url !== 'string' || !/^https?:/.test(url)) return value
     if (options.mediaUrl && url.startsWith(options.mediaUrl)) return value
     try {
@@ -108,13 +113,17 @@ export function createSideEffects(options: SideEffectOptions): PostrPlugin {
 
       if (options.fetchReferences && (event.action === 'create' || event.action === 'update')) {
         const urls = new Set(
-          links.filter((l) => responseProperties.includes(l.rel)).map((l) => l.url),
+          links.filter((l) => responseProperties.includes(l.rel)).map((l) => l.url)
         )
         for (const url of urls) await jobs.enqueue('fetch-reference', { url })
       }
 
       const wasPublic = previous ? isPublic(previous) : false
-      if (options.sendWebmentions && post.visibility !== 'private' && (isPublic(post) || wasPublic)) {
+      if (
+        options.sendWebmentions &&
+        post.visibility !== 'private' &&
+        (isPublic(post) || wasPublic)
+      ) {
         const targets = new Set(links.map((l) => l.url))
         if (previous) for (const l of getLinks(previous.properties, siteUrl)) targets.add(l.url)
         for (const target of targets) {

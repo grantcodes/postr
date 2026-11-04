@@ -51,13 +51,18 @@ describe('importLegacyPosts', () => {
 
     assert.equal(report.imported, 2)
     assert.equal(report.deleted, 1)
-    assert.deepEqual(report.failed.map((f) => f.id), ['legacy-3'])
+    assert.deepEqual(
+      report.failed.map((f) => f.id),
+      ['legacy-3']
+    )
 
     const post = await postr.posts.getByUrl(`${siteUrl}/2019/05/01/hello`)
     assert.equal(post?.id, 'legacy-1')
     assert.equal(post?.updated, '2019-05-02T12:00:00.000Z')
     assert.equal(post?.visibility, 'public')
-    assert.deepEqual(post?.properties.photo, [{ value: 'https://media.example.com/2019/05/01/a.jpg', alt: '' }])
+    assert.deepEqual(post?.properties.photo, [
+      { value: 'https://media.example.com/2019/05/01/a.jpg', alt: '' },
+    ])
     assert.equal(post?.properties.comment?.length, 1)
 
     assert.equal(await postr.posts.getByUrl(`${siteUrl}/2019/06/01/gone`), undefined)
@@ -72,9 +77,14 @@ describe('importLegacyPosts', () => {
     const dump = join(dir, 'dump.json')
     await writeFile(dump, JSON.stringify({ docs }))
     const cli = new URL('../src/bin/import-legacy.ts', import.meta.url).pathname
-    const result = await promisify(execFile)(process.execPath, [cli, '--dump', dump, '--site-url', siteUrl, '--dry-run']).catch(
-      (err: { stdout: string; code: number }) => err,
-    )
+    const result = await promisify(execFile)(process.execPath, [
+      cli,
+      '--dump',
+      dump,
+      '--site-url',
+      siteUrl,
+      '--dry-run',
+    ]).catch((err: { stdout: string; code: number }) => err)
     assert.equal('code' in result ? result.code : 0, 1)
     const report = JSON.parse(result.stdout)
     assert.equal(report.imported, 2)

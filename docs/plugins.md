@@ -12,7 +12,10 @@ npm install @postr/plugin-feeds
 ```ts
 import { feeds } from '@postr/plugin-feeds'
 
-createPostr({ ...options, plugins: [feeds({ author: { name: 'Grant', photo: 'https://example.com/me.jpg' } })] })
+createPostr({
+  ...options,
+  plugins: [feeds({ author: { name: 'Grant', photo: 'https://example.com/me.jpg' } })],
+})
 ```
 
 Serves public posts at `<endpoint>/plugin/feeds/<format>` where format is `rss`, `atom`, `json`
@@ -28,7 +31,10 @@ npm install @postr/plugin-webmention-endpoint
 ```ts
 import { webmentionEndpoint } from '@postr/plugin-webmention-endpoint'
 
-createPostr({ ...options, plugins: [webmentionEndpoint({ notify: (entry, post) => console.log(entry) })] })
+createPostr({
+  ...options,
+  plugins: [webmentionEndpoint({ notify: (entry, post) => console.log(entry) })],
+})
 ```
 
 Receives webmentions at `<endpoint>/plugin/webmention`. The source must link to the target. Its
@@ -70,7 +76,10 @@ posts. For collections, each child photo post is published. Uses the unofficial
 ```ts
 import { superfeedr } from '@postr/syndicator-superfeedr'
 
-superfeedr({ hub: 'https://example.superfeedr.com/', topic: ['https://example.com/', 'https://example.com/feed'] })
+superfeedr({
+  hub: 'https://example.superfeedr.com/',
+  topic: ['https://example.com/', 'https://example.com/feed'],
+})
 ```
 
 Sends a WebSub `publish` ping for the topics after each published post.
@@ -87,7 +96,13 @@ export function myPlugin(): PostrPlugin {
     id: 'my-plugin',
     name: 'My plugin',
     // Extra post types, checked before the built-in discovery.
-    postTypes: [{ type: 'weather', name: 'Weather', discovery: (item) => Boolean(item.properties.temperature) }],
+    postTypes: [
+      {
+        type: 'weather',
+        name: 'Weather',
+        discovery: (item) => Boolean(item.properties.temperature),
+      },
+    ],
     // Transform a post before it is stored. Return the (new) mf2 item; do not write anything.
     beforeSave(item, ctx) {
       return item
@@ -95,7 +110,11 @@ export function myPlugin(): PostrPlugin {
     // React to a committed create/update/delete/undelete.
     async afterSave(event, ctx) {
       if (event.origin === 'plugin:my-plugin') return
-      await ctx.postr.posts.update(event.post.id, { add: { category: ['seen'] } }, { origin: 'plugin:my-plugin' })
+      await ctx.postr.posts.update(
+        event.post.id,
+        { add: { category: ['seen'] } },
+        { origin: 'plugin:my-plugin' }
+      )
     },
     // Routes mounted at <endpoint>/plugin/my-plugin
     routes(app, ctx) {

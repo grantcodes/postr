@@ -37,10 +37,7 @@ export const mf2UpdateSchema = z.object({
 export type Mf2Update = z.infer<typeof mf2UpdateSchema>
 
 /** First value of a property as a string, reading `value`/`html` from objects. */
-export function firstString(
-  properties: Mf2Properties,
-  key: string,
-): string | undefined {
+export function firstString(properties: Mf2Properties, key: string): string | undefined {
   const value = properties[key]?.[0]
   if (typeof value === 'string') return value
   if (value && typeof value === 'object') {

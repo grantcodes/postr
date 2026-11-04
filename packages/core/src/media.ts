@@ -31,7 +31,7 @@ function appendToFilename(filename: string, extra: string | number) {
 async function writeImageSizes(
   data: Uint8Array,
   path: string,
-  sizes: NonNullable<LocalMediaOptions['imageSizes']>,
+  sizes: NonNullable<LocalMediaOptions['imageSizes']>
 ) {
   const { default: sharp } = await import('sharp')
   const { width = 0, height = 0 } = await sharp(data).metadata()

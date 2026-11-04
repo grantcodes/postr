@@ -45,7 +45,10 @@ describe('posts.create', () => {
     assert.equal(late.published, '2026-06-04T23:30:00-05:00')
     assert.equal(late.postType, 'article')
     const listed = await postr.posts.list()
-    assert.deepEqual(listed.map((p) => p.id), [late.id, early.id])
+    assert.deepEqual(
+      listed.map((p) => p.id),
+      [late.id, early.id]
+    )
   })
 
   it('normalizes photos, strips the own permalink url and maps legacy visibility', async () => {
@@ -53,7 +56,10 @@ describe('posts.create', () => {
     const post = await postr.posts.create({
       type: ['h-entry'],
       properties: {
-        photo: ['https://cdn.example.org/a.jpg', { value: 'https://cdn.example.org/b.jpg', alt: 'B' }],
+        photo: [
+          'https://cdn.example.org/a.jpg',
+          { value: 'https://cdn.example.org/b.jpg', alt: 'B' },
+        ],
         url: [`${siteUrl}/old`, 'https://elsewhere.example/post'],
         visibility: ['visible'],
         location: ['geo:1,2'],
@@ -79,25 +85,22 @@ describe('posts.create', () => {
     const first = await postr.posts.create(input)
     const second = await postr.posts.create(input)
     const third = await postr.posts.create(input)
-    assert.deepEqual(
-      [first.slug, second.slug, third.slug],
-      ['same', 'same-1', 'same-2'],
-    )
+    assert.deepEqual([first.slug, second.slug, third.slug], ['same', 'same-1', 'same-2'])
   })
 
   it('rejects invalid input', async () => {
     const postr = testPostr()
     await assert.rejects(
       postr.posts.create({ type: ['entry'], properties: {} }),
-      (err: unknown) => err instanceof PostrError && err.code === 'invalid_request',
+      (err: unknown) => err instanceof PostrError && err.code === 'invalid_request'
     )
     await assert.rejects(
       postr.posts.create({ type: ['h-entry'], properties: { published: ['not a date'] } }),
-      /Invalid published/,
+      /Invalid published/
     )
     await assert.rejects(
       postr.posts.create({ type: ['h-entry'], properties: { 'post-status': ['nope'] } }),
-      /Invalid post-status/,
+      /Invalid post-status/
     )
   })
 })
@@ -151,7 +154,7 @@ describe('posts.update', () => {
     const postr = testPostr()
     await assert.rejects(
       postr.posts.update(`${siteUrl}/nope`, { replace: { name: ['x'] } }),
-      (err: unknown) => err instanceof PostrError && err.code === 'not_found',
+      (err: unknown) => err instanceof PostrError && err.code === 'not_found'
     )
   })
 })
@@ -193,7 +196,10 @@ describe('posts.list', () => {
     assert.deepEqual(ids(await postr.posts.list({ notExists: ['photo'] })), [note.id])
     assert.deepEqual(ids(await postr.posts.list({ properties: { category: 'y' } })), [photo.id])
     assert.deepEqual(ids(await postr.posts.list()), ids([note, photo]))
-    assert.deepEqual(ids(await postr.posts.list({ includeHidden: true })), ids([note, photo, draft]))
+    assert.deepEqual(
+      ids(await postr.posts.list({ includeHidden: true })),
+      ids([note, photo, draft])
+    )
     assert.equal((await postr.posts.list({ limit: 1, offset: 1 })).length, 1)
     assert.deepEqual(await postr.posts.categories(), ['x', 'y'])
   })
@@ -221,7 +227,11 @@ describe('plugin hooks', () => {
     const plugin: PostrPlugin = {
       id: 'test',
       postTypes: [
-        { type: 'weather', name: 'Weather', discovery: (item) => Boolean(item.properties.temperature) },
+        {
+          type: 'weather',
+          name: 'Weather',
+          discovery: (item) => Boolean(item.properties.temperature),
+        },
       ],
       beforeSave(item) {
         return { ...item, properties: { ...item.properties, summary: ['added'] } }
@@ -229,7 +239,11 @@ describe('plugin hooks', () => {
       async afterSave(event, ctx) {
         events.push(event)
         if (event.origin === 'user' && event.action === 'create') {
-          await ctx.postr.posts.update(event.post.id, { add: { category: ['tagged'] } }, { origin: 'plugin:test' })
+          await ctx.postr.posts.update(
+            event.post.id,
+            { add: { category: ['tagged'] } },
+            { origin: 'plugin:test' }
+          )
         }
       },
     }
@@ -243,7 +257,10 @@ describe('plugin hooks', () => {
     assert.deepEqual(post.properties.summary, ['added'])
     assert.deepEqual(
       events.map((e) => [e.action, e.origin]),
-      [['create', 'user'], ['update', 'plugin:test']],
+      [
+        ['create', 'user'],
+        ['update', 'plugin:test'],
+      ]
     )
     assert.deepEqual(events[0]?.commands, { 'mp-syndicate-to': ['x'] })
     assert.deepEqual((await postr.posts.get(post.id))?.properties.category, ['tagged'])

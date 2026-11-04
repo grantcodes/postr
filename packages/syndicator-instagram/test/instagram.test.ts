@@ -5,7 +5,9 @@ import { createPostr } from '@postr/core'
 import { instagram, instagramUrlToId, type InstagramPhoto } from '../src/index.ts'
 
 const image = (width: number, height: number) =>
-  sharp({ create: { width, height, channels: 3, background: '#0af' } }).png().toBuffer()
+  sharp({ create: { width, height, channels: 3, background: '#0af' } })
+    .png()
+    .toBuffer()
 
 async function setup() {
   const published: Array<{ photos: InstagramPhoto[]; caption: string }> = []
@@ -56,17 +58,32 @@ describe('instagram syndicator', () => {
     })
     const album = await postr.posts.create({
       type: ['h-entry'],
-      properties: { photo: ['https://cdn.example.org/wide.png', 'https://cdn.example.org/square.png'] },
+      properties: {
+        photo: ['https://cdn.example.org/wide.png', 'https://cdn.example.org/square.png'],
+      },
     })
     await postr.jobs.runDue()
 
     assert.equal(published.length, 2)
     const [first, second] = published
     assert.equal(first?.caption, `Sky • Originally posted to ${single.url}`)
-    assert.deepEqual(first?.photos.map((p) => [p.width, p.height]), [[2000, 2000]])
-    assert.deepEqual(second?.photos.map((p) => [p.width, p.height]), [[2000, 2000], [2000, 2000]])
-    assert.deepEqual((await postr.posts.get(single.id))?.properties.syndication, ['https://www.instagram.com/p/CODE1/'])
-    assert.deepEqual((await postr.posts.get(album.id))?.properties.syndication, ['https://www.instagram.com/p/CODE2/'])
+    assert.deepEqual(
+      first?.photos.map((p) => [p.width, p.height]),
+      [[2000, 2000]]
+    )
+    assert.deepEqual(
+      second?.photos.map((p) => [p.width, p.height]),
+      [
+        [2000, 2000],
+        [2000, 2000],
+      ]
+    )
+    assert.deepEqual((await postr.posts.get(single.id))?.properties.syndication, [
+      'https://www.instagram.com/p/CODE1/',
+    ])
+    assert.deepEqual((await postr.posts.get(album.id))?.properties.syndication, [
+      'https://www.instagram.com/p/CODE2/',
+    ])
   })
 
   it('likes Instagram posts and skips other likes', async () => {
@@ -75,7 +92,10 @@ describe('instagram syndicator', () => {
       type: ['h-entry'],
       properties: { 'like-of': ['https://www.instagram.com/p/B/'] },
     })
-    await postr.posts.create({ type: ['h-entry'], properties: { 'like-of': ['https://other.example/'] } })
+    await postr.posts.create({
+      type: ['h-entry'],
+      properties: { 'like-of': ['https://other.example/'] },
+    })
     await postr.jobs.runDue()
 
     assert.deepEqual(liked, ['1'])
@@ -86,6 +106,9 @@ describe('instagram syndicator', () => {
   })
 
   it('decodes shortcodes to media ids', () => {
-    assert.equal(instagramUrlToId('https://www.instagram.com/p/BAAAAAAAAAA/'), (2n ** 60n).toString())
+    assert.equal(
+      instagramUrlToId('https://www.instagram.com/p/BAAAAAAAAAA/'),
+      (2n ** 60n).toString()
+    )
   })
 })

@@ -5,7 +5,9 @@ export type Jf2 = { [key: string]: unknown }
 const hidden = new Set(['post-status', 'visibility', 'mp-slug', 'syndicate-to'])
 
 function isItem(value: Mf2Value): value is Mf2Value & Mf2Item {
-  return typeof value === 'object' && Array.isArray(value.type) && typeof value.properties === 'object'
+  return (
+    typeof value === 'object' && Array.isArray(value.type) && typeof value.properties === 'object'
+  )
 }
 
 function convertValue(property: string, value: Mf2Value): Mf2Value {

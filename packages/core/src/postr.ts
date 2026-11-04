@@ -74,7 +74,8 @@ export function createPostr(options: PostrOptions) {
     postTypes,
     async beforeSave(item, action, previous) {
       for (const plugin of plugins) {
-        if (plugin.beforeSave) item = await plugin.beforeSave(item, { ...context(), action, previous })
+        if (plugin.beforeSave)
+          item = await plugin.beforeSave(item, { ...context(), action, previous })
       }
       return item
     },
@@ -105,7 +106,7 @@ export function createPostr(options: PostrOptions) {
                 ...(plugin.syndication.default ? { checked: true } : {}),
               },
             ]
-          : [],
+          : []
       ),
     micropubConfig: options.micropubConfig ?? {},
   })

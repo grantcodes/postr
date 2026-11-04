@@ -20,8 +20,12 @@ async function setup() {
     type: ['h-entry'],
     properties: { name: ['Article'], content: ['Body'], published: ['2026-01-02T00:00:00Z'] },
   })
-  await postr.posts.create({ type: ['h-entry'], properties: { content: ['secret'], visibility: ['private'] } })
-  const get = (path: string) => postr.fetch(new Request(`https://example.com/micropub/plugin/feeds${path}`))
+  await postr.posts.create({
+    type: ['h-entry'],
+    properties: { content: ['secret'], visibility: ['private'] },
+  })
+  const get = (path: string) =>
+    postr.fetch(new Request(`https://example.com/micropub/plugin/feeds${path}`))
   return { postr, note, article, get }
 }
 
@@ -38,16 +42,29 @@ describe('feeds plugin', () => {
 
     assert.match(await (await get('/atom')).text(), /<feed/)
     const json = (await (await get('/json')).json()) as { items: Array<{ title: string }> }
-    assert.deepEqual(json.items.map((i) => i.title), ['Article', 'A note #tag'])
+    assert.deepEqual(
+      json.items.map((i) => i.title),
+      ['Article', 'A note #tag']
+    )
   })
 
   it('filters by post type and category, and 404s when empty', async () => {
     const { get, note, article } = await setup()
-    const byType = (await (await get('/mf2json/type/article')).json()) as { items: Array<{ properties: { url: string[] } }> }
-    assert.deepEqual(byType.items.map((i) => i.properties.url[0]), [article.url])
+    const byType = (await (await get('/mf2json/type/article')).json()) as {
+      items: Array<{ properties: { url: string[] } }>
+    }
+    assert.deepEqual(
+      byType.items.map((i) => i.properties.url[0]),
+      [article.url]
+    )
 
-    const byCategory = (await (await get('/jf2/category/tag')).json()) as { children: Array<{ uid: string }> }
-    assert.deepEqual(byCategory.children.map((c) => c.uid), [note.url])
+    const byCategory = (await (await get('/jf2/category/tag')).json()) as {
+      children: Array<{ uid: string }>
+    }
+    assert.deepEqual(
+      byCategory.children.map((c) => c.uid),
+      [note.url]
+    )
 
     assert.equal((await get('/rss/page/2')).status, 404)
     assert.equal((await get('/nope')).status, 404)
@@ -76,7 +93,7 @@ describe('mf2ToJf2', () => {
         photo: 'https://example.com/p.jpg',
         category: ['a', 'b'],
         author: { type: 'card', name: 'Grant' },
-      },
+      }
     )
   })
 })

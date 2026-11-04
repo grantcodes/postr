@@ -3,7 +3,12 @@ export type { Hono, Context } from 'hono'
 export type { PostrOptions, Logger } from './options.ts'
 export { PostrError, type PostrErrorCode } from './errors.ts'
 export type { AuthOptions, TokenInfo } from './micropub/auth.ts'
-export { localMediaStore, type MediaStore, type MediaFile, type LocalMediaOptions } from './media.ts'
+export {
+  localMediaStore,
+  type MediaStore,
+  type MediaFile,
+  type LocalMediaOptions,
+} from './media.ts'
 export type {
   PostrPlugin,
   PluginContext,
@@ -12,7 +17,13 @@ export type {
   SaveAction,
   SyndicationTarget,
 } from './plugins.ts'
-export type { Post, ListOptions, WriteOptions, CreateOptions, PostService } from './posts/service.ts'
+export type {
+  Post,
+  ListOptions,
+  WriteOptions,
+  CreateOptions,
+  PostService,
+} from './posts/service.ts'
 export type { PostStatus, PostVisibility } from './posts/normalize.ts'
 export type { PostTypeDefinition } from './posts/post-type.ts'
 export {

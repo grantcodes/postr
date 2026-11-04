@@ -51,7 +51,11 @@ export function telegram(options: TelegramOptions): PostrPlugin {
 
         async function call(method: string, body: FormData) {
           const response = await ctx.fetch(`${api}/${method}`, { method: 'POST', body })
-          const result = (await response.json()) as { ok: boolean; description?: string; result?: { message_id: number } }
+          const result = (await response.json()) as {
+            ok: boolean
+            description?: string
+            result?: { message_id: number }
+          }
           if (!result.ok) throw new Error(`Telegram ${method} failed: ${result.description}`)
           return result.result
         }
@@ -68,7 +72,11 @@ export function telegram(options: TelegramOptions): PostrPlugin {
             if (!response.ok) throw new Error(`Downloading ${url} failed with ${response.status}`)
             const form = new FormData()
             form.append('chat_id', options.channel)
-            form.append(field, await response.blob(), URL.parse(url)?.pathname.split('/').pop() || field)
+            form.append(
+              field,
+              await response.blob(),
+              URL.parse(url)?.pathname.split('/').pop() || field
+            )
             await call(method, form)
           }
         }

@@ -24,13 +24,19 @@ describe('Micropub auth', () => {
         return new Response('', { status: 401 })
       },
     })
-    const postr = testPostr({ auth: { tokenEndpoint: 'https://tokens.example/token' }, fetch: tokenFetch })
+    const postr = testPostr({
+      auth: { tokenEndpoint: 'https://tokens.example/token' },
+      fetch: tokenFetch,
+    })
 
     assert.equal((await micropub(postr, '', { token: 'good' })).status, 200)
     assert.equal((await micropub(postr, '', { token: 'other' })).status, 403)
     assert.equal((await micropub(postr, '', { token: 'bad' })).status, 403)
 
-    const created = await micropub(postr, '', { ...json({ type: ['h-entry'], properties: { content: ['x'] } }), token: 'good' })
+    const created = await micropub(postr, '', {
+      ...json({ type: ['h-entry'], properties: { content: ['x'] } }),
+      token: 'good',
+    })
     assert.equal(created.status, 201)
     const deleted = await micropub(postr, '', {
       ...json({ action: 'delete', url: created.headers.get('location') }),
@@ -77,7 +83,7 @@ describe('Micropub create', () => {
       json({
         type: ['h-entry'],
         properties: { content: [{ html: '<p>Hi <a href="https://a.example/">a</a></p>' }] },
-      }),
+      })
     )
     assert.equal(res.status, 201)
     const { item } = await res.json()
@@ -102,7 +108,11 @@ describe('Micropub create', () => {
   })
 
   it('rejects invalid posts', async () => {
-    const res = await micropub(testPostr(), '', json({ type: ['h-entry'], properties: { content: 'x' } }))
+    const res = await micropub(
+      testPostr(),
+      '',
+      json({ type: ['h-entry'], properties: { content: 'x' } })
+    )
     assert.equal(res.status, 400)
     assert.equal((await res.json()).error, 'invalid_request')
   })
@@ -111,13 +121,24 @@ describe('Micropub create', () => {
 describe('Micropub actions', () => {
   it('updates, deletes and undeletes', async () => {
     const postr = testPostr()
-    const post = await postr.posts.create({ type: ['h-entry'], properties: { content: ['a'], name: ['N'] } })
+    const post = await postr.posts.create({
+      type: ['h-entry'],
+      properties: { content: ['a'], name: ['N'] },
+    })
 
-    const updated = await micropub(postr, '', json({ action: 'update', url: post.url, replace: { content: ['b'] } }))
+    const updated = await micropub(
+      postr,
+      '',
+      json({ action: 'update', url: post.url, replace: { content: ['b'] } })
+    )
     assert.equal(updated.status, 200)
     assert.equal((await postr.posts.get(post.id))?.properties.content?.[0] && 'ok', 'ok')
 
-    const moved = await micropub(postr, '', json({ action: 'update', url: post.url, replace: { 'mp-slug': ['moved'] } }))
+    const moved = await micropub(
+      postr,
+      '',
+      json({ action: 'update', url: post.url, replace: { 'mp-slug': ['moved'] } })
+    )
     assert.equal(moved.status, 201)
     assert.match(moved.headers.get('location') ?? '', /\/moved$/)
 
@@ -141,7 +162,11 @@ describe('Micropub actions', () => {
   })
 
   it('returns invalid_request for unknown posts', async () => {
-    const res = await micropub(testPostr(), '', json({ action: 'delete', url: `${siteUrl}/missing` }))
+    const res = await micropub(
+      testPostr(),
+      '',
+      json({ action: 'delete', url: `${siteUrl}/missing` })
+    )
     assert.equal(res.status, 400)
   })
 })
@@ -150,7 +175,13 @@ describe('Micropub queries', () => {
   it('returns config with syndication targets and post types', async () => {
     const postr = testPostr({
       media: { dir: await tempDir(), url: 'https://media.example.com' },
-      plugins: [{ id: 'social', name: 'Social', syndication: { default: true, syndicate: async () => null } }],
+      plugins: [
+        {
+          id: 'social',
+          name: 'Social',
+          syndication: { default: true, syndicate: async () => null },
+        },
+      ],
       micropubConfig: { extra: true },
     })
     const config = await (await micropub(postr, '?q=config')).json()
@@ -175,7 +206,9 @@ describe('Micropub queries', () => {
       properties: { name: ['Two'], category: ['dogs'], published: ['2026-01-02T00:00:00Z'] },
     })
 
-    const source = await (await micropub(postr, `?q=source&url=${encodeURIComponent(first.url)}`)).json()
+    const source = await (
+      await micropub(postr, `?q=source&url=${encodeURIComponent(first.url)}`)
+    ).json()
     assert.deepEqual(source.properties.category, ['Cats'])
     const partial = await (
       await micropub(postr, `?q=source&properties[]=category&url=${encodeURIComponent(first.url)}`)
@@ -220,14 +253,28 @@ describe('Media endpoint', () => {
       .toBuffer()
     const dir = await tempDir()
     const postr = testPostr({
-      media: { dir, url: 'https://media.example.com', imageSizes: { small: [10, 10], huge: [100] } },
+      media: {
+        dir,
+        url: 'https://media.example.com',
+        imageSizes: { small: [10, 10], huge: [100] },
+      },
     })
     const form = new FormData()
     form.append('file', new File([new Uint8Array(png)], 'red'))
-    const location = (await micropub(postr, '/media', { method: 'POST', body: form })).headers.get('location') ?? ''
+    const location =
+      (await micropub(postr, '/media', { method: 'POST', body: form })).headers.get('location') ??
+      ''
     assert.match(location, /\/red\.png$/)
-    const small = join(dir, location.replace('https://media.example.com/', '').replace('.png', '-small.png'))
-    assert.deepEqual(await sharp(small).metadata().then(({ width, height }) => [width, height]), [10, 10])
+    const small = join(
+      dir,
+      location.replace('https://media.example.com/', '').replace('.png', '-small.png')
+    )
+    assert.deepEqual(
+      await sharp(small)
+        .metadata()
+        .then(({ width, height }) => [width, height]),
+      [10, 10]
+    )
     await assert.rejects(readFile(small.replace('-small', '-huge')))
   })
 

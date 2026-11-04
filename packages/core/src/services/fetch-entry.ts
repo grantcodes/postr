@@ -28,9 +28,7 @@ function extractArticle(html: string, url: string): Mf2Item {
   // SAFETY: linkedom implements the DOM subset Readability reads; its types are not the lib.dom ones.
   const dom = document as unknown as ConstructorParameters<typeof Readability>[0]
   const article = new Readability(dom).parse()
-  const image = document
-    .querySelector('meta[property="og:image"]')
-    ?.getAttribute('content')
+  const image = document.querySelector('meta[property="og:image"]')?.getAttribute('content')
 
   if (article?.title) properties.name = [article.title]
   if (article?.excerpt) properties.summary = [article.excerpt]

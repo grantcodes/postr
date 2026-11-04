@@ -2,6 +2,17 @@
   "name": "@postr/core",
   "version": "1.10.3",
   "description": "A library-first Micropub server and content engine",
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "license": "ISC",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "bin": {
+    "postr-import-legacy": "./dist/bin/import-legacy.js"
+  },
+  "files": [
+    "dist",
+    "drizzle"
+  ],
   "type": "module",
   "exports": {
     ".": {
@@ -9,24 +20,12 @@
       "default": "./dist/index.js"
     }
   },
-  "files": [
-    "dist",
-    "drizzle"
-  ],
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
     "test": "node --test \"test/**/*.test.ts\"",
     "db:generate": "drizzle-kit generate"
   },
-  "packageManager": "pnpm@11.3.0",
-  "engines": {
-    "node": ">=24"
-  },
-  "homepage": "https://github.com/grantcodes/postr",
-  "bugs": "https://github.com/grantcodes/postr/issues",
-  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
-  "license": "ISC",
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
     "@sindresorhus/slugify": "^4.0.0",
@@ -52,7 +51,8 @@
       "optional": true
     }
   },
-  "bin": {
-    "postr-import-legacy": "./dist/bin/import-legacy.js"
-  }
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.3.0"
 }

@@ -34,7 +34,8 @@ export function feeds(options: FeedsOptions): PostrPlugin {
           contentValue && typeof contentValue === 'object' && typeof contentValue.html === 'string'
             ? contentValue.html
             : firstString(post.properties, 'content')
-        const image = firstString(post.properties, 'featured') ?? firstString(post.properties, 'photo')
+        const image =
+          firstString(post.properties, 'featured') ?? firstString(post.properties, 'photo')
 
         let itemTitle = title
         if (!title && !description) {
@@ -49,7 +50,13 @@ export function feeds(options: FeedsOptions): PostrPlugin {
           id: post.url,
           link: post.url,
           date: new Date(post.published),
-          author: [{ name: options.author.name, link: options.author.url ?? ctx.siteUrl, email: options.author.email }],
+          author: [
+            {
+              name: options.author.name,
+              link: options.author.url ?? ctx.siteUrl,
+              email: options.author.email,
+            },
+          ],
           category: (post.properties.category ?? [])
             .filter((c) => typeof c === 'string')
             .map((name) => ({ name })),
@@ -94,15 +101,23 @@ export function feeds(options: FeedsOptions): PostrPlugin {
           link: ctx.siteUrl,
           generator: '@postr/plugin-feeds',
           feedLinks: { rss: `${base}/rss`, atom: `${base}/atom`, json: `${base}/json` },
-          author: { name: options.author.name, avatar: options.author.photo, link: options.author.url ?? ctx.siteUrl },
+          author: {
+            name: options.author.name,
+            avatar: options.author.photo,
+            link: options.author.url ?? ctx.siteUrl,
+          },
           updated: new Date(posts[0]?.updated ?? Date.now()),
         })
         for (const post of posts) {
           const item = toItem(post)
           if (item) feed.addItem(item)
         }
-        if (format === 'rss') return c.body(feed.rss2(), 200, { 'Content-Type': 'application/rss+xml; charset=utf-8' })
-        if (format === 'atom') return c.body(feed.atom1(), 200, { 'Content-Type': 'application/atom+xml; charset=utf-8' })
+        if (format === 'rss')
+          return c.body(feed.rss2(), 200, { 'Content-Type': 'application/rss+xml; charset=utf-8' })
+        if (format === 'atom')
+          return c.body(feed.atom1(), 200, {
+            'Content-Type': 'application/atom+xml; charset=utf-8',
+          })
         return c.body(feed.json1(), 200, { 'Content-Type': 'application/feed+json; charset=utf-8' })
       }
 

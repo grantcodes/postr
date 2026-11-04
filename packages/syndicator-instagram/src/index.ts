@@ -1,5 +1,11 @@
 import sharp, { type Sharp } from 'sharp'
-import { firstString, urlValues, type PluginContext, type Post, type PostrPlugin } from '@postr/core'
+import {
+  firstString,
+  urlValues,
+  type PluginContext,
+  type Post,
+  type PostrPlugin,
+} from '@postr/core'
 
 export interface InstagramPhoto {
   file: Buffer
@@ -60,7 +66,11 @@ async function privateApiClient(options: InstagramOptions): Promise<InstagramCli
     async like(mediaId) {
       await ig.media.like({
         mediaId,
-        moduleInfo: { module_name: 'profile', username: options.username, user_id: ig.state.cookieUserId },
+        moduleInfo: {
+          module_name: 'profile',
+          username: options.username,
+          user_id: ig.state.cookieUserId,
+        },
         d: 1,
       })
     },
@@ -75,7 +85,10 @@ async function fitPhoto(data: Buffer, single: boolean, blur: boolean): Promise<I
     image = sharp(data).resize({ width: 2000, withoutEnlargement: true })
   } else if (blur) {
     const main = await sharp(data).resize({ width: 2000, height: 2000, fit: 'inside' }).toBuffer()
-    image = sharp(data).resize({ width: 2000, height: 2000 }).blur(300).composite([{ input: main }])
+    image = sharp(data)
+      .resize({ width: 2000, height: 2000 })
+      .blur(300)
+      .composite([{ input: main }])
   } else {
     image = sharp(data).resize({ width: 2000, height: 2000, fit: 'contain', background: '#fafafa' })
   }
@@ -86,7 +99,8 @@ async function fitPhoto(data: Buffer, single: boolean, blur: boolean): Promise<I
 /** Publishes photo posts (up to 10 photos) and likes of Instagram posts. */
 export function instagram(options: InstagramOptions): PostrPlugin {
   const getClient = options.client ?? (() => privateApiClient(options))
-  const alreadySyndicated = (post: Post) => urlValues(post.properties, 'syndication').some(isInstagramUrl)
+  const alreadySyndicated = (post: Post) =>
+    urlValues(post.properties, 'syndication').some(isInstagramUrl)
 
   async function publishPhotos(post: Post, ctx: PluginContext, client: InstagramClient) {
     const urls = urlValues(post.properties, 'photo')
@@ -127,7 +141,11 @@ export function instagram(options: InstagramOptions): PostrPlugin {
             const child = await ctx.postr.posts.getByUrl(childUrl)
             if (!child || alreadySyndicated(child) || !child.properties.photo) continue
             const url = await publishPhotos(child, ctx, client)
-            await ctx.postr.posts.update(child.id, { add: { syndication: [url] } }, { origin: 'syndication:instagram' })
+            await ctx.postr.posts.update(
+              child.id,
+              { add: { syndication: [url] } },
+              { origin: 'syndication:instagram' }
+            )
           }
           return null
         }

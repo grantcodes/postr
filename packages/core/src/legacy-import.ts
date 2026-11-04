@@ -35,7 +35,7 @@ function replacePlaceholders<T>(value: T, replacements: Record<string, string>):
   if (Array.isArray(value)) return value.map((v) => replacePlaceholders(v, replacements)) as T
   if (value && typeof value === 'object') {
     return Object.fromEntries(
-      Object.entries(value).map(([k, v]) => [k, replacePlaceholders(v, replacements)]),
+      Object.entries(value).map(([k, v]) => [k, replacePlaceholders(v, replacements)])
     ) as T
   }
   return value
@@ -64,9 +64,11 @@ function legacyPath(doc: LegacyDoc, options: LegacyImportOptions): string | unde
 export async function importLegacyPosts(
   postr: Postr,
   docs: LegacyDoc[],
-  options: LegacyImportOptions,
+  options: LegacyImportOptions
 ): Promise<LegacyImportReport> {
-  const replacements: Record<string, string> = { siteBaseUrl: options.siteBaseUrl.replace(/\/$/, '') }
+  const replacements: Record<string, string> = {
+    siteBaseUrl: options.siteBaseUrl.replace(/\/$/, ''),
+  }
   if (options.mediaBaseUrl) replacements.mediaBaseUrl = options.mediaBaseUrl.replace(/\/$/, '')
   const report: LegacyImportReport = { imported: 0, deleted: 0, failed: [] }
 

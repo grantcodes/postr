@@ -2,6 +2,17 @@
   "name": "@postr/plugin-feeds",
   "version": "1.0.0-beta.3",
   "description": "A plugin for Postr to automatically provide a variety of feeds",
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "license": "ISC",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grantcodes/postr.git"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "exports": {
     ".": {
@@ -9,27 +20,10 @@
       "default": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
     "test": "node --test \"test/**/*.test.ts\""
-  },
-  "engines": {
-    "node": ">=24"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/grantcodes/postr.git"
-  },
-  "homepage": "https://github.com/grantcodes/postr",
-  "bugs": "https://github.com/grantcodes/postr/issues",
-  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
-  "license": "ISC",
-  "peerDependencies": {
-    "@postr/core": "workspace:^"
   },
   "dependencies": {
     "feed": "^6.0.0"
@@ -38,5 +32,11 @@
     "@postr/core": "workspace:^",
     "@types/node": "^24.19.2",
     "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "@postr/core": "workspace:^"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

@@ -71,8 +71,11 @@ export function createMicropubApp(deps: MicropubDeps) {
   app.onError((err, c) => {
     if (err instanceof PostrError) {
       return c.json(
-        { error: err.code === 'not_found' ? 'invalid_request' : err.code, error_description: err.message },
-        err.code === 'not_found' ? 400 : (err.status as 400 | 401 | 403),
+        {
+          error: err.code === 'not_found' ? 'invalid_request' : err.code,
+          error_description: err.message,
+        },
+        err.code === 'not_found' ? 400 : (err.status as 400 | 401 | 403)
       )
     }
     console.error('[postr]', err)
@@ -103,13 +106,18 @@ export function createMicropubApp(deps: MicropubDeps) {
       const search = c.req.query('search')?.trim().toLowerCase()
       const categories = await posts.categories()
       return c.json({
-        categories: search ? categories.filter((cat) => cat.toLowerCase().includes(search)) : categories,
+        categories: search
+          ? categories.filter((cat) => cat.toLowerCase().includes(search))
+          : categories,
       })
     }
 
     if (q === 'source') {
       const url = c.req.query('url')
-      const requested = [...c.req.queries('properties[]') ?? [], ...c.req.queries('properties') ?? []]
+      const requested = [
+        ...(c.req.queries('properties[]') ?? []),
+        ...(c.req.queries('properties') ?? []),
+      ]
       if (url) {
         const post = await posts.getByUrl(url)
         if (!post) throw new PostrError('not_found', 'Post not found')
@@ -135,8 +143,11 @@ export function createMicropubApp(deps: MicropubDeps) {
         includeHidden: true,
         order: c.req.query('order') === 'reverse' ? 'asc' : 'desc',
         postType: c.req.query('post-type'),
-        exists: [...c.req.queries('exists') ?? [], ...c.req.queries('exists[]') ?? []],
-        notExists: [...c.req.queries('not-exists') ?? [], ...c.req.queries('not-exists[]') ?? []],
+        exists: [...(c.req.queries('exists') ?? []), ...(c.req.queries('exists[]') ?? [])],
+        notExists: [
+          ...(c.req.queries('not-exists') ?? []),
+          ...(c.req.queries('not-exists[]') ?? []),
+        ],
         properties: propertyFilters,
       })
       return c.json({
@@ -167,7 +178,10 @@ export function createMicropubApp(deps: MicropubDeps) {
       if (!['update', 'delete', 'undelete'].includes(scope)) {
         throw new PostrError('invalid_request', `Unsupported action: ${String(action)}`)
       }
-      requireScope(token, scope === 'undelete' && !token.scope.includes('undelete') ? 'create' : scope)
+      requireScope(
+        token,
+        scope === 'undelete' && !token.scope.includes('undelete') ? 'create' : scope
+      )
 
       if (action === 'delete') {
         const post = await posts.delete(url)

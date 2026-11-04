@@ -32,7 +32,7 @@ export async function discoverEndpoint(target: string, fetchFn: typeof fetch = f
 export async function sendWebmention(
   source: string,
   target: string,
-  fetchFn: typeof fetch = fetch,
+  fetchFn: typeof fetch = fetch
 ): Promise<boolean> {
   const endpoint = await discoverEndpoint(target, fetchFn)
   if (!endpoint) return false

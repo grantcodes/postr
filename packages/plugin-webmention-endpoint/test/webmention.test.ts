@@ -34,7 +34,7 @@ async function setup() {
       new Request('https://example.com/micropub/plugin/webmention', {
         method: 'POST',
         body: new URLSearchParams({ source, target }),
-      }),
+      })
     )
   return { postr, post, send, notified }
 }
@@ -42,12 +42,18 @@ async function setup() {
 describe('webmention endpoint', () => {
   it('stores likes and replies on the target post and notifies once', async () => {
     const { postr, post, send, notified } = await setup()
-    pages.set('https://them.example/like', html(
-      `<div class="h-entry"><a class="u-like-of" href="${post.url}">liked</a><p class="p-name">Liked it</p></div>`,
-    ))
-    pages.set('https://them.example/reply', html(
-      `<div class="h-entry"><a class="u-in-reply-to" href="${post.url}">re</a><p class="e-content">Nice</p></div>`,
-    ))
+    pages.set(
+      'https://them.example/like',
+      html(
+        `<div class="h-entry"><a class="u-like-of" href="${post.url}">liked</a><p class="p-name">Liked it</p></div>`
+      )
+    )
+    pages.set(
+      'https://them.example/reply',
+      html(
+        `<div class="h-entry"><a class="u-in-reply-to" href="${post.url}">re</a><p class="e-content">Nice</p></div>`
+      )
+    )
 
     assert.equal((await send('https://them.example/like')).status, 202)
     assert.equal((await send('https://them.example/reply')).status, 202)
@@ -61,17 +67,26 @@ describe('webmention endpoint', () => {
 
   it('rejects mentions that do not link to the target or target another site', async () => {
     const { send } = await setup()
-    pages.set('https://them.example/unrelated', html('<div class="h-entry"><p class="p-name">Nothing</p><p class="e-content">here</p></div>'))
+    pages.set(
+      'https://them.example/unrelated',
+      html('<div class="h-entry"><p class="p-name">Nothing</p><p class="e-content">here</p></div>')
+    )
     assert.equal((await send('https://them.example/unrelated')).status, 400)
-    assert.equal((await send('https://them.example/unrelated', 'https://other.example/post')).status, 400)
+    assert.equal(
+      (await send('https://them.example/unrelated', 'https://other.example/post')).status,
+      400
+    )
     assert.equal((await send('not a url')).status, 400)
   })
 
   it('removes a mention when the source returns 410 Gone', async () => {
     const { postr, post, send } = await setup()
-    pages.set('https://them.example/gone', html(
-      `<div class="h-entry"><p class="p-name">Mention</p><div class="e-content"><a href="${post.url}">you</a></div></div>`,
-    ))
+    pages.set(
+      'https://them.example/gone',
+      html(
+        `<div class="h-entry"><p class="p-name">Mention</p><div class="e-content"><a href="${post.url}">you</a></div></div>`
+      )
+    )
     await send('https://them.example/gone')
     assert.equal((await postr.posts.get(post.id))?.properties.mention?.length, 1)
 

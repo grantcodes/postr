@@ -21,14 +21,14 @@ including [migrating from 1.x](docs/home.md#migrating-from-1x).
 
 ## Packages
 
-| Package | Description |
-| --- | --- |
-| [`@postr/core`](packages/core) | Storage, posts API, Micropub and media endpoints, plugin runtime |
-| [`@postr/plugin-feeds`](packages/plugin-feeds) | RSS, Atom, JSON Feed, JF2 and mf2 feeds |
-| [`@postr/plugin-webmention-endpoint`](packages/plugin-webmention-endpoint) | Receive webmentions |
-| [`@postr/syndicator-telegram`](packages/syndicator-telegram) | Syndicate to a Telegram channel |
-| [`@postr/syndicator-instagram`](packages/syndicator-instagram) | Syndicate photos to Instagram |
-| [`@postr/syndicator-superfeedr`](packages/syndicator-superfeedr) | WebSub publish pings |
+| Package                                                                    | Description                                                      |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [`@postr/core`](packages/core)                                             | Storage, posts API, Micropub and media endpoints, plugin runtime |
+| [`@postr/plugin-feeds`](packages/plugin-feeds)                             | RSS, Atom, JSON Feed, JF2 and mf2 feeds                          |
+| [`@postr/plugin-webmention-endpoint`](packages/plugin-webmention-endpoint) | Receive webmentions                                              |
+| [`@postr/syndicator-telegram`](packages/syndicator-telegram)               | Syndicate to a Telegram channel                                  |
+| [`@postr/syndicator-instagram`](packages/syndicator-instagram)             | Syndicate photos to Instagram                                    |
+| [`@postr/syndicator-superfeedr`](packages/syndicator-superfeedr)           | WebSub publish pings                                             |
 
 ## Development
 

@@ -48,7 +48,7 @@ export interface TestResponse extends Response {
 export async function micropub(
   postr: ReturnType<typeof testPostr>,
   path: string,
-  init: RequestInit & { token?: string | null } = {},
+  init: RequestInit & { token?: string | null } = {}
 ): Promise<TestResponse> {
   const headers = new Headers(init.headers)
   const token = init.token === undefined ? 'test-token' : init.token
