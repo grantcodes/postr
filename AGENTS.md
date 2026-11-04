@@ -9,7 +9,7 @@
 ## TypeScript everywhere
 
 - Every package is strict TypeScript ESM: `.ts` only, `"type": "module"`, settings in `tsconfig.base.json` (`nodenext`, `verbatimModuleSyntax`, `erasableSyntaxOnly`, `rewriteRelativeImportExtensions`).
-- Relative imports use the `.ts` extension; `tsc` rewrites them to `.js` in `dist/`. Each package has `tsconfig.json` (typecheck src + test, no emit) and `tsconfig.build.json` (emit `src` → `dist`).
+- Relative imports use the `.ts` extension; `tsc` rewrites them to `.js` in `dist/`. Each package has `tsconfig.json` (src + test, no emit; used by `vp check` for type checking) and `tsconfig.build.json` (emit `src` → `dist`).
 - Tests are `test/**/*.test.ts`, run directly by `node --test` (Node type stripping). No erasable-incompatible syntax (enums, namespaces, parameter properties).
 - Plugin tests import `@postr/core` from its built `dist`, so build core before running them (`pnpm run build`).
 
@@ -24,7 +24,7 @@
 
 ## Commands that matter
 
-- `pnpm install`, `pnpm run build`, `pnpm run typecheck`, `pnpm test`, `pnpm run check` (build + typecheck + test + dry-run pack).
+- `pnpm install`, `pnpm run build`, `pnpm test`, `vp check` (format, lint, type check), `pnpm run check` (vp check + build + test + dry-run pack).
 - `pnpm run test-server` starts `tests/server.ts` on `http://localhost:3000/micropub` (`PORT` overrides; port 3000 may be taken locally), data in `tests/_tmp/`, token `token`.
 - `postr-import-legacy` (core bin) imports a 1.x `collection.dump()` JSON file.
 
@@ -42,7 +42,7 @@
 ## Vite+ (`vp`) awareness
 
 - `vite-plus` is a root devDependency. Root `vite.config.ts` holds only the `fmt` (Oxfmt) and `staged` config; do not add Vitest or Vite app config.
-- Format with `vp fmt`; `vp check` runs format + lint (Oxlint) and is the first step of `pnpm run check`.
+- Format with `vp fmt`; `vp check` runs format, lint (Oxlint) and type-aware type checks (tsgolint), and is the first step of `pnpm run check`. There is no separate `tsc` typecheck script.
 - `pnpm install` runs `prepare` → `vp config --no-agent`, which installs the Git hook dispatcher; `.vite-hooks/pre-commit` runs `vp staged` (`vp check --fix` on staged files). Skip once with `VP_GIT_HOOKS=0`.
 
 ## Safe working assumptions

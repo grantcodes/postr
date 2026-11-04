@@ -7,8 +7,9 @@ describe('superfeedr syndicator', () => {
   it('pings the hub with every topic after publishing', async () => {
     const pings: string[] = []
     const warnings: unknown[] = []
-    const fakeFetch = (async (input: string | URL | Request, init?: RequestInit) => {
-      pings.push(`${String(input)} ${String(init?.body)}`)
+    const fakeFetch = (async (input: string | URL, init?: RequestInit) => {
+      assert.ok(init?.body instanceof URLSearchParams)
+      pings.push(`${String(input)} ${init.body.toString()}`)
       return new Response(null, { status: 204 })
     }) as typeof fetch
     const postr = createPostr({

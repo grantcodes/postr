@@ -118,7 +118,7 @@ export function createPostr(options: PostrOptions) {
     app,
     /** Fetch handler for Node servers, Next.js route handlers or Astro endpoints. */
     fetch: (request: Request) => app.fetch(request),
-    jobs: { runDue: jobs.runDue, idle: jobs.idle },
+    jobs: { runDue: () => jobs.runDue(), idle: () => jobs.idle() },
     close() {
       jobs.stop()
       db.$client.close()

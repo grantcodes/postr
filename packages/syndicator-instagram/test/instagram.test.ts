@@ -16,7 +16,7 @@ async function setup() {
     'https://cdn.example.org/wide.png': await image(400, 100),
     'https://cdn.example.org/square.png': await image(100, 100),
   }
-  const fakeFetch = (async (input: string | URL | Request) => {
+  const fakeFetch = (async (input: string | URL) => {
     const file = files[String(input)]
     return file ? new Response(new Uint8Array(file)) : new Response('', { status: 404 })
   }) as typeof fetch

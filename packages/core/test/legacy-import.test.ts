@@ -39,7 +39,7 @@ describe('importLegacyPosts', () => {
   it('keeps ids, permalinks, dates and mentions without side effects', async () => {
     const sent: string[] = []
     const postr = testPostr({
-      fetch: (async (input: string | URL | Request) => {
+      fetch: (async (input: string | URL) => {
         sent.push(String(input))
         return new Response('')
       }) as typeof fetch,

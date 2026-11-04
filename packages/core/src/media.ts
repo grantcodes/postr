@@ -34,7 +34,7 @@ async function writeImageSizes(
   sizes: NonNullable<LocalMediaOptions['imageSizes']>
 ) {
   const { default: sharp } = await import('sharp')
-  const { width = 0, height = 0 } = await sharp(data).metadata()
+  const { width, height } = await sharp(data).metadata()
   for (const [size, [maxWidth, maxHeight]] of Object.entries(sizes)) {
     if (width <= maxWidth && (!maxHeight || height <= maxHeight)) continue
     await sharp(data)

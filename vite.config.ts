@@ -14,6 +14,19 @@ export default defineConfig({
       'skills-lock.json',
     ],
   },
+  lint: {
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
+    overrides: [
+      {
+        // node:test's describe/it return promises the runner tracks itself.
+        files: ['**/test/**/*.ts'],
+        rules: { 'typescript/no-floating-promises': 'off' },
+      },
+    ],
+  },
   staged: {
     '*': 'vp check --fix',
   },

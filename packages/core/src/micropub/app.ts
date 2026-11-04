@@ -174,9 +174,9 @@ export function createMicropubApp(deps: MicropubDeps) {
     if (action !== undefined) {
       const url = asArray(body.url)[0]
       if (typeof url !== 'string') throw new PostrError('invalid_request', 'Missing url')
-      const scope = action === 'undelete' ? 'undelete' : String(action)
+      const scope = typeof action === 'string' ? action : ''
       if (!['update', 'delete', 'undelete'].includes(scope)) {
-        throw new PostrError('invalid_request', `Unsupported action: ${String(action)}`)
+        throw new PostrError('invalid_request', `Unsupported action: ${scope}`)
       }
       requireScope(
         token,

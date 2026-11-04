@@ -78,7 +78,7 @@ async function privateApiClient(options: InstagramOptions): Promise<InstagramCli
 }
 
 async function fitPhoto(data: Buffer, single: boolean, blur: boolean): Promise<InstagramPhoto> {
-  const { width = 1, height = 1 } = await sharp(data).metadata()
+  const { width, height } = await sharp(data).metadata()
   const ratio = width / height
   let image: Sharp
   if (single && ratio >= 0.8 && ratio <= 1.91) {

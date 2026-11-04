@@ -18,7 +18,6 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json",
     "test": "node --test \"test/**/*.test.ts\""
   },
   "dependencies": {

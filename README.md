@@ -38,9 +38,9 @@ built-in runner and run the `.ts` sources directly.
 ```bash
 pnpm install
 pnpm run build       # compile every package to dist/
-pnpm run typecheck
+vp check             # format, lint and type check
 pnpm test
-pnpm run check       # build, typecheck, test and dry-run pack
+pnpm run check       # vp check, build, test and dry-run pack
 pnpm run test-server # Micropub on http://localhost:3000/micropub (PORT to change), token "token"
 ```
 

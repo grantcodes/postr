@@ -299,7 +299,7 @@ export function createPostService(deps: PostServiceDeps) {
 
   /** Every category used by a published post, sorted. */
   async function categories(): Promise<string[]> {
-    const rows = await db.all<{ value: string }>(sql`
+    const rows = db.all<{ value: string }>(sql`
       select distinct c.value as value
       from ${posts}, json_each(${posts.properties}, '$.category') as c
       where ${posts.deletedAt} is null and ${posts.status} = 'published' and c.type = 'text'

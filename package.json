@@ -8,10 +8,9 @@
   "scripts": {
     "prepare": "vp config --no-agent",
     "build": "pnpm -r build",
-    "typecheck": "tsc -p tsconfig.json && pnpm -r typecheck",
     "test": "pnpm -r test",
     "test-server": "node tests/server.ts",
-    "check": "vp check && pnpm run build && pnpm run typecheck && pnpm run test && pnpm -r pack --dry-run"
+    "check": "vp check && pnpm run build && pnpm run test && pnpm -r pack --dry-run"
   },
   "devDependencies": {
     "@hono/node-server": "^2.1.6",
