@@ -3,5 +3,5 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["scripts", "tests"]
+  "include": ["scripts", "tests", "vite.config.ts"]
 }

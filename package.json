@@ -1,24 +1,17 @@
 {
   "private": true,
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "license": "ISC",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "type": "module",
   "scripts": {
+    "prepare": "vp config --no-agent",
     "build": "pnpm -r build",
     "typecheck": "tsc -p tsconfig.json && pnpm -r typecheck",
     "test": "pnpm -r test",
     "test-server": "node tests/server.ts",
-    "check": "pnpm run build && pnpm run typecheck && pnpm run test && pnpm -r pack --dry-run"
-  },
-  "packageManager": "pnpm@11.3.0",
-  "engines": {
-    "node": ">=24"
-  },
-  "homepage": "https://github.com/grantcodes/postr",
-  "bugs": "https://github.com/grantcodes/postr/issues",
-  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
-  "license": "ISC",
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true
+    "check": "vp check && pnpm run build && pnpm run typecheck && pnpm run test && pnpm -r pack --dry-run"
   },
   "devDependencies": {
     "@hono/node-server": "^2.1.6",
@@ -27,5 +20,8 @@
     "typescript": "^7.0.2",
     "vite-plus": "^1.4.0"
   },
-  "type": "module"
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.3.0"
 }
