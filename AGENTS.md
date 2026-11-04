@@ -28,6 +28,11 @@
 - `pnpm run test-server` starts `tests/server.ts` on `http://localhost:3000/micropub` (`PORT` overrides; port 3000 may be taken locally), data in `tests/_tmp/`, token `token`.
 - `postr-import-legacy` (core bin) imports a 1.x `collection.dump()` JSON file.
 
+## Commits
+
+- Use Conventional Commits (`feat(core): …`, `fix: …`, `chore(deps): …`; `!` or a `BREAKING CHANGE:` footer for breaking changes). release-please derives versions and changelogs from them, and squash merges use the PR title, so the title must follow it too.
+- `.vite-hooks/commit-msg` runs `scripts/check-commit-message.ts` to reject other messages; CI checks PR titles with the same script.
+
 ## Release workflows
 
 - **`npm-prerelease.yml`**: pushes to `dev` → release-please (`release-please-config.dev.json`) → publish released packages to npm tag `next` via OIDC trusted publishing (`scripts/publish-release-please-packages.ts`).
