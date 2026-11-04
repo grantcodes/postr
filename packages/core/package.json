@@ -40,6 +40,7 @@
   "devDependencies": {
     "@types/node": "^24.19.2",
     "drizzle-kit": "1.0.0-rc.5",
+    "fast-check": "^4.10.2",
     "sharp": "^0.35.5",
     "typescript": "^7.0.2"
   },
