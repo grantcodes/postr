@@ -37,6 +37,9 @@ jobs:
       - name: Check
         run: pnpm run check
 
+      - name: Build docs
+        run: pnpm run docs:build
+
       - name: Conventional Commit PR title
         if: github.event_name == 'pull_request'
         env:

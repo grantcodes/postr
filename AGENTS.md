@@ -40,6 +40,10 @@
 - **`release-please-stable.yml`**: pushes to `master` → release-please (`release-please-config.json`) → publish to `latest`.
 - A new package must be added to both release-please configs, `.release-please-manifest.json` and `PACKAGE_MAP` in the publish script.
 
+## Docs
+
+- `docs/` is a VitePress site (`pnpm run docs:dev`, `pnpm run docs:build`) published to postr.dev by `.github/workflows/docs.yml` on pushes to `master`. Guide pages live in `docs/guide/`; add new pages to the sidebar in `docs/.vitepress/config.ts`. VitePress is pinned to a 2.0 alpha (Vite 8) because 1.x pulls in a vulnerable Vite 5.
+
 ## Env and compatibility
 
 - Node 24+ (`.node-version`, `engines`); `node:sqlite` and TS type stripping are required.

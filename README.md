@@ -16,8 +16,9 @@ const postr = createPostr({
 export default { fetch: postr.fetch }
 ```
 
-Documentation: [usage, options and posts API](docs/home.md), [plugins](docs/plugins.md),
-including [migrating from 1.x](docs/home.md#migrating-from-1x).
+Documentation: [postr.dev](https://postr.dev) — [getting started](docs/guide/getting-started.md),
+[posts API](docs/guide/posts-api.md), [plugins](docs/guide/plugins.md) and
+[migrating from 1.x](docs/guide/migrating.md).
 
 ## Packages
 

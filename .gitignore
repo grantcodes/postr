@@ -5,3 +5,5 @@ config.json
 tests/_tmp
 .planning/
 dist
+docs/.vitepress/dist
+docs/.vitepress/cache
