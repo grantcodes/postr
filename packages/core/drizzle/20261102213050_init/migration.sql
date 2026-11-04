@@ -41,4 +41,14 @@ CREATE TABLE `refs` (
 CREATE INDEX `jobs_run_at_idx` ON `jobs` (`run_at`);--> statement-breakpoint
 CREATE INDEX `post_refs_url_idx` ON `post_refs` (`url`);--> statement-breakpoint
 CREATE INDEX `posts_published_at_idx` ON `posts` (`published_at`);--> statement-breakpoint
-CREATE INDEX `posts_post_type_idx` ON `posts` (`post_type`);
+CREATE INDEX `posts_post_type_idx` ON `posts` (`post_type`);--> statement-breakpoint
+-- Full-text index written by the posts service (src/posts/search.ts). Not in schema.ts because
+-- Drizzle can't model FTS5 tables; keyed by post_id so table rebuilds can't desync it.
+CREATE VIRTUAL TABLE `posts_fts` USING fts5(
+	post_id UNINDEXED,
+	name,
+	summary,
+	content,
+	category,
+	tokenize = 'unicode61 remove_diacritics 2'
+);

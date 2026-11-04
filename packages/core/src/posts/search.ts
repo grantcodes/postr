@@ -4,7 +4,7 @@ import type { Mf2Properties } from '../mf2.ts'
 const strings = (properties: Mf2Properties, key: string) =>
   (properties[key] ?? []).filter((v) => typeof v === 'string').join(' ')
 
-/** Text indexed in `posts_fts`; the backfill in the `search` migration mirrors this. */
+/** Text indexed in `posts_fts` (created in the init migration). */
 export function searchFields(properties: Mf2Properties) {
   const content = (properties.content ?? [])
     .map((v) => {

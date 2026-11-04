@@ -1,10 +1,7 @@
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import { DatabaseSync } from 'node:sqlite'
 import { describe, it } from 'node:test'
 import { PostrError, type PostrPlugin, type SaveEvent } from '../src/index.ts'
-import { siteUrl, tempDir, testPostr } from './helpers.ts'
+import { siteUrl, testPostr } from './helpers.ts'
 
 describe('posts.create', () => {
   it('stores a note with defaults, formatted content and hashtags', async () => {
@@ -242,39 +239,6 @@ describe('posts.list', () => {
     assert.deepEqual(await search('walk'), [ride.id])
     await postr.posts.delete(cafe.id)
     assert.deepEqual(await search('cafe'), [])
-  })
-
-  it('backfills the search index the same way the service writes it', async () => {
-    const database = join(await tempDir(), 'postr.db')
-    // Without formatting, content keeps plain strings and html-only objects.
-    const postr = testPostr({ database, formatContent: false })
-    await postr.posts.create({
-      type: ['h-entry'],
-      properties: {
-        name: ['A', 'B'],
-        summary: ['S'],
-        content: ['*x*', { html: '<p>h</p>' }],
-        category: ['c', 'd'],
-      },
-    })
-    await postr.posts.create({
-      type: ['h-entry'],
-      properties: { content: [{ html: '<b>only html</b>' }] },
-    })
-    postr.close()
-
-    const db = new DatabaseSync(database)
-    const rows = () => db.prepare('select * from posts_fts order by post_id').all()
-    const written = rows()
-    const migration = await readFile(
-      new URL('../drizzle/20261104141812_search/migration.sql', import.meta.url),
-      'utf8'
-    )
-    const backfill = migration.split('--> statement-breakpoint')[1] ?? ''
-    db.exec('delete from posts_fts')
-    db.exec(backfill)
-    assert.deepEqual(rows(), written)
-    db.close()
   })
 })
 
