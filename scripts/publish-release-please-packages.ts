@@ -7,7 +7,7 @@
  * Called from CI after release-please-action creates releases.
  *
  * Usage:
- *   node scripts/publish-release-please-packages.ts <next|latest>
+ *   node scripts/publish-release-please-packages.ts <alpha|latest>
  *
  * Environment:
  *   PATHS_RELEASED  – JSON array of released package paths, e.g.
@@ -36,7 +36,7 @@ const PACKAGE_MAP: Record<string, string> = {
   'packages/syndicator-telegram': '@postr/syndicator-telegram',
 }
 
-const VALID_TAGS = ['next', 'latest']
+const VALID_TAGS = ['alpha', 'latest']
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -67,7 +67,7 @@ function main() {
   // 1. Validate CLI argument
   const distTag = process.argv[2]
   if (!distTag) {
-    fail('Missing required argument: <next|latest>')
+    fail('Missing required argument: <alpha|latest>')
   }
   if (!VALID_TAGS.includes(distTag)) {
     fail(`Invalid dist-tag "${distTag}". Must be one of: ${VALID_TAGS.join(', ')}`)
@@ -106,10 +106,10 @@ function main() {
     const version = getPackageVersion(pkgPath)
     console.log(`  ${pkgPath} → ${PACKAGE_MAP[pkgPath]}@${version}`)
 
-    // Guard: dev (next tag) must produce prerelease versions
-    if (distTag === 'next' && !isPrereleaseVersion(version)) {
+    // Guard: the dev branch (alpha tag) must only publish alpha versions
+    if (distTag === 'alpha' && !version.includes('-alpha')) {
       fail(
-        `Package ${PACKAGE_MAP[pkgPath]}@${version} is NOT a prerelease version but dist-tag is "next". Refusing to publish.`
+        `Package ${PACKAGE_MAP[pkgPath]}@${version} is NOT an alpha version but dist-tag is "alpha". Refusing to publish.`
       )
     }
 

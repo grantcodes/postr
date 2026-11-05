@@ -1,29 +1,17 @@
 {
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "plugins": ["node-workspace"],
+  "bootstrap-sha": "8a96bf28e8062219419ac0d6d5deb31c38575653",
+  "release-type": "node",
+  "prerelease": true,
+  "versioning": "prerelease",
+  "prerelease-type": "alpha.0",
   "packages": {
-    "packages/core": {
-      "release-type": "node",
-      "prerelease": true
-    },
-    "packages/plugin-feeds": {
-      "release-type": "node",
-      "prerelease": true
-    },
-    "packages/plugin-webmention-endpoint": {
-      "release-type": "node",
-      "prerelease": true
-    },
-    "packages/syndicator-instagram": {
-      "release-type": "node",
-      "prerelease": true
-    },
-    "packages/syndicator-superfeedr": {
-      "release-type": "node",
-      "prerelease": true
-    },
-    "packages/syndicator-telegram": {
-      "release-type": "node",
-      "prerelease": true
-    }
+    "packages/core": {},
+    "packages/plugin-feeds": {},
+    "packages/plugin-webmention-endpoint": {},
+    "packages/syndicator-instagram": {},
+    "packages/syndicator-superfeedr": {},
+    "packages/syndicator-telegram": {}
   }
 }
