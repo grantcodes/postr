@@ -1,5 +1,8 @@
 # Postr
 
+> **2.0 is in alpha.** This branch is a rewrite published as `@postr/core@alpha`; the APIs may still
+> change. `npm install @postr/core` installs the stable 1.x release.
+
 A library-first IndieWeb backend for Node.js: a Micropub server, media endpoint and typed post
 API on a single SQLite file, with plugins for feeds, webmentions and syndication.
 
@@ -49,4 +52,5 @@ pnpm run test-server # Micropub on http://localhost:3000/micropub (PORT to chang
 `pnpm --filter @postr/core db:generate` to add a migration under `packages/core/drizzle/`.
 
 Releases use release-please in manifest mode with npm trusted publishing: pushes to `dev`
-publish prereleases to the `next` tag, pushes to `master` publish to `latest`.
+publish `-alpha.N` versions to the npm `alpha` tag, and pushes to `master` publish to `latest`.
+See `AGENTS.md` for how 2.0 moves from alpha to stable.

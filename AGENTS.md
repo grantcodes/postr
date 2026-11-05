@@ -37,8 +37,10 @@
 
 ## Release workflows
 
-- **`npm-prerelease.yml`**: pushes to `dev` → release-please (`release-please-config.dev.json`) → publish released packages to npm tag `next` via OIDC trusted publishing (`scripts/publish-release-please-packages.ts`).
-- **`release-please-stable.yml`**: pushes to `master` → release-please (`release-please-config.json`) → publish to `latest`.
+- **`npm-prerelease.yml`**: pushes to `dev` → release-please (`release-please-config.dev.json`: `versioning: prerelease`, `prerelease-type: alpha.0`) → publish released packages to the npm `alpha` dist-tag via OIDC trusted publishing (`scripts/publish-release-please-packages.ts`, which refuses non-alpha versions). 2.0 is released this way until it is ready; `npm install @postr/core` keeps resolving to 1.x on `latest`.
+- The first alpha of each package is forced by a `Release-As:` footer on that package's `docs(<pkg>): add a package README` commit (core, feeds, webmention-endpoint and telegram → `2.0.0-alpha.0`; superfeedr and instagram → `3.0.0-alpha.0`). Merge `feature/rebuild` into `dev` with a merge commit, not a squash, so each footer stays on a commit that only touches its package. Later alphas count up automatically (`-alpha.1`, …).
+- To ship 2.0 stable: merge `dev` into `master` and add one commit per package, touching only that package, with a `Release-As: <x.y.z>` footer (prerelease versions would otherwise bump to the next major).
+- **`release-please-stable.yml`**: pushes to `master` → release-please (`release-please-config.json`) → publish to `latest` (1.x until 2.0 ships).
 - A new package must be added to both release-please configs, `.release-please-manifest.json` and `PACKAGE_MAP` in the publish script.
 
 ## Docs
