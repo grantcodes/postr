@@ -17,5 +17,9 @@ objects. To move your posts:
      --media-url https://example.com/media --database postr.db --dry-run
    ```
 
+   If 1.x ran with `createdDateInPermalinks`, add `--created-date-in-permalinks`.
+
    Drop `--dry-run` to write the database. Ids, permalinks, dates, received webmentions and
    deleted posts are kept; nothing is re-sent. `importLegacyPosts()` does the same from code.
+   A deleted post whose permalink a live post already uses is skipped and listed under
+   `skipped` in the report.

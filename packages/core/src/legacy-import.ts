@@ -16,11 +16,15 @@ export interface LegacyImportOptions {
   mediaBaseUrl?: string
   /** 1.x `permalinkPattern`, used to keep every existing permalink. Default `:siteBaseUrl/:year/:month/:day/:slug`. */
   permalinkPattern?: string
+  /** 1.x `createdDateInPermalinks`: permalink dates use `created` when a post has it. */
+  createdDateInPermalinks?: boolean
 }
 
 export interface LegacyImportReport {
   imported: number
   deleted: number
+  /** Deleted posts left out because a live post already has their permalink. */
+  skipped: Array<{ id?: string; path: string }>
   failed: Array<{ id?: string; error: string }>
 }
 
@@ -41,13 +45,21 @@ function replacePlaceholders<T>(value: T, replacements: Record<string, string>):
   return value
 }
 
-/** The path 1.x served a post at, computed the way 1.x did (in the local timezone). */
-function legacyPath(doc: LegacyDoc, options: LegacyImportOptions): string | undefined {
-  const slug = doc.properties['mp-slug']?.[0]
-  const published = doc.properties.published?.[0]
-  if (typeof slug !== 'string' || typeof published !== 'string') return undefined
-  const date = new Date(published)
+/**
+ * The path 1.x served a post at: its stored own URL, or the permalink computed the way 1.x
+ * did (in the local timezone).
+ */
+function legacyPath(properties: Mf2Properties, options: LegacyImportOptions): string | undefined {
   const siteBaseUrl = options.siteBaseUrl.replace(/\/$/, '')
+  const url = properties.url?.[0]
+  if (typeof url === 'string' && url.startsWith(`${siteBaseUrl}/`)) {
+    return url.slice(siteBaseUrl.length).replace(/[?#].*$/, '')
+  }
+  const slug = properties['mp-slug']?.[0]
+  const created = options.createdDateInPermalinks ? properties.created?.[0] : undefined
+  const dateString = typeof created === 'string' ? created : properties.published?.[0]
+  if (typeof slug !== 'string' || typeof dateString !== 'string') return undefined
+  const date = new Date(dateString)
   const permalink = (options.permalinkPattern ?? ':siteBaseUrl/:year/:month/:day/:slug')
     .replace(':siteBaseUrl', siteBaseUrl)
     .replace(':year', String(date.getFullYear()))
@@ -55,6 +67,17 @@ function legacyPath(doc: LegacyDoc, options: LegacyImportOptions): string | unde
     .replace(':day', String(date.getDate()).padStart(2, '0'))
     .replace(':slug', slug)
   return permalink.startsWith(siteBaseUrl) ? permalink.slice(siteBaseUrl.length) : undefined
+}
+
+/** Drops `null` values and the Micropub commands 1.x kept, except `mp-slug`. */
+function cleanProperties(properties: Mf2Properties): Mf2Properties {
+  const cleaned: Mf2Properties = {}
+  for (const [key, values] of Object.entries(properties)) {
+    if (key.startsWith('mp-') && key !== 'mp-slug') continue
+    const kept = values.filter((value) => value !== null && value !== undefined)
+    if (kept.length) cleaned[key] = kept
+  }
+  return cleaned
 }
 
 /**
@@ -70,20 +93,30 @@ export async function importLegacyPosts(
     siteBaseUrl: options.siteBaseUrl.replace(/\/$/, ''),
   }
   if (options.mediaBaseUrl) replacements.mediaBaseUrl = options.mediaBaseUrl.replace(/\/$/, '')
-  const report: LegacyImportReport = { imported: 0, deleted: 0, failed: [] }
+  const report: LegacyImportReport = { imported: 0, deleted: 0, skipped: [], failed: [] }
 
-  for (const doc of docs) {
+  const isDeleted = (doc: LegacyDoc) => doc.properties['post-status']?.[0] === 'deleted'
+  // Live posts first, so a deleted duplicate never takes a live post's permalink.
+  const ordered = [...docs.filter((doc) => !isDeleted(doc)), ...docs.filter(isDeleted)]
+
+  for (const doc of ordered) {
+    let path: string | undefined
     try {
-      const properties = replacePlaceholders(doc.properties, replacements)
-      const deleted = properties['post-status']?.[0] === 'deleted'
+      const properties = cleanProperties(replacePlaceholders(doc.properties, replacements))
+      const deleted = isDeleted(doc)
       if (deleted) properties['post-status'] = ['published']
+      path = legacyPath(properties, options)
+      if (deleted && path && (await postr.posts.getByUrl(postr.siteUrl + path))) {
+        report.skipped.push({ id: doc._id, path })
+        continue
+      }
       const input: Mf2Input = { type: doc.type, properties }
       if (doc.children) input.children = replacePlaceholders(doc.children, replacements)
 
       await postr.posts.create(input, {
         origin: 'import',
         id: doc._id,
-        path: legacyPath(doc, options),
+        path,
         deletedAt: deleted ? new Date().toISOString() : undefined,
       })
       report.imported++
