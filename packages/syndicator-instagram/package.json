@@ -1,6 +1,6 @@
 {
   "name": "@postr/syndicator-instagram",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Instagram syndication plugin",
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
