@@ -1,6 +1,6 @@
 {
   "name": "@postr/plugin-webmention-endpoint",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0-alpha.1",
   "description": "Webmention endpoint for Postr",
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",

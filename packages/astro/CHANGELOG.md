@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.0-alpha.2](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.1...astro-v0.1.0-alpha.2) (2026-11-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+
 ## [0.1.0-alpha.1](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.0...astro-v0.1.0-alpha.1) (2026-11-10)
 
 

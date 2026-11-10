@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0-alpha.1](https://github.com/grantcodes/postr/compare/plugin-webmention-endpoint-v2.0.0-alpha.0...plugin-webmention-endpoint-v2.0.0-alpha.1) (2026-11-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+
 ## [2.0.0-alpha.0](https://github.com/grantcodes/postr/compare/plugin-webmention-endpoint-v1.0.3...plugin-webmention-endpoint-v2.0.0-alpha.0) (2026-11-10)
 
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0-alpha.1](https://github.com/grantcodes/postr/compare/syndicator-telegram-v2.0.0-alpha.0...syndicator-telegram-v2.0.0-alpha.1) (2026-11-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+
 ## [2.0.0-alpha.0](https://github.com/grantcodes/postr/compare/syndicator-telegram-v1.0.1...syndicator-telegram-v2.0.0-alpha.0) (2026-11-10)
 
 
