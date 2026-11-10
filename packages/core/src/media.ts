@@ -11,6 +11,8 @@ export interface MediaFile {
 export interface MediaStore {
   /** Persists a file and returns its public URL. */
   save(file: MediaFile): Promise<string>
+  /** Public URL prefix of saved files, so posts that already use them are not downloaded again. */
+  url?: string
 }
 
 export interface LocalMediaOptions {
@@ -49,6 +51,7 @@ async function writeImageSizes(
 export function localMediaStore(options: LocalMediaOptions): MediaStore {
   const baseUrl = options.url.replace(/\/$/, '')
   return {
+    url: baseUrl,
     async save(file) {
       let filename = basename(file.name || 'file')
         .replace(/\s+/g, '-')

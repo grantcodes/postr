@@ -73,7 +73,10 @@ export function webmentionEndpoint(options: WebmentionEndpointOptions = {}): Pos
         if (samePage(source, target)) return c.text('Source and target are the same', 400)
 
         const post = await posts.getByUrl(target)
-        if (!post) return c.text('Target is not a post on this site', 400)
+        // Drafts and private posts answer like missing ones, so their URLs stay hidden.
+        if (!post || post.status !== 'published' || post.visibility === 'private') {
+          return c.text('Target is not a post on this site', 400)
+        }
 
         let entry: Mf2Item
         try {

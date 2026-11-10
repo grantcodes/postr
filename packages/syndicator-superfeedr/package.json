@@ -6,6 +6,11 @@
   "bugs": "https://github.com/grantcodes/postr/issues",
   "license": "ISC",
   "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grantcodes/postr.git",
+    "directory": "packages/syndicator-superfeedr"
+  },
   "files": [
     "dist"
   ],

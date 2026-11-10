@@ -320,12 +320,15 @@ export function createPostService(deps: PostServiceDeps) {
     return rows.map(toPost)
   }
 
-  /** Every category used by a published post, sorted. */
-  async function categories(): Promise<string[]> {
+  /** Every category used by a listed post (or any post with `includeHidden`), sorted. */
+  async function categories({ includeHidden = false } = {}): Promise<string[]> {
+    const listed = includeHidden
+      ? sql``
+      : sql`and ${posts.status} = 'published' and ${posts.visibility} = 'public'`
     const rows = db.all<{ value: string }>(sql`
       select distinct c.value as value
       from ${posts}, json_each(${posts.properties}, '$.category') as c
-      where ${posts.deletedAt} is null and ${posts.status} = 'published' and c.type = 'text'
+      where ${posts.deletedAt} is null and c.type = 'text' ${listed}
       order by c.value`)
     return rows.map((row) => row.value)
   }

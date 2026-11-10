@@ -48,8 +48,8 @@ pnpm run check       # vp check, build, test, then publint + attw on each packed
 pnpm run test-server # Micropub on http://localhost:3000/micropub (PORT to change), token "token"
 ```
 
-`@postr/core` schema changes: edit `packages/core/src/db/schema.ts`. Until 2.0 ships, regenerate
-the single init migration in `packages/core/drizzle/` instead of adding new ones (see `AGENTS.md`).
+`@postr/core` schema changes: edit `packages/core/src/db/schema.ts`. Until the first alpha is published,
+regenerate the single init migration in `packages/core/drizzle/` instead of adding new ones (see `AGENTS.md`).
 
 Releases use release-please in manifest mode with npm trusted publishing: pushes to `dev`
 publish `-alpha.N` versions to the npm `alpha` tag, and pushes to `master` publish to `latest`.

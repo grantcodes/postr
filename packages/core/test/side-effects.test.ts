@@ -146,6 +146,33 @@ describe('syndication', () => {
     await postr.jobs.runDue()
     assert.equal(syndicated.length, 2)
   })
+
+  it('syndicates a draft to the default targets when it is published', async () => {
+    const syndicated: string[] = []
+    const postr = testPostr({
+      plugins: [
+        {
+          id: 'one',
+          syndication: {
+            default: true,
+            async syndicate(post) {
+              syndicated.push(post.id)
+              return null
+            },
+          },
+        },
+      ],
+      sendWebmentions: false,
+    })
+    const draft = await postr.posts.create({
+      type: ['h-entry'],
+      properties: { content: ['a'], 'post-status': ['draft'] },
+    })
+    await postr.posts.update(draft.id, { replace: { 'post-status': ['published'] } })
+    await postr.posts.update(draft.id, { replace: { content: ['b'] } })
+    await postr.jobs.runDue()
+    assert.deepEqual(syndicated, [draft.id])
+  })
 })
 
 describe('external media', () => {
@@ -181,5 +208,27 @@ describe('external media', () => {
     assert.deepEqual(missing, { value: 'https://missing.example/x.png' })
     const file = join(dir, saved.value.replace('https://example.com/media/', ''))
     assert.deepEqual([...(await readFile(file))], [9, 9])
+  })
+
+  it('does not download files already in a custom media store', async () => {
+    let saves = 0
+    const postr = testPostr({
+      fetch: fakeFetch({}),
+      media: {
+        url: 'https://media.example.com',
+        async save() {
+          saves++
+          return 'https://media.example.com/copy.png'
+        },
+      },
+      fetchReferences: false,
+      sendWebmentions: false,
+    })
+    const post = await postr.posts.create({
+      type: ['h-entry'],
+      properties: { photo: ['https://media.example.com/pic.png'] },
+    })
+    assert.equal(saves, 0)
+    assert.deepEqual(post.properties.photo, [{ value: 'https://media.example.com/pic.png' }])
   })
 })

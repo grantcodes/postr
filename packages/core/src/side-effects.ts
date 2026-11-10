@@ -132,8 +132,9 @@ export function createSideEffects(options: SideEffectOptions): PostrPlugin {
       }
 
       const requested = event.commands['mp-syndicate-to']
-      const syndicate =
-        isPublic(post) && (event.action === 'create' || (event.action === 'update' && requested))
+      // Publishing a draft counts as a create: its targets were dropped with the other mp-* commands.
+      const firstPublish = event.action === 'create' || (event.action === 'update' && !wasPublic)
+      const syndicate = isPublic(post) && (firstPublish || (event.action === 'update' && requested))
       if (syndicate) {
         for (const plugin of options.plugins) {
           if (!plugin.syndication) continue

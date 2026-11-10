@@ -13,7 +13,7 @@ objects. To move your posts:
 2. Import it, with `TZ` set to the old server's timezone so permalink dates match:
 
    ```bash
-   TZ=Europe/Berlin npx postr-import-legacy --dump dump.json --site-url https://example.com \
+   TZ=Europe/Berlin npx -p @postr/core@alpha postr-import-legacy --dump dump.json --site-url https://example.com \
      --media-url https://example.com/media --database postr.db --dry-run
    ```
 

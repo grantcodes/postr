@@ -139,7 +139,8 @@ export function instagram(options: InstagramOptions): PostrPlugin {
           const client = await getClient()
           for (const childUrl of post.children) {
             const child = await ctx.postr.posts.getByUrl(childUrl)
-            if (!child || alreadySyndicated(child) || !child.properties.photo) continue
+            if (!child || child.status !== 'published' || child.visibility === 'private') continue
+            if (alreadySyndicated(child) || !child.properties.photo) continue
             const url = await publishPhotos(child, ctx, client)
             await ctx.postr.posts.update(
               child.id,

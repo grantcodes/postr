@@ -9,7 +9,9 @@ const migrationsFolder = fileURLToPath(new URL('../../drizzle', import.meta.url)
 export function openDatabase(path: string, { readOnly = false } = {}) {
   const client = new DatabaseSync(path, { readOnly })
   client.exec(
-    readOnly ? 'PRAGMA foreign_keys = ON;' : 'PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;'
+    readOnly
+      ? 'PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;'
+      : 'PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000;'
   )
   const db = drizzle({ client })
   if (!readOnly) migrate(db, { migrationsFolder })

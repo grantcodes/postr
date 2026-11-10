@@ -116,6 +116,15 @@ describe('Micropub create', () => {
     assert.equal(res.status, 400)
     assert.equal((await res.json()).error, 'invalid_request')
   })
+
+  it('rejects empty posts and non-object bodies', async () => {
+    const postr = testPostr()
+    for (const body of [null, { type: ['h-entry'], properties: { 'mp-slug': ['x'] } }]) {
+      assert.equal((await micropub(postr, '', json(body))).status, 400)
+    }
+    assert.equal((await micropub(postr, '', { method: 'POST' })).status, 400)
+    assert.equal((await postr.posts.list({ includeHidden: true })).length, 0)
+  })
 })
 
 describe('Micropub actions', () => {

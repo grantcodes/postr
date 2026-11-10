@@ -32,8 +32,14 @@ function bearerToken(c: Context, body?: Body): string | undefined {
       'Send the access token in the header or the body, not both'
     )
   }
-  if (header) return header.split(/\s+/)[1]
+  if (header) return /^Bearer\s+(\S+)$/i.exec(header)?.[1]
   return typeof fromBody === 'string' ? fromBody : undefined
+}
+
+/** Integer query parameter, clamped to `min..max`; anything unparseable gives `fallback`. */
+function intParam(value: string | undefined, fallback: number, min: number, max = Infinity) {
+  const n = Math.trunc(Number(value))
+  return Number.isFinite(n) && value ? Math.min(Math.max(n, min), max) : fallback
 }
 
 function asArray<T>(value: T | T[] | undefined): T[] {
@@ -114,7 +120,7 @@ export function createMicropubApp(deps: MicropubDeps) {
 
     if (q === 'category') {
       const search = c.req.query('search')?.trim().toLowerCase()
-      const categories = await posts.categories()
+      const categories = await posts.categories({ includeHidden: true })
       return c.json({
         categories: search
           ? categories.filter((cat) => cat.toLowerCase().includes(search))
@@ -141,8 +147,8 @@ export function createMicropubApp(deps: MicropubDeps) {
         return c.json({ properties })
       }
 
-      const limit = Math.min(Number(c.req.query('limit')) || 20, 100)
-      const offset = Number(c.req.query('after')) || 0
+      const limit = intParam(c.req.query('limit'), 20, 1, 100)
+      const offset = intParam(c.req.query('after'), 0, 0)
       const propertyFilters: Record<string, string> = {}
       for (const [key, value] of Object.entries(c.req.query())) {
         if (key.startsWith('property-')) propertyFilters[key.slice('property-'.length)] = value
@@ -179,6 +185,9 @@ export function createMicropubApp(deps: MicropubDeps) {
           throw new PostrError('invalid_request', 'Invalid JSON body')
         })
       : await c.req.parseBody({ all: true })
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      throw new PostrError('invalid_request', 'The body must be an object')
+    }
     const token = await deps.authenticate(bearerToken(c, body))
     assertWritable()
 
@@ -212,6 +221,10 @@ export function createMicropubApp(deps: MicropubDeps) {
 
     requireScope(token, 'create')
     const input = isJson ? body : await formToMf2(body, deps.media)
+    const properties = (input as { properties?: unknown }).properties ?? {}
+    if (!Object.keys(properties).some((key) => !key.startsWith('mp-'))) {
+      throw new PostrError('invalid_request', 'A post needs at least one property')
+    }
     const post = await posts.create(input as Parameters<PostService['create']>[0])
     c.header('Location', post.url)
     return c.json({ location: post.url, item: posts.toMf2(post) }, 201)
