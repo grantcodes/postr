@@ -63,6 +63,8 @@ export interface PostServiceDeps {
   siteUrl: string
   permalinkPattern: string
   formatContent: boolean
+  /** Reject every write with `forbidden`. */
+  readOnly?: boolean
   postTypes: () => PostTypeDefinition[]
   beforeSave: (item: Mf2Item, action: 'create' | 'update', previous?: Post) => Promise<Mf2Item>
   afterSave: (event: SaveEvent) => Promise<void>
@@ -120,6 +122,10 @@ export function createPostService(deps: PostServiceDeps) {
         and(inArray(posts.path, candidates), includeDeleted ? undefined : isNull(posts.deletedAt))
       )
     return row && toPost(row)
+  }
+
+  function assertWritable() {
+    if (deps.readOnly) throw new PostrError('forbidden', 'postr is read-only')
   }
 
   async function find(urlOrId: string): Promise<Post> {
@@ -219,6 +225,7 @@ export function createPostService(deps: PostServiceDeps) {
   }
 
   async function create(input: Mf2Input, options: CreateOptions = {}) {
+    assertWritable()
     const parsed = mf2InputSchema.safeParse(input)
     if (!parsed.success) {
       throw new PostrError('invalid_request', `Invalid post: ${parsed.error.message}`)
@@ -234,6 +241,7 @@ export function createPostService(deps: PostServiceDeps) {
 
   /** Applies a Micropub update (`replace`, `add`, `delete`) to a post. */
   async function update(urlOrId: string, changes: Mf2Update, options: WriteOptions = {}) {
+    assertWritable()
     const parsed = mf2UpdateSchema.safeParse(changes)
     if (!parsed.success) {
       throw new PostrError('invalid_request', `Invalid update: ${parsed.error.message}`)
@@ -268,6 +276,7 @@ export function createPostService(deps: PostServiceDeps) {
   }
 
   async function setDeleted(urlOrId: string, deleted: boolean, options: WriteOptions) {
+    assertWritable()
     const previous = await find(urlOrId)
     const deletedAt = deleted ? new Date().toISOString() : null
     await db.update(posts).set({ deletedAt }).where(eq(posts.id, previous.id))

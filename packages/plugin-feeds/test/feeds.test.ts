@@ -69,6 +69,24 @@ describe('feeds plugin', () => {
     assert.equal((await get('/rss/page/2')).status, 404)
     assert.equal((await get('/nope')).status, 404)
   })
+
+  it('escapes plain-text content', async () => {
+    const postr = createPostr({
+      siteUrl: 'https://example.com',
+      endpointUrl: 'https://example.com/micropub',
+      database: ':memory:',
+      auth: { dangerousToken: 't' },
+      runJobs: false,
+      formatContent: false,
+      plugins: [feeds({ author: { name: 'Grant' } })],
+    })
+    await postr.posts.create({ type: ['h-entry'], properties: { content: ['<b>bold</b>'] } })
+    const response = await postr.fetch(
+      new Request('https://example.com/micropub/plugin/feeds/json')
+    )
+    const json = (await response.json()) as { items: Array<{ content_html: string }> }
+    assert.equal(json.items[0]?.content_html, '<p>&#60;b&#62;bold&#60;/b&#62;</p>')
+  })
 })
 
 describe('mf2ToJf2', () => {

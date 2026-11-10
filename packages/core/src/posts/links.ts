@@ -1,5 +1,6 @@
 import { parseHTML } from 'linkedom'
 import { urlValues, type Mf2Properties } from '../mf2.ts'
+import { contentValue } from './view.ts'
 
 /** Properties whose values are URLs of other posts this post responds to. */
 export const responseProperties = [
@@ -30,8 +31,9 @@ export function getLinks(properties: Mf2Properties, siteUrl: string): PostLink[]
     for (const url of urlValues(properties, rel)) add(rel, url)
   }
   for (const content of properties.content ?? []) {
-    if (content && typeof content === 'object' && typeof content.html === 'string') {
-      const { document } = parseHTML(`<html><body>${content.html}</body></html>`)
+    const html = contentValue(content)?.html
+    if (html) {
+      const { document } = parseHTML(`<html><body>${html}</body></html>`)
       for (const a of document.querySelectorAll('a[href]')) {
         const href = a.getAttribute('href')
         if (href && URL.canParse(href)) add('mention', href)

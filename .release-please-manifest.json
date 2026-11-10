@@ -4,5 +4,6 @@
   "packages/plugin-webmention-endpoint": "1.0.3",
   "packages/syndicator-instagram": "2.1.1-beta.0",
   "packages/syndicator-superfeedr": "2.0.2",
-  "packages/syndicator-telegram": "1.0.1"
+  "packages/syndicator-telegram": "1.0.1",
+  "packages/astro": "0.0.0"
 }

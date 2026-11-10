@@ -1,5 +1,5 @@
 import { Feed, type Item } from 'feed'
-import { firstString, htmlToText, type Context, type Post, type PostrPlugin } from '@postr/core'
+import { toPostView, type Context, type Post, type PostrPlugin } from '@postr/core'
 import { mf2ToJf2 } from './jf2.ts'
 
 export { mf2ToJf2, type Jf2 } from './jf2.ts'
@@ -27,20 +27,16 @@ export function feeds(options: FeedsOptions): PostrPlugin {
       const base = `${ctx.endpointUrl.replace(/\/$/, '')}/plugin/feeds`
 
       function toItem(post: Post): Item | null {
-        const title = firstString(post.properties, 'name')
-        const description = firstString(post.properties, 'summary')
-        const contentValue = post.properties.content?.[0]
-        let content =
-          contentValue && typeof contentValue === 'object' && typeof contentValue.html === 'string'
-            ? contentValue.html
-            : firstString(post.properties, 'content')
-        const image =
-          firstString(post.properties, 'featured') ?? firstString(post.properties, 'photo')
+        const view = toPostView(ctx.postr.posts.toMf2(post))
+        const title = view.name
+        const description = view.summary
+        let content = view.content?.html
+        const image = view.featured ?? view.photos[0]?.url
 
         let itemTitle = title
         if (!title && !description) {
-          if (!content) return null
-          const text = htmlToText(content)
+          if (!view.content) return null
+          const { text } = view.content
           itemTitle = text.length > 50 ? `${text.slice(0, 50)}…` : text
         }
         content ??= description ?? title
@@ -49,7 +45,7 @@ export function feeds(options: FeedsOptions): PostrPlugin {
           title: itemTitle ?? description ?? '',
           id: post.url,
           link: post.url,
-          date: new Date(post.published),
+          date: view.published,
           author: [
             {
               name: options.author.name,
@@ -57,9 +53,7 @@ export function feeds(options: FeedsOptions): PostrPlugin {
               email: options.author.email,
             },
           ],
-          category: (post.properties.category ?? [])
-            .filter((c) => typeof c === 'string')
-            .map((name) => ({ name })),
+          category: view.categories.map((name) => ({ name })),
         }
         if (description) item.description = description
         if (content) item.content = content

@@ -25,7 +25,7 @@ export type {
   PostService,
 } from './posts/service.ts'
 export type { PostStatus, PostVisibility } from './posts/normalize.ts'
-export type { PostTypeDefinition } from './posts/post-type.ts'
+export { discoverPostType, builtInPostTypes, type PostTypeDefinition } from './posts/post-type.ts'
 export {
   firstString,
   urlValues,
@@ -39,6 +39,7 @@ export {
 export { fetchEntry, FetchError } from './services/fetch-entry.ts'
 export { sendWebmention, discoverEndpoint } from './services/webmention.ts'
 export { htmlToText } from './posts/content.ts'
+export { postContent, toPostView, type PostContent, type PostView } from './posts/view.ts'
 export {
   importLegacyPosts,
   type LegacyDoc,

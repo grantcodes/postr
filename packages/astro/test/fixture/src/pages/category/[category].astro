@@ -1,0 +1,18 @@
+---
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts')
+  const categories = [...new Set(posts.flatMap((post) => post.data.categories))]
+  return categories.map((category) => ({
+    params: { category },
+    props: { posts: posts.filter((post) => post.data.categories.includes(category)) },
+  }))
+}
+
+const { posts } = Astro.props
+---
+
+<ul>
+  {posts.map((post) => <li><a href={post.data.path}>{post.data.path}</a></li>)}
+</ul>

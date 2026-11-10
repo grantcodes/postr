@@ -1,0 +1,47 @@
+{
+  "name": "@postr/astro",
+  "version": "0.0.0",
+  "description": "Astro content loaders for Postr posts",
+  "keywords": [
+    "astro-loader",
+    "indieweb",
+    "micropub",
+    "postr",
+    "withastro"
+  ],
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "license": "ISC",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grantcodes/postr.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "test": "node --conditions=@postr/source --test \"test/**/*.test.ts\""
+  },
+  "devDependencies": {
+    "@postr/core": "workspace:^",
+    "@types/node": "^24.19.2",
+    "astro": "^7.4.5",
+    "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "@postr/core": "workspace:^",
+    "astro": "^6.0.0 || ^7.0.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
