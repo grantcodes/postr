@@ -1,6 +1,6 @@
 {
   "name": "@postr/syndicator-superfeedr",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "description": "Superfeedr syndication plugin",
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",

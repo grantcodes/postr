@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0-alpha.3](https://github.com/grantcodes/postr/compare/plugin-feeds-v2.0.0-alpha.2...plugin-feeds-v2.0.0-alpha.3) (2026-11-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.3
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.3
+
 ## [2.0.0-alpha.2](https://github.com/grantcodes/postr/compare/plugin-feeds-v2.0.0-alpha.1...plugin-feeds-v2.0.0-alpha.2) (2026-11-10)
 
 

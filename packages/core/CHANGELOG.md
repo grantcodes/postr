@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0-alpha.3](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.2...core-v2.0.0-alpha.3) (2026-11-10)
+
+
+### Bug Fixes
+
+* **core:** skip deleted legacy duplicates of deleted posts ([430fbb5](https://github.com/grantcodes/postr/commit/430fbb5f6292c485f3c6ed6d68daa4a07b0c3540))
+* **core:** skip deleted legacy duplicates of deleted posts ([63f451b](https://github.com/grantcodes/postr/commit/63f451bdf940cee167669bd1c96c8d8481053970))
+
 ## [2.0.0-alpha.2](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.1...core-v2.0.0-alpha.2) (2026-11-10)
 
 
