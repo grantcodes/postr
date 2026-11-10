@@ -20,6 +20,8 @@ objects. To move your posts:
    If 1.x ran with `createdDateInPermalinks`, add `--created-date-in-permalinks`.
 
    Drop `--dry-run` to write the database. Ids, permalinks, dates, received webmentions and
-   deleted posts are kept; nothing is re-sent. `importLegacyPosts()` does the same from code.
-   A deleted post whose permalink a live post already uses is skipped and listed under
-   `skipped` in the report.
+   deleted posts are kept; nothing is re-sent. A deleted post whose permalink another post
+   already uses is skipped and listed under `skipped` in the report.
+
+   The CLI only knows the built-in post types. If you use custom ones, import from code with
+   `importLegacyPosts(postr, docs, options)`, passing a postr instance created with your plugins.
