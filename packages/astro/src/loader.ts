@@ -63,8 +63,11 @@ export function toRendered(data: ReturnType<typeof toEntryData>) {
   return data.content && { html: data.content.html }
 }
 
+/** Annotated so the declaration names `typeof postSchema` instead of inlining `zod` types. */
+export type PostrLoader = Loader & { schema: typeof postSchema }
+
 /** Build-time content loader for `src/content.config.ts`. */
-export function postrLoader(options: PostrLoaderOptions) {
+export function postrLoader(options: PostrLoaderOptions): PostrLoader {
   const query = { postType: options.postType, category: options.category }
   return {
     name: 'postr-loader',
