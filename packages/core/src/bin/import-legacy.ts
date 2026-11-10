@@ -10,7 +10,9 @@ const usage = `Usage: postr-import-legacy --dump <dump.json> --site-url <url> [-
 
 Imports a postr 1.x collection.dump() file. Run it with TZ set to the old server's timezone
 so permalink dates match. Pass --created-date-in-permalinks if 1.x ran with
-createdDateInPermalinks. --dry-run imports into memory and only prints the report.`
+createdDateInPermalinks. --dry-run imports into memory and only prints the report.
+Posts get the built-in post types; to apply custom ones, call importLegacyPosts() with a postr
+instance that has your plugins.`
 
 const { values } = parseArgs({
   options: {

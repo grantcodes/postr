@@ -25,7 +25,7 @@ export interface LegacyImportOptions {
 export interface LegacyImportReport {
   imported: number
   deleted: number
-  /** Deleted posts left out because a live post already has their permalink. */
+  /** Deleted posts left out because another post already has their permalink. */
   skipped: Array<{ id?: string; path: string }>
   failed: Array<{ id?: string; error: string }>
 }
@@ -110,7 +110,11 @@ export async function importLegacyPosts(
       // 1.x showed a post without `updated` as last changed when it was published.
       if (!properties.updated && properties.published) properties.updated = properties.published
       path = legacyPath(properties, options)
-      if (deleted && path && (await postr.posts.getByUrl(postr.siteUrl + path))) {
+      if (
+        deleted &&
+        path &&
+        (await postr.posts.getByUrl(postr.siteUrl + path, { includeDeleted: true }))
+      ) {
         report.skipped.push({ id: doc._id, path })
         continue
       }

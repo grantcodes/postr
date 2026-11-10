@@ -83,6 +83,8 @@ describe('importLegacyPosts', () => {
       postr,
       [
         entry('deleted-twin', { 'mp-slug': ['twin'], 'post-status': ['deleted'] }),
+        entry('deleted-a', { 'mp-slug': ['gone'], 'post-status': ['deleted'] }),
+        entry('deleted-b', { 'mp-slug': ['gone'], 'post-status': ['deleted'] }),
         entry('created', { 'mp-slug': ['watched'], created: ['2014-05-22T10:00:00Z'] }),
         entry('stored-url', {
           'mp-slug': ['moved'],
@@ -110,7 +112,10 @@ describe('importLegacyPosts', () => {
     )
 
     assert.deepEqual(report.failed, [])
-    assert.deepEqual(report.skipped, [{ id: 'deleted-twin', path: '/2019/08/28/twin' }])
+    assert.deepEqual(report.skipped, [
+      { id: 'deleted-twin', path: '/2019/08/28/twin' },
+      { id: 'deleted-b', path: '/2019/08/28/gone' },
+    ])
     const path = async (id: string) => (await postr.posts.get(id))?.path
     assert.equal(await path('created'), '/2014/05/22/watched')
     assert.equal((await postr.posts.get('created'))?.published, '2019-08-28T10:00:00Z')
