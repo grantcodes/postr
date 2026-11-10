@@ -19,6 +19,14 @@ on:
   push:
     branches:
       - dev
+  # Publishes already-released packages whose publish failed, at their
+  # current versions.
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: >-
+          JSON array of package paths to publish, e.g. ["packages/core"]
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -80,6 +88,7 @@ jobs:
       # ── Release-please ─────────────────────────────────────────────
 
       - uses: googleapis/release-please-action@v4
+        if: ${{ github.event_name == 'push' }}
         id: release
         with:
           manifest: true
@@ -90,7 +99,13 @@ jobs:
       # ── Publish released packages to npm tag `alpha` ───────────────
 
       - name: Publish released packages to alpha
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
+        if: >-
+          steps.release.outputs.releases_created == 'true' ||
+          (github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/dev')
         env:
-          PATHS_RELEASED: ${{ steps.release.outputs.paths_released }}
+          PATHS_RELEASED: >-
+            ${{ github.event_name == 'workflow_dispatch'
+            && inputs.paths
+            || steps.release.outputs.paths_released }}
         run: node scripts/publish-release-please-packages.ts alpha
