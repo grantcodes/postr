@@ -72,6 +72,42 @@ describe('importLegacyPosts', () => {
     assert.deepEqual(sent, [])
   })
 
+  it('keeps 1.x permalinks from stored urls and created dates, and cleans 1.x data', async () => {
+    const postr = testPostr()
+    const entry = (id: string, properties: LegacyDoc['properties']): LegacyDoc => ({
+      _id: id,
+      type: ['h-entry'],
+      properties: { published: ['2019-08-28T10:00:00Z'], ...properties },
+    })
+    const report = await importLegacyPosts(
+      postr,
+      [
+        entry('deleted-twin', { 'mp-slug': ['twin'], 'post-status': ['deleted'] }),
+        entry('created', { 'mp-slug': ['watched'], created: ['2014-05-22T10:00:00Z'] }),
+        entry('stored-url', {
+          'mp-slug': ['moved'],
+          url: ['{{siteBaseUrl}}/2015/01/02/moved'],
+        }),
+        entry('nulls', {
+          'mp-slug': ['nulls'],
+          'mp-syndicate-to': ['superfeedr', null as unknown as string],
+          category: ['a', null as unknown as string],
+        }),
+        entry('twin', { 'mp-slug': ['twin'] }),
+      ],
+      { siteBaseUrl: siteUrl, createdDateInPermalinks: true }
+    )
+
+    assert.deepEqual(report.failed, [])
+    assert.deepEqual(report.skipped, [{ id: 'deleted-twin', path: '/2019/08/28/twin' }])
+    const path = async (id: string) => (await postr.posts.get(id))?.path
+    assert.equal(await path('created'), '/2014/05/22/watched')
+    assert.equal((await postr.posts.get('created'))?.published, '2019-08-28T10:00:00Z')
+    assert.equal(await path('stored-url'), '/2015/01/02/moved')
+    assert.equal(await path('twin'), '/2019/08/28/twin')
+    assert.deepEqual((await postr.posts.get('nulls'))?.properties.category, ['a'])
+  })
+
   it('runs as a CLI with --dry-run', async () => {
     const dir = await tempDir()
     const dump = join(dir, 'dump.json')

@@ -5,10 +5,12 @@ import { importLegacyPosts, type LegacyDoc } from '../legacy-import.ts'
 import { createPostr } from '../postr.ts'
 
 const usage = `Usage: postr-import-legacy --dump <dump.json> --site-url <url> [--database <postr.db>]
-                          [--media-url <url>] [--permalink-pattern <pattern>] [--dry-run]
+                          [--media-url <url>] [--permalink-pattern <pattern>]
+                          [--created-date-in-permalinks] [--dry-run]
 
 Imports a postr 1.x collection.dump() file. Run it with TZ set to the old server's timezone
-so permalink dates match. --dry-run imports into memory and only prints the report.`
+so permalink dates match. Pass --created-date-in-permalinks if 1.x ran with
+createdDateInPermalinks. --dry-run imports into memory and only prints the report.`
 
 const { values } = parseArgs({
   options: {
@@ -17,6 +19,7 @@ const { values } = parseArgs({
     'site-url': { type: 'string' },
     'media-url': { type: 'string' },
     'permalink-pattern': { type: 'string' },
+    'created-date-in-permalinks': { type: 'boolean', default: false },
     'dry-run': { type: 'boolean', default: false },
     help: { type: 'boolean', default: false },
   },
@@ -56,6 +59,7 @@ const report = await importLegacyPosts(postr, docs, {
   siteBaseUrl: siteUrl,
   mediaBaseUrl: values['media-url'],
   permalinkPattern: values['permalink-pattern'],
+  createdDateInPermalinks: values['created-date-in-permalinks'],
 })
 postr.close()
 
