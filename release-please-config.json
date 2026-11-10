@@ -18,6 +18,9 @@
     },
     "packages/syndicator-telegram": {
       "release-type": "node"
+    },
+    "packages/astro": {
+      "release-type": "node"
     }
   }
 }

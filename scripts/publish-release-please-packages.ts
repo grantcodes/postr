@@ -28,6 +28,7 @@ const ROOT = resolve(__dirname, '..')
 // unknown released paths. The paths here must match the keys in
 // .release-please-manifest.json and release-please-config.json.
 const PACKAGE_MAP: Record<string, string> = {
+  'packages/astro': '@postr/astro',
   'packages/core': '@postr/core',
   'packages/plugin-feeds': '@postr/plugin-feeds',
   'packages/plugin-webmention-endpoint': '@postr/plugin-webmention-endpoint',

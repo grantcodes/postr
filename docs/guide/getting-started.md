@@ -39,6 +39,8 @@ export const POST = postr.fetch
 
 Postr does not serve the media directory; serve `media.dir` at `media.url` yourself.
 
+To build an Astro site from your posts, use the [Astro content loaders](./astro.md).
+
 ### Options
 
 | Option                  | Default                    | Description                                                                                                                    |
@@ -57,6 +59,7 @@ Postr does not serve the media directory; serve `media.dir` at `media.url` yours
 | `downloadExternalMedia` | `true`                     | Copy external `photo`, `video` and `audio` URLs into the media store when a post is created.                                   |
 | `micropubConfig`        | `{}`                       | Extra values merged into the `q=config` response.                                                                              |
 | `runJobs`               | `true`                     | Run queued webmentions, reference fetches and syndication in the background.                                                   |
+| `readOnly`              | `false`                    | Open an existing database read-only: no migrations, no jobs, and every write fails with `forbidden`.                           |
 | `logger`                | `console`                  | Any object with `info`, `warn` and `error`.                                                                                    |
 | `fetch`                 | global `fetch`             | Used for every outgoing request.                                                                                               |
 

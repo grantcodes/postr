@@ -18,6 +18,7 @@ export default defineConfig({
           { text: 'Getting started', link: '/guide/getting-started' },
           { text: 'Posts API', link: '/guide/posts-api' },
           { text: 'Plugins', link: '/guide/plugins' },
+          { text: 'Astro', link: '/guide/astro' },
           { text: 'Migrating from 1.x', link: '/guide/migrating' },
         ],
       },

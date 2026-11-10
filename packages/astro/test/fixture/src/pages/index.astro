@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content'
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.published.getTime() - a.data.published.getTime()
+)
+---
+
+<ul>
+  {posts.map((post) => <li><a href={post.data.path}>{post.data.name ?? post.data.content?.text}</a></li>)}
+</ul>

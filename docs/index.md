@@ -20,6 +20,8 @@ features:
     details: createPostr() returns a typed posts API and a fetch handler that drops into Node, Next.js or Astro.
   - title: Side effects that retry
     details: Webmentions, reference fetching and syndication run on a durable job queue with backoff.
+  - title: Astro content collections
+    details: Load posts into Astro at build time or per request, from the database or a running postr server.
   - title: Plugins
     details: Feeds, a webmention endpoint, and syndication to Telegram, Instagram and WebSub hubs.
 ---
