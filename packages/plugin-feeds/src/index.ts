@@ -70,7 +70,10 @@ export function feeds(options: FeedsOptions): PostrPlugin {
       async function handle(c: Context) {
         const format = c.req.param('format') as Format
         if (!formats.includes(format)) return c.notFound()
-        const page = Math.max(Number(c.req.param('page') ?? c.req.query('page')) || 1, 1)
+        const page = Math.max(
+          Math.trunc(Number(c.req.param('page') ?? c.req.query('page'))) || 1,
+          1
+        )
         const posts = await ctx.postr.posts.list({
           limit,
           offset: (page - 1) * limit,

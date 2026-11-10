@@ -16,7 +16,7 @@ export interface Mf2Item extends Mf2Object {
 
 const mf2Value = z.union([z.string(), z.number(), z.boolean(), z.looseObject({})])
 
-export const mf2PropertiesSchema = z.record(z.string(), z.array(mf2Value))
+const mf2PropertiesSchema = z.record(z.string(), z.array(mf2Value))
 
 /** Micropub create payload in mf2 JSON shape. */
 export const mf2InputSchema = z.object({

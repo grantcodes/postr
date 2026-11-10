@@ -59,13 +59,17 @@ export function createJobQueue(db: Database, log: Logger, autoRun: boolean) {
     return running
   }
 
+  // An unhandled rejection here (closed or busy database) would exit the process.
+  const runInBackground = () =>
+    void runDue().catch((err: unknown) => log.error(`[postr] job run failed: ${String(err)}`))
+
   return {
     register(type: string, handler: JobHandler) {
       handlers.set(type, handler)
     },
     async enqueue(type: string, payload: unknown) {
       await db.insert(jobs).values({ type, payload, runAt: Date.now() })
-      if (autoRun) setImmediate(() => void runDue())
+      if (autoRun) setImmediate(runInBackground)
     },
     runDue,
     /** Waits for any in-flight run, then drains due jobs. */
@@ -75,9 +79,9 @@ export function createJobQueue(db: Database, log: Logger, autoRun: boolean) {
     },
     start() {
       if (!autoRun || timer) return
-      timer = setInterval(() => void runDue(), baseDelayMs)
+      timer = setInterval(runInBackground, baseDelayMs)
       timer.unref()
-      setImmediate(() => void runDue())
+      setImmediate(runInBackground)
     },
     stop() {
       clearInterval(timer)

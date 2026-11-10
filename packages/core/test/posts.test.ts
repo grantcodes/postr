@@ -186,7 +186,7 @@ describe('posts.list', () => {
     })
     const draft = await postr.posts.create({
       type: ['h-entry'],
-      properties: { content: ['d'], 'post-status': ['draft'] },
+      properties: { content: ['d'], 'post-status': ['draft'], category: ['z'] },
     })
     const ids = (posts: Array<{ id: string }>) => posts.map((p) => p.id).sort()
 
@@ -202,6 +202,7 @@ describe('posts.list', () => {
     )
     assert.equal((await postr.posts.list({ limit: 1, offset: 1 })).length, 1)
     assert.deepEqual(await postr.posts.categories(), ['x', 'y'])
+    assert.deepEqual(await postr.posts.categories({ includeHidden: true }), ['x', 'y', 'z'])
   })
 
   it('searches name, summary, content and category text', async () => {

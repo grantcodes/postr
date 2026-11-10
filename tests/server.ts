@@ -37,5 +37,6 @@ const app = new Hono()
 app.use('/media/*', serveStatic({ root: dir }))
 app.route('/', postr.app)
 
-serve({ fetch: app.fetch, port })
+// dangerousAllowAll: keep it off the LAN.
+serve({ fetch: app.fetch, port, hostname: 'localhost' })
 console.log(`Postr test server listening at ${origin}/micropub`)

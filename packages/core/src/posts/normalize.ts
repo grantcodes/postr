@@ -5,8 +5,8 @@ import { formatContent } from './content.ts'
 import { generateSlug } from './permalink.ts'
 import { discoverPostType, type PostTypeDefinition } from './post-type.ts'
 
-export const statuses = ['published', 'draft'] as const
-export const visibilities = ['public', 'unlisted', 'private'] as const
+const statuses = ['published', 'draft'] as const
+const visibilities = ['public', 'unlisted', 'private'] as const
 
 export type PostStatus = (typeof statuses)[number]
 export type PostVisibility = (typeof visibilities)[number]
