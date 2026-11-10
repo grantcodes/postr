@@ -70,6 +70,36 @@ describe('feeds plugin', () => {
     assert.equal((await get('/nope')).status, 404)
   })
 
+  it('limits the main feeds to the postTypes option', async () => {
+    const postr = createPostr({
+      siteUrl: 'https://example.com',
+      endpointUrl: 'https://example.com/micropub',
+      database: ':memory:',
+      auth: { dangerousToken: 't' },
+      runJobs: false,
+      fetchReferences: false,
+      plugins: [feeds({ author: { name: 'Grant' }, postTypes: ['note', 'article'] })],
+    })
+    const note = await postr.posts.create({
+      type: ['h-entry'],
+      properties: { content: ['A note'] },
+    })
+    await postr.posts.create({
+      type: ['h-entry'],
+      properties: { 'like-of': ['https://them.example/post'] },
+    })
+    const get = async (path: string) =>
+      (await (
+        await postr.fetch(new Request(`https://example.com/micropub/plugin/feeds${path}`))
+      ).json()) as { items: Array<{ properties: { url: string[] } }> }
+
+    assert.deepEqual(
+      (await get('/mf2json')).items.map((i) => i.properties.url[0]),
+      [note.url]
+    )
+    assert.equal((await get('/mf2json/type/like')).items.length, 1)
+  })
+
   it('escapes plain-text content', async () => {
     const postr = createPostr({
       siteUrl: 'https://example.com',

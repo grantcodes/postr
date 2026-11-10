@@ -11,6 +11,8 @@ export interface FeedsOptions {
   title?: string
   /** Posts per page. Default 50. */
   limit?: number
+  /** Post types in the main and category feeds, e.g. `['note', 'article', 'photo']`. Default all. */
+  postTypes?: string[]
 }
 
 const formats = ['mf2json', 'jf2', 'rss', 'atom', 'json'] as const
@@ -71,7 +73,7 @@ export function feeds(options: FeedsOptions): PostrPlugin {
         const posts = await ctx.postr.posts.list({
           limit,
           offset: (page - 1) * limit,
-          postType: c.req.param('postType'),
+          postType: c.req.param('postType') ?? options.postTypes,
           category: c.req.param('category'),
         })
         if (!posts.length) return c.json({ error: 'No posts found' }, 404)
