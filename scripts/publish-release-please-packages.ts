@@ -123,6 +123,7 @@ function main() {
 
   // 4. Publish each released package
   console.log(`\nPublishing with dist-tag "${distTag}" ...`)
+  const failed: string[] = []
   for (const pkgPath of releasedPaths) {
     const pkgName = PACKAGE_MAP[pkgPath]
     const version = getPackageVersion(pkgPath)
@@ -142,9 +143,11 @@ function main() {
       )
       console.log(`  ✓ ${pkgName}@${version} published to tag "${distTag}"`)
     } catch (err) {
-      fail(`Failed to publish ${pkgName}@${version}: ${(err as Error).message}`)
+      console.error(`  ✗ ${pkgName}@${version}: ${(err as Error).message}`)
+      failed.push(`${pkgName}@${version}`)
     }
   }
+  if (failed.length) fail(`Failed to publish ${failed.join(', ')}`)
 
   console.log('\nAll released packages published successfully.')
 }
