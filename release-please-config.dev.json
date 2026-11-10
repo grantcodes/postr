@@ -13,6 +13,8 @@
     "packages/syndicator-instagram": {},
     "packages/syndicator-superfeedr": {},
     "packages/syndicator-telegram": {},
-    "packages/astro": {}
+    "packages/astro": {
+      "initial-version": "0.1.0-alpha.0"
+    }
   }
 }

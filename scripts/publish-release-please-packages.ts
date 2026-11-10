@@ -97,7 +97,10 @@ function main() {
   }
   console.log(`Processing ${releasedPaths.length} released package(s): ${releasedPaths.join(', ')}`)
 
-  // 3. Validate every released path
+  // 3. Validate every released path. A version that doesn't fit the dist-tag is skipped,
+  // so one bad release doesn't block publishing the others.
+  const failed: string[] = []
+  const publishable: string[] = []
   for (const pkgPath of releasedPaths) {
     if (!PACKAGE_MAP[pkgPath]) {
       fail(
@@ -109,23 +112,27 @@ function main() {
 
     // Guard: the dev branch (alpha tag) must only publish alpha versions
     if (distTag === 'alpha' && !version.includes('-alpha')) {
-      fail(
-        `Package ${PACKAGE_MAP[pkgPath]}@${version} is NOT an alpha version but dist-tag is "alpha". Refusing to publish.`
+      console.error(
+        `ERROR: Package ${PACKAGE_MAP[pkgPath]}@${version} is NOT an alpha version but dist-tag is "alpha". Skipping it.`
       )
+      failed.push(`${PACKAGE_MAP[pkgPath]}@${version}`)
+      continue
     }
 
     // Guard: stable (latest tag) must NOT produce prerelease versions
     if (distTag === 'latest' && isPrereleaseVersion(version)) {
-      fail(
-        `Package ${PACKAGE_MAP[pkgPath]}@${version} IS a prerelease version but dist-tag is "latest". Refusing to publish.`
+      console.error(
+        `ERROR: Package ${PACKAGE_MAP[pkgPath]}@${version} IS a prerelease version but dist-tag is "latest". Skipping it.`
       )
+      failed.push(`${PACKAGE_MAP[pkgPath]}@${version}`)
+      continue
     }
+    publishable.push(pkgPath)
   }
 
   // 4. Publish each released package
   console.log(`\nPublishing with dist-tag "${distTag}" ...`)
-  const failed: string[] = []
-  for (const pkgPath of releasedPaths) {
+  for (const pkgPath of publishable) {
     const pkgName = PACKAGE_MAP[pkgPath]
     const version = getPackageVersion(pkgPath)
     console.log(`  Publishing ${pkgName}@${version} --tag ${distTag} ...`)
