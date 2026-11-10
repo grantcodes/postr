@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0-alpha.1](https://github.com/grantcodes/postr/compare/syndicator-instagram-v3.0.0-alpha.0...syndicator-instagram-v3.0.0-alpha.1) (2026-11-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.1
+
 ## [3.0.0-alpha.0](https://github.com/grantcodes/postr/compare/syndicator-instagram-v2.1.1-beta.0...syndicator-instagram-v3.0.0-alpha.0) (2026-11-10)
 
 

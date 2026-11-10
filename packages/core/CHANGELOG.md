@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0-alpha.1](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.0...core-v2.0.0-alpha.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **core:** keep 1.x permalinks and clean 1.x data in the legacy importer ([7a40fe6](https://github.com/grantcodes/postr/commit/7a40fe6062379057a30fb47378b84ede4a40d697))
+* **core:** keep 1.x permalinks and clean 1.x data in the legacy importer ([27868c9](https://github.com/grantcodes/postr/commit/27868c97963efc438708a3c0431771d30827aa33))
+
 ## [2.0.0-alpha.0](https://github.com/grantcodes/postr/compare/core-v1.10.3...core-v2.0.0-alpha.0) (2026-11-10)
 
 
