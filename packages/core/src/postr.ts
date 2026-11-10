@@ -22,12 +22,9 @@ export function createPostr(options: PostrOptions) {
   const jobs = createJobQueue(db, log, options.runJobs ?? true)
 
   let media: MediaStore | undefined
-  let mediaUrl: string | undefined
   if (options.media && isMediaStore(options.media)) media = options.media
-  else if (options.media) {
-    media = localMediaStore(options.media)
-    mediaUrl = options.media.url
-  }
+  else if (options.media) media = localMediaStore(options.media)
+  const mediaUrl = media?.url
 
   const userPlugins = options.plugins ?? []
   const ids = new Set<string>()
