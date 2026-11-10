@@ -1,25 +1,32 @@
 {
   "private": true,
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "license": "ISC",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test-server": "node tests/server.mjs",
+    "prepare": "vp config --no-agent",
     "build": "pnpm -r build",
-    "check": "pnpm run build && pnpm -r pack --dry-run"
+    "test": "pnpm -r test",
+    "test-server": "node tests/server.ts",
+    "check": "vp check && pnpm run build && pnpm run test && pnpm run check:packages",
+    "check:packages": "pnpm -r exec publint --strict && pnpm -r exec attw --pack . --profile esm-only --no-summary",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs"
   },
-  "packageManager": "pnpm@11.3.0",
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@hono/node-server": "^2.1.6",
+    "@types/node": "^24.19.2",
+    "hono": "^4.13.16",
+    "publint": "^0.3.25",
+    "typescript": "^7.0.2",
+    "vite-plus": "^1.4.0",
+    "vitepress": "2.0.0-alpha.21"
+  },
   "engines": {
     "node": ">=24"
   },
-  "homepage": "https://github.com/grantcodes/postr",
-  "bugs": "https://github.com/grantcodes/postr/issues",
-  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
-  "license": "ISC",
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true
-  },
-  "devDependencies": {
-    "vite-plus": "^0.1.24"
-  }
+  "packageManager": "pnpm@11.3.0"
 }

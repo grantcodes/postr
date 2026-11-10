@@ -17,7 +17,8 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # A cancelled run can leave tagged releases unpublished.
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -85,4 +86,4 @@ jobs:
         if: ${{ steps.release.outputs.releases_created == 'true' }}
         env:
           PATHS_RELEASED: ${{ steps.release.outputs.paths_released }}
-        run: node scripts/publish-release-please-packages.mjs latest
+        run: node scripts/publish-release-please-packages.ts latest

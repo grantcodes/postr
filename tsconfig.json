@@ -1,18 +1,7 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "allowJs": true,
-    "checkJs": false,
-    "noEmit": true,
-    "strict": false,
-    "skipLibCheck": true
+    "noEmit": true
   },
-  "include": [
-    "packages/*/lib/**/*.js",
-    "packages/*/schema/**/*.js",
-    "packages/plugin/src/**/*.ts",
-    "packages/core/src/**/*.mts"
-  ]
+  "include": ["scripts", "tests", "vite.config.ts", "docs/.vitepress/**/*.ts"]
 }

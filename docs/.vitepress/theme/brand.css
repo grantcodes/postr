@@ -1,0 +1,14 @@
+/* The purple from the original postr site. */
+:root {
+  --vp-c-brand-1: #6142a5;
+  --vp-c-brand-2: #7454bd;
+  --vp-c-brand-3: #6142a5;
+  --vp-c-brand-soft: rgb(97 66 165 / 14%);
+}
+
+.dark {
+  --vp-c-brand-1: #b49cf0;
+  --vp-c-brand-2: #9f83e6;
+  --vp-c-brand-3: #7454bd;
+  --vp-c-brand-soft: rgb(180 156 240 / 16%);
+}

@@ -1,17 +1,15 @@
-# Dev prerelease workflow: release-please + OIDC publish to npm tag `next`
+# Alpha release workflow: release-please + OIDC publish to npm tag `alpha`
 #
 # Flow:
 #   - Pushes to `dev` ⟶ release-please opens/updates a Release PR against `dev`
-#   - Merging that Release PR to `dev` ⟶ release-please creates GitHub Releases + tags
-#   - Only when releases_created=true do we publish to npm with tag `next`
+#   - Merging that Release PR to `dev` ⟶ GitHub Releases + tags are created
+#   - Only when releases_created=true do we publish to npm with tag `alpha`
 #   - Uses npm trusted publishing via OIDC (no long-lived tokens)
 #
-# NOTE — version suffix vs dist-tag:
-#   The release-please config uses `"prerelease": true` (boolean), which derives
-#   the prerelease identifier from the branch name. On the `dev` branch the version
-#   suffix is `-dev.N` (e.g. 1.10.4-dev.0). The npm dist-tag is independently set
-#   to `next` in the publish script below. These are orthogonal concerns: consumers
-#   install with `npm i @postr/core@next` and get the latest dev build.
+# Versions come from release-please-config.dev.json (`versioning: prerelease`,
+# `prerelease-type: alpha.0`): 2.0.0-alpha.0, 2.0.0-alpha.1, …
+# The `alpha` dist-tag keeps `npm i @postr/core` on `latest`; alphas need
+# `npm i @postr/core@alpha`.
 #
 # Reference: https://github.com/googleapis/release-please-action
 
@@ -24,7 +22,8 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # A cancelled run can leave tagged releases unpublished.
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -63,15 +62,18 @@ jobs:
       - name: Guard - No npm token-based auth (must use OIDC only)
         run: |
           if [ -n "${NODE_AUTH_TOKEN:-}" ] || [ -n "${NPM_TOKEN:-}" ]; then
-            echo 'ERROR: npm token environment variables detected. Dev release must use OIDC trusted publishing only.'
+            echo 'ERROR: npm token environment variables detected.'
+            echo 'Alpha releases must use OIDC trusted publishing only.'
             exit 1
           fi
           echo 'OK: No npm token environment variables present'
 
       - name: Guard - OIDC prerequisites available
         run: |
-          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ] && [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
-            echo 'ERROR: OIDC token request env vars not found. Ensure id-token: write permission is set.'
+          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ] &&
+            [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo 'ERROR: OIDC token request env vars not found.'
+            echo 'Ensure the id-token: write permission is set.'
             exit 1
           fi
           echo 'OK: OIDC environment available'
@@ -86,10 +88,10 @@ jobs:
           config-file: release-please-config.dev.json
           manifest-file: .release-please-manifest.json
 
-      # ── Publish released packages to npm tag `next` ───────────────
+      # ── Publish released packages to npm tag `alpha` ───────────────
 
-      - name: Publish released packages to next
+      - name: Publish released packages to alpha
         if: ${{ steps.release.outputs.releases_created == 'true' }}
         env:
           PATHS_RELEASED: ${{ steps.release.outputs.paths_released }}
-        run: node scripts/publish-release-please-packages.mjs next
+        run: node scripts/publish-release-please-packages.ts alpha

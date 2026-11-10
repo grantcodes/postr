@@ -6,13 +6,6 @@ packages:
 # the deprecated "pnpm" key in package.json.
 # See https://pnpm.io/settings
 
-# Allow git-resolved subdependencies (needed by @postlight/mercury-parser@2.2.1)
-# which depends on difflib and browser-request from github:postlight forks.
-blockExoticSubdeps: false
-
-# Approve specific packages to run build scripts
+# sharp ships prebuilt binaries, so its install script is not needed.
 allowBuilds:
-  core-js: false
-  leveldown: false
-  rxdb: false
   sharp: false

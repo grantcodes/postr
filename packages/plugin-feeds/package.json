@@ -2,33 +2,40 @@
   "name": "@postr/plugin-feeds",
   "version": "1.0.0-beta.3",
   "description": "A plugin for Postr to automatically provide a variety of feeds",
-  "type": "module",
-  "main": "index.js",
-  "exports": {
-    ".": "./index.js"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "homepage": "https://github.com/grantcodes/postr",
+  "bugs": "https://github.com/grantcodes/postr/issues",
+  "license": "ISC",
+  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/grantcodes/postr.git"
   },
-  "engines": {
-    "node": ">=24"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "test": "node --conditions=@postr/source --test \"test/**/*.test.ts\""
   },
   "dependencies": {
-    "@postr/plugin": "workspace:^1.0.0",
-    "express": "^4.17.1",
-    "feed": "^4.2.2"
+    "feed": "^6.0.0"
   },
-  "homepage": "https://github.com/grantcodes/postr",
-  "bugs": "https://github.com/grantcodes/postr/issues",
-  "author": "Grant Richmond <mail@grant.codes> (https://grant.codes)",
-  "license": "ISC",
-  "prettier": {
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true
+  "devDependencies": {
+    "@postr/core": "workspace:^",
+    "@types/node": "^24.19.2",
+    "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "@postr/core": "workspace:^"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
