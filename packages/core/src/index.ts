@@ -25,7 +25,7 @@ export type {
   PostService,
 } from './posts/service.ts'
 export type { PostStatus, PostVisibility } from './posts/normalize.ts'
-export type { PostTypeDefinition } from './posts/post-type.ts'
+export { discoverPostType, builtInPostTypes, type PostTypeDefinition } from './posts/post-type.ts'
 export {
   firstString,
   urlValues,

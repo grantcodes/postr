@@ -18,8 +18,9 @@ export function createPostr(options: PostrOptions) {
   const siteUrl = options.siteUrl.replace(/\/$/, '')
   const log = options.logger ?? console
   const fetchFn = options.fetch ?? fetch
-  const db = openDatabase(options.database ?? 'postr.db')
-  const jobs = createJobQueue(db, log, options.runJobs ?? true)
+  const readOnly = options.readOnly ?? false
+  const db = openDatabase(options.database ?? 'postr.db', { readOnly })
+  const jobs = createJobQueue(db, log, !readOnly && (options.runJobs ?? true))
 
   let media: MediaStore | undefined
   let mediaUrl: string | undefined
@@ -71,6 +72,7 @@ export function createPostr(options: PostrOptions) {
     siteUrl,
     permalinkPattern: options.permalinkPattern ?? '/:year/:month/:day/:slug',
     formatContent: options.formatContent ?? true,
+    readOnly,
     postTypes,
     async beforeSave(item, action, previous) {
       for (const plugin of plugins) {
@@ -95,6 +97,7 @@ export function createPostr(options: PostrOptions) {
     media,
     authenticate: createAuthenticator(options.auth, siteUrl, fetchFn),
     endpointUrl: options.endpointUrl,
+    readOnly,
     postTypes,
     syndicateTo: () =>
       userPlugins.flatMap((plugin) =>
@@ -112,6 +115,8 @@ export function createPostr(options: PostrOptions) {
   })
 
   const postr = {
+    /** `siteUrl` without a trailing slash. */
+    siteUrl,
     posts,
     media,
     /** Hono app serving Micropub at the `endpointUrl` path, plus plugin routes. */

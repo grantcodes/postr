@@ -12,6 +12,7 @@ export interface MicropubDeps {
   media?: MediaStore
   authenticate: (token: string | undefined) => Promise<TokenInfo>
   endpointUrl: string
+  readOnly?: boolean
   postTypes: () => PostTypeDefinition[]
   syndicateTo: () => Array<{ uid: string; name: string; checked?: boolean }>
   micropubConfig: Record<string, unknown>
@@ -86,6 +87,10 @@ export function createMicropubApp(deps: MicropubDeps) {
     console.error('[postr]', err)
     return c.json({ error: 'server_error', error_description: 'Internal server error' }, 500)
   })
+
+  function assertWritable() {
+    if (deps.readOnly) throw new PostrError('forbidden', 'postr is read-only')
+  }
 
   app.use('/', cors())
   app.use('/media', cors())
@@ -175,6 +180,7 @@ export function createMicropubApp(deps: MicropubDeps) {
         })
       : await c.req.parseBody({ all: true })
     const token = await deps.authenticate(bearerToken(c, body))
+    assertWritable()
 
     const action = asArray(body.action)[0]
     if (action !== undefined) {
@@ -214,6 +220,7 @@ export function createMicropubApp(deps: MicropubDeps) {
   app.post('/media', async (c) => {
     const body = await c.req.parseBody()
     requireScope(await deps.authenticate(bearerToken(c, body)), 'media')
+    assertWritable()
     if (!deps.media) throw new PostrError('invalid_request', 'Media uploads are not enabled')
     const file = body.file
     if (!(file instanceof File)) throw new PostrError('invalid_request', 'Missing file')

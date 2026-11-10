@@ -27,6 +27,11 @@ export interface PostrOptions {
   downloadExternalMedia?: boolean
   /** Extra values merged into the Micropub `q=config` response. */
   micropubConfig?: Record<string, unknown>
+  /**
+   * Open an already migrated database read-only: no migrations, no jobs, and every write
+   * (posts API, Micropub POST, media upload) fails with `forbidden`. Default `false`.
+   */
+  readOnly?: boolean
   /** Run queued jobs automatically. Default `true`; tests call `postr.jobs.runDue()` instead. */
   runJobs?: boolean
   logger?: Logger

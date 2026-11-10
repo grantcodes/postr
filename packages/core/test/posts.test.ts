@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { PostrError, type PostrPlugin, type SaveEvent } from '../src/index.ts'
-import { siteUrl, testPostr } from './helpers.ts'
+import { join } from 'node:path'
+import { endpointUrl, fakeFetch, siteUrl, tempDir, testPostr } from './helpers.ts'
 
 describe('posts.create', () => {
   it('stores a note with defaults, formatted content and hashtags', async () => {
@@ -305,5 +306,51 @@ describe('plugin hooks', () => {
 
   it('rejects duplicate plugin ids', () => {
     assert.throws(() => testPostr({ plugins: [{ id: 'a' }, { id: 'a' }] }), /duplicate plugin id/)
+  })
+})
+
+describe('readOnly', () => {
+  it('reads a migrated database but rejects every write and runs no jobs', async () => {
+    const database = join(await tempDir(), 'postr.db')
+    const writer = testPostr({ database })
+    const post = await writer.posts.create({
+      type: ['h-entry'],
+      properties: { content: ['Hello search'], 'in-reply-to': ['https://other.example/post'] },
+    })
+    writer.close()
+
+    const fetch = fakeFetch()
+    const reader = testPostr({ database, readOnly: true, runJobs: true, fetch })
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    assert.equal(fetch.requests.length, 0)
+
+    assert.equal((await reader.posts.get(post.id))?.id, post.id)
+    assert.deepEqual(
+      (await reader.posts.list({ search: 'search' })).map((p) => p.id),
+      [post.id]
+    )
+    const forbidden = { code: 'forbidden' }
+    await assert.rejects(
+      reader.posts.create({ type: ['h-entry'], properties: { content: ['x'] } }),
+      forbidden
+    )
+    await assert.rejects(reader.posts.update(post.id, { replace: { name: ['x'] } }), forbidden)
+    await assert.rejects(reader.posts.delete(post.id), forbidden)
+    await assert.rejects(reader.posts.undelete(post.id), forbidden)
+
+    const response = await reader.fetch(
+      new Request(endpointUrl, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: ['h-entry'], properties: { content: ['x'] } }),
+      })
+    )
+    assert.equal(response.status, 403)
+    reader.close()
+  })
+
+  it('fails to open a missing database', async () => {
+    const database = join(await tempDir(), 'missing.db')
+    assert.throws(() => testPostr({ database, readOnly: true }))
   })
 })
