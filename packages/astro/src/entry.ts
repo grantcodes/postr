@@ -1,17 +1,19 @@
 import {
   firstString,
-  htmlToText,
-  urlValues,
+  toPostView,
   type Mf2Item,
   type Mf2Properties,
-  type Mf2Value,
+  type PostView,
 } from '@postr/core'
 import { z } from 'astro/zod'
 import type { SourceItem } from './source.ts'
 
 const isObject = (value: unknown) => typeof value === 'object' && value !== null
 
-/** Schema of `entry.data`. Extend it with `postSchema.extend({...})` for a custom collection schema. */
+/**
+ * Schema of `entry.data`: core's `PostView` plus the loader's fields. Extend it with
+ * `postSchema.extend({...})` for a custom collection schema.
+ */
 export const postSchema = z.object({
   url: z.string(),
   /** Permalink path, e.g. `/2026/06/04/hello`. */
@@ -44,69 +46,28 @@ export const postSchema = z.object({
 
 export type PostData = z.infer<typeof postSchema>
 
-const escapeHtml = (text: string) => text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`)
-
-function mediaUrl(value: Mf2Value): string | undefined {
-  if (typeof value === 'string') return value
-  if (isObject(value) && typeof value.value === 'string') return value.value
-  return undefined
-}
-
-const mediaUrls = (properties: Mf2Properties, key: string) =>
-  (properties[key] ?? []).map(mediaUrl).filter((url) => url !== undefined)
-
-function content(properties: Mf2Properties): PostData['content'] {
-  const value = properties.content?.[0]
-  if (typeof value === 'string') return { html: `<p>${escapeHtml(value)}</p>`, text: value }
-  if (!isObject(value)) return undefined
-  const html = typeof value.html === 'string' ? value.html : undefined
-  const text = typeof value.value === 'string' ? value.value : undefined
-  if (html !== undefined) return { html, text: text ?? htmlToText(html) }
-  if (text !== undefined) return { html: `<p>${escapeHtml(text)}</p>`, text }
-  return undefined
-}
-
-/** Projects a source item onto the friendly entry shape. */
-export function toEntryData({ item, url, path, postType, references }: SourceItem): PostData {
-  const { properties } = item
-  const body = content(properties)
-  const summary = firstString(properties, 'summary')
-  const featured = firstString(properties, 'featured')
-  const published = firstString(properties, 'published')
-  let name = firstString(properties, 'name')
-  // mf2 parsers imply a name from the text; it is not a real title when it repeats the content.
-  if (name && body && name.trim().toLowerCase() === body.text.trim().toLowerCase()) {
-    name = undefined
+type EntryShape = PostView &
+  Pick<SourceItem, 'url' | 'path' | 'postType' | 'references'> & {
+    properties: Mf2Properties
   }
+
+/** Fails to compile when `postSchema` and core's `PostView` drift apart. */
+type SchemaMatchesPostView = [PostData] extends [EntryShape]
+  ? [EntryShape] extends [PostData]
+    ? true
+    : never
+  : never
+true satisfies SchemaMatchesPostView
+
+/** Projects a source item onto the entry shape. */
+export function toEntryData({ item, url, path, postType, references }: SourceItem): PostData {
   return {
+    ...toPostView(item),
     url,
     path,
-    type: item.type[0] ?? 'h-entry',
     postType,
-    ...(name !== undefined && { name }),
-    ...(summary !== undefined && { summary }),
-    ...(body && { content: body }),
-    published: new Date(published ?? 0),
-    updated: new Date(firstString(properties, 'updated') ?? published ?? 0),
-    status: isDraft(item) ? 'draft' : 'published',
-    visibility: visibility(item),
-    categories: (properties.category ?? []).filter((value) => typeof value === 'string'),
-    photos: (properties.photo ?? []).flatMap((value) => {
-      const photoUrl = mediaUrl(value)
-      if (!photoUrl) return []
-      const alt = isObject(value) && typeof value.alt === 'string' ? value.alt : undefined
-      return [alt === undefined ? { url: photoUrl } : { url: photoUrl, alt }]
-    }),
-    videos: mediaUrls(properties, 'video'),
-    audio: mediaUrls(properties, 'audio'),
-    ...(featured !== undefined && { featured }),
-    inReplyTo: urlValues(properties, 'in-reply-to'),
-    likeOf: urlValues(properties, 'like-of'),
-    repostOf: urlValues(properties, 'repost-of'),
-    bookmarkOf: urlValues(properties, 'bookmark-of'),
-    syndication: urlValues(properties, 'syndication'),
     references,
-    properties,
+    properties: item.properties,
   }
 }
 
