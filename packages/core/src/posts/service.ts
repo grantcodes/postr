@@ -31,7 +31,8 @@ export interface ListOptions {
   offset?: number
   /** `desc` (newest first) by default. */
   order?: 'asc' | 'desc'
-  postType?: string
+  /** One post type, or several to match any of them. */
+  postType?: string | string[]
   category?: string
   /** Only posts that have all of these properties. */
   exists?: string[]
@@ -289,7 +290,11 @@ export function createPostService(deps: PostServiceDeps) {
     if (!options.includeHidden) {
       conditions.push(eq(posts.status, 'published'), eq(posts.visibility, 'public'))
     }
-    if (options.postType) conditions.push(eq(posts.postType, options.postType))
+    if (typeof options.postType === 'string') {
+      conditions.push(eq(posts.postType, options.postType))
+    } else if (options.postType?.length) {
+      conditions.push(inArray(posts.postType, options.postType))
+    }
     if (options.search?.trim()) {
       const match = toMatchQuery(options.search)
       if (!match) return []
@@ -345,6 +350,15 @@ export function createPostService(deps: PostServiceDeps) {
     return result
   }
 
+  /** Caches the h-entry of a URL posts respond to, as returned by `references()`. */
+  async function saveReference(url: string, entry: Mf2Item) {
+    const fetchedAt = new Date().toISOString()
+    await db
+      .insert(refs)
+      .values({ url, entry, fetchedAt })
+      .onConflictDoUpdate({ target: refs.url, set: { entry, fetchedAt, error: null } })
+  }
+
   return {
     create,
     update,
@@ -353,6 +367,7 @@ export function createPostService(deps: PostServiceDeps) {
     get,
     getByUrl,
     list,
+    saveReference,
     categories,
     references,
     toMf2,

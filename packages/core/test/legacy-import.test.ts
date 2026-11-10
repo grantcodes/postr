@@ -94,6 +94,17 @@ describe('importLegacyPosts', () => {
           category: ['a', null as unknown as string],
         }),
         entry('twin', { 'mp-slug': ['twin'] }),
+        {
+          ...entry('liked', { 'mp-slug': ['liked'], 'like-of': ['https://them.example/post'] }),
+          cms: {
+            references: [
+              {
+                type: ['h-entry'],
+                properties: { url: ['https://them.example/post'], name: ['Theirs'] },
+              },
+            ],
+          },
+        },
       ],
       { siteBaseUrl: siteUrl, createdDateInPermalinks: true }
     )
@@ -105,6 +116,13 @@ describe('importLegacyPosts', () => {
     assert.equal((await postr.posts.get('created'))?.published, '2019-08-28T10:00:00Z')
     assert.equal(await path('stored-url'), '/2015/01/02/moved')
     assert.equal(await path('twin'), '/2019/08/28/twin')
+    const liked = await postr.posts.get('liked')
+    assert.equal(liked?.updated, '2019-08-28T10:00:00Z')
+    assert.ok(liked)
+    assert.deepEqual(
+      (await postr.posts.references(liked))['https://them.example/post']?.properties.name,
+      ['Theirs']
+    )
     assert.deepEqual((await postr.posts.get('nulls'))?.properties.category, ['a'])
   })
 

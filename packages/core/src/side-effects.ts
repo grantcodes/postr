@@ -34,14 +34,10 @@ export function createSideEffects(options: SideEffectOptions): PostrPlugin {
   const ctx = () => options.getContext()
 
   jobs.register('fetch-reference', async ({ url }: { url: string }) => {
-    const fetchedAt = new Date().toISOString()
     try {
-      const entry = await fetchEntry(url, ctx().fetch)
-      await db
-        .insert(refs)
-        .values({ url, entry, fetchedAt })
-        .onConflictDoUpdate({ target: refs.url, set: { entry, fetchedAt, error: null } })
+      await ctx().postr.posts.saveReference(url, await fetchEntry(url, ctx().fetch))
     } catch (err) {
+      const fetchedAt = new Date().toISOString()
       const error = err instanceof Error ? err.message : String(err)
       await db
         .insert(refs)

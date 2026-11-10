@@ -38,6 +38,8 @@ export const postSchema = z.object({
   repostOf: z.array(z.string()),
   bookmarkOf: z.array(z.string()),
   syndication: z.array(z.string()),
+  /** URLs of the posts in a collection (mf2 `children`). */
+  children: z.array(z.string()),
   /** Fetched h-entries of the URLs the post responds to, keyed by URL. Empty over HTTP. */
   references: z.custom<Record<string, Mf2Item>>(isObject),
   /** The full mf2 properties, as returned by `q=source`. */
