@@ -1,6 +1,6 @@
 {
   "name": "@postr/astro",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "Astro content loaders for Postr posts",
   "keywords": [
     "astro-loader",

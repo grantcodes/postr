@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0-alpha.2](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.1...core-v2.0.0-alpha.2) (2026-11-10)
+
+
+### Features
+
+* import 1.x references, keep collection children and filter feeds by post type ([d5d0a5f](https://github.com/grantcodes/postr/commit/d5d0a5fc51bfbceecfcaead7c3d4b427e4a30576))
+* import 1.x references, list several post types and keep collection children ([1a42569](https://github.com/grantcodes/postr/commit/1a42569d285b4c1764051ff3a9a92e9eee09a1e8))
+
 ## [2.0.0-alpha.1](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.0...core-v2.0.0-alpha.1) (2026-11-10)
 
 

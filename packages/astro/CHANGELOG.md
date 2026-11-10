@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.0-alpha.3](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.2...astro-v0.1.0-alpha.3) (2026-11-10)
+
+
+### Features
+
+* import 1.x references, keep collection children and filter feeds by post type ([d5d0a5f](https://github.com/grantcodes/postr/commit/d5d0a5fc51bfbceecfcaead7c3d4b427e4a30576))
+* import 1.x references, list several post types and keep collection children ([1a42569](https://github.com/grantcodes/postr/commit/1a42569d285b4c1764051ff3a9a92e9eee09a1e8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.2
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.2
+
 ## [0.1.0-alpha.2](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.1...astro-v0.1.0-alpha.2) (2026-11-10)
 
 

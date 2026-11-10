@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0-alpha.2](https://github.com/grantcodes/postr/compare/plugin-feeds-v2.0.0-alpha.1...plugin-feeds-v2.0.0-alpha.2) (2026-11-10)
+
+
+### Features
+
+* import 1.x references, keep collection children and filter feeds by post type ([d5d0a5f](https://github.com/grantcodes/postr/commit/d5d0a5fc51bfbceecfcaead7c3d4b427e4a30576))
+* **plugin-feeds:** add a postTypes option for the main feeds ([cd33f3f](https://github.com/grantcodes/postr/commit/cd33f3f08003a0827333c22e1bd5884361c93a7e))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.2
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.2
+
 ## [2.0.0-alpha.1](https://github.com/grantcodes/postr/compare/plugin-feeds-v2.0.0-alpha.0...plugin-feeds-v2.0.0-alpha.1) (2026-11-10)
 
 
