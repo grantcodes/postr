@@ -1,6 +1,6 @@
 {
   "name": "@postr/plugin-feeds",
-  "version": "2.0.0-alpha.2",
+  "version": "2.0.0-alpha.3",
   "description": "A plugin for Postr to automatically provide a variety of feeds",
   "homepage": "https://github.com/grantcodes/postr",
   "bugs": "https://github.com/grantcodes/postr/issues",
