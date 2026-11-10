@@ -30,6 +30,8 @@ export interface PostView {
   repostOf: string[]
   bookmarkOf: string[]
   syndication: string[]
+  /** URLs of the posts in a collection (mf2 `children`). */
+  children: string[]
 }
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
@@ -94,5 +96,6 @@ export function toPostView(item: Mf2Item): PostView {
     repostOf: urlValues(properties, 'repost-of'),
     bookmarkOf: urlValues(properties, 'bookmark-of'),
     syndication: urlValues(properties, 'syndication'),
+    children: (item.children ?? []).filter((child) => typeof child === 'string'),
   }
 }

@@ -20,7 +20,8 @@ createPostr({
 
 Serves public posts at `<endpoint>/plugin/feeds/<format>` where format is `rss`, `atom`, `json`
 (JSON Feed), `jf2` or `mf2json`. Append `/type/<post-type>`, `/category/<category>` or
-`/page/<n>` to filter or page. Options: `author` (required), `title`, `limit` (default 50).
+`/page/<n>` to filter or page. Options: `author` (required), `title`, `limit` (default 50), and `postTypes` to limit the
+main and category feeds to some post types, e.g. `['note', 'article', 'photo']`.
 
 ## Webmention endpoint
 

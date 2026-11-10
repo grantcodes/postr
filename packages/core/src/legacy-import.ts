@@ -1,4 +1,4 @@
-import type { Mf2Input, Mf2Properties } from './mf2.ts'
+import { urlValues, type Mf2Input, type Mf2Item, type Mf2Properties } from './mf2.ts'
 import type { Postr } from './postr.ts'
 
 /** A post document from a postr 1.x `collection.dump()`. */
@@ -7,6 +7,8 @@ export interface LegacyDoc {
   type: string[]
   properties: Mf2Properties
   children?: string[]
+  /** 1.x metadata; `references` holds the fetched h-entries of the URLs the post responds to. */
+  cms?: { references?: Mf2Item[] }
 }
 
 export interface LegacyImportOptions {
@@ -105,6 +107,8 @@ export async function importLegacyPosts(
       const properties = cleanProperties(replacePlaceholders(doc.properties, replacements))
       const deleted = isDeleted(doc)
       if (deleted) properties['post-status'] = ['published']
+      // 1.x showed a post without `updated` as last changed when it was published.
+      if (!properties.updated && properties.published) properties.updated = properties.published
       path = legacyPath(properties, options)
       if (deleted && path && (await postr.posts.getByUrl(postr.siteUrl + path))) {
         report.skipped.push({ id: doc._id, path })
@@ -119,6 +123,13 @@ export async function importLegacyPosts(
         path,
         deletedAt: deleted ? new Date().toISOString() : undefined,
       })
+      for (const reference of doc.cms?.references ?? []) {
+        const entry = replacePlaceholders(reference, replacements)
+        if (!entry?.properties) continue
+        for (const url of urlValues(entry.properties, 'url')) {
+          await postr.posts.saveReference(url, entry)
+        }
+      }
       report.imported++
       if (deleted) report.deleted++
     } catch (err) {
