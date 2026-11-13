@@ -67,7 +67,7 @@ To build an Astro site from your posts, use the [Astro content loaders](./astro.
 | `media.imageSizes`      | none                       | Resized copies, e.g. `{ thumbnail: [200, 200], large: [1800] }`, written as `name-thumbnail.jpg` and added to photos' `sizes`. Needs `sharp`. |
 | `plugins`               | `[]`                       | See [Plugins](./plugins.md).                                                                                                                  |
 | `formatContent`         | `true`                     | Treat plain content as Markdown and store `{ html, value }`; add `#hashtags` to `category`.                                                   |
-| `fetchReferences`       | `true`                     | Fetch and cache the posts you reply to, like, repost or bookmark.                                                                             |
+| `fetchReferences`       | `true`                     | Fetch and cache the posts you reply to, like, repost or bookmark, with their oEmbed data. `{ oembed: false }` skips oEmbed.                   |
 | `sendWebmentions`       | `true`                     | Send webmentions to every URL a post links to.                                                                                                |
 | `downloadExternalMedia` | `true`                     | Copy external `photo`, `video` and `audio` URLs into the media store when a post is created.                                                  |
 | `micropubConfig`        | `{}`                       | Extra values merged into the `q=config` response.                                                                                             |

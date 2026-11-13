@@ -38,7 +38,7 @@ export {
   type Mf2Value,
   type Mf2Object,
 } from './mf2.ts'
-export { fetchEntry, FetchError } from './services/fetch-entry.ts'
+export { fetchEntry, FetchError, type FetchEntryOptions } from './services/fetch-entry.ts'
 export { sendWebmention, discoverEndpoint } from './services/webmention.ts'
 export { htmlToText } from './posts/content.ts'
 export {

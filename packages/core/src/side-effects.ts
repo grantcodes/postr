@@ -17,7 +17,7 @@ interface SideEffectOptions {
   /** Adds recorded image dimensions to photos. */
   enrichPhotos: (photos: Mf2Value[]) => Promise<Mf2Value[]>
   plugins: PostrPlugin[]
-  fetchReferences: boolean
+  fetchReferences: boolean | { oembed?: boolean }
   sendWebmentions: boolean
   downloadExternalMedia: boolean
   getContext: () => PluginContext
@@ -36,9 +36,13 @@ export function createSideEffects(options: SideEffectOptions): PostrPlugin {
   const { jobs, db } = options
   const ctx = () => options.getContext()
 
+  const oembed =
+    typeof options.fetchReferences === 'object' ? options.fetchReferences.oembed : undefined
+
   jobs.register('fetch-reference', async ({ url }: { url: string }) => {
     try {
-      await ctx().postr.posts.saveReference(url, await fetchEntry(url, ctx().fetch))
+      const entry = await fetchEntry(url, ctx().fetch, { oembed })
+      await ctx().postr.posts.saveReference(url, entry)
     } catch (err) {
       const fetchedAt = new Date().toISOString()
       const error = err instanceof Error ? err.message : String(err)

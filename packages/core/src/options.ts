@@ -19,8 +19,11 @@ export interface PostrOptions {
   plugins?: PostrPlugin[]
   /** Convert plain/markdown content to `{ html, value }` and collect `#hashtags`. Default `true`. */
   formatContent?: boolean
-  /** Fetch and cache h-entry snapshots of referenced URLs. Default `true`. */
-  fetchReferences?: boolean
+  /**
+   * Fetch and cache h-entry snapshots of referenced URLs. Default `true`.
+   * `{ oembed: false }` fetches references without their oEmbed discovery link.
+   */
+  fetchReferences?: boolean | { oembed?: boolean }
   /** Send webmentions to linked URLs. Default `true`. */
   sendWebmentions?: boolean
   /** Copy external `photo`/`video`/`audio` URLs into the media store on create. Default `true`. */
