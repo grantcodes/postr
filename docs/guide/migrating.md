@@ -25,3 +25,13 @@ objects. To move your posts:
 
    The CLI only knows the built-in post types. If you use custom ones, import from code with
    `importLegacyPosts(postr, docs, options)`, passing a postr instance created with your plugins.
+
+3. With your 1.x media directory available as `media.dir` (and the same `imageSizes`), add image
+   dimensions to the imported photos. This needs `sharp`:
+
+   ```ts
+   const postr = createPostr({ ...options, media: { dir, url, imageSizes } })
+   console.log(await postr.media.backfill()) // { scanned, recorded, skipped, posts }
+   ```
+
+   See [Image dimensions](./getting-started.md#image-dimensions).

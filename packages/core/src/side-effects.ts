@@ -14,6 +14,8 @@ interface SideEffectOptions {
   jobs: JobQueue
   media?: MediaStore
   mediaUrl?: string
+  /** Adds recorded image dimensions to photos. */
+  enrichPhotos: (photos: Mf2Value[]) => Promise<Mf2Value[]>
   plugins: PostrPlugin[]
   fetchReferences: boolean | { oembed?: boolean }
   sendWebmentions: boolean
@@ -25,7 +27,8 @@ const isPublic = (event: SaveEvent['post']) =>
   !event.deletedAt && event.status === 'published' && event.visibility === 'public'
 
 /**
- * Built-in behaviour expressed as a plugin: external media download before save,
+ * Built-in behaviour expressed as a plugin: external media download and photo dimensions
+ * before save,
  * then queued reference fetching, webmentions and syndication after save.
  * Only changes with the `user` origin trigger it, so its own writes cannot loop.
  */
@@ -96,12 +99,15 @@ export function createSideEffects(options: SideEffectOptions): PostrPlugin {
   return {
     id: 'postr',
     async beforeSave(item: Mf2Item, { action }) {
-      if (action !== 'create' || !options.downloadExternalMedia || !options.media) return item
+      if (!options.media) return item
       const properties = { ...item.properties }
-      for (const key of ['photo', 'video', 'audio']) {
-        const values = properties[key]
-        if (values) properties[key] = await Promise.all(values.map(downloadMedia))
+      if (action === 'create' && options.downloadExternalMedia) {
+        for (const key of ['photo', 'video', 'audio']) {
+          const values = properties[key]
+          if (values) properties[key] = await Promise.all(values.map(downloadMedia))
+        }
       }
+      if (properties.photo) properties.photo = await options.enrichPhotos(properties.photo)
       return { ...item, properties }
     },
 

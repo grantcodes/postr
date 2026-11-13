@@ -29,7 +29,18 @@ export const postSchema = z.object({
   status: z.enum(['published', 'draft']),
   visibility: z.enum(['public', 'unlisted', 'private']),
   categories: z.array(z.string()),
-  photos: z.array(z.object({ url: z.string(), alt: z.string().optional() })),
+  photos: z.array(
+    z.object({
+      url: z.string(),
+      alt: z.string().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+      /** Resized copies by `imageSizes` name. */
+      sizes: z
+        .record(z.string(), z.object({ url: z.string(), width: z.number(), height: z.number() }))
+        .optional(),
+    })
+  ),
   videos: z.array(z.string()),
   audio: z.array(z.string()),
   featured: z.string().optional(),

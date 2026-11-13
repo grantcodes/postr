@@ -31,7 +31,13 @@ describe('postrLoader', () => {
     assert.equal(articleData.postType, 'photo')
     assert.deepEqual(articleData.categories, ['news'])
     assert.deepEqual(articleData.photos, [
-      { url: 'https://example.com/media/a.jpg', alt: 'A photo' },
+      {
+        url: 'https://example.com/media/a.jpg',
+        alt: 'A photo',
+        width: 1200,
+        height: 800,
+        sizes: { '600': { url: 'https://example.com/media/a-600.jpg', width: 600, height: 400 } },
+      },
     ])
     assert.equal((articleData.properties as Record<string, unknown[]>).category?.length, 2)
   })

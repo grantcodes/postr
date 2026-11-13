@@ -1,7 +1,8 @@
 import { Hono } from 'hono'
 import { openDatabase } from './db/index.ts'
 import { createJobQueue } from './jobs.ts'
-import { isMediaStore, localMediaStore, type MediaStore } from './media.ts'
+import { isMediaStore, localMediaStore, type MediaFile, type MediaStore } from './media.ts'
+import { createMediaLibrary } from './media-library.ts'
 import { createAuthenticator } from './micropub/auth.ts'
 import { createMicropubApp } from './micropub/app.ts'
 import type { PostrOptions } from './options.ts'
@@ -22,9 +23,15 @@ export function createPostr(options: PostrOptions) {
   const db = openDatabase(options.database ?? 'postr.db', { readOnly })
   const jobs = createJobQueue(db, log, !readOnly && (options.runJobs ?? true))
 
-  let media: MediaStore | undefined
-  if (options.media && isMediaStore(options.media)) media = options.media
-  else if (options.media) media = localMediaStore(options.media)
+  const local = options.media && !isMediaStore(options.media) ? options.media : undefined
+  const library = createMediaLibrary({ db, local, log, posts: () => posts })
+  const media: MediaStore | undefined =
+    options.media && isMediaStore(options.media)
+      ? options.media
+      : local &&
+        localMediaStore(local, async (file) => {
+          await library.record(file)
+        })
   const mediaUrl = media?.url
 
   const userPlugins = options.plugins ?? []
@@ -50,6 +57,7 @@ export function createPostr(options: PostrOptions) {
       jobs,
       media,
       mediaUrl,
+      enrichPhotos: library.enrichPhotos,
       plugins: userPlugins,
       fetchReferences: options.fetchReferences ?? true,
       sendWebmentions: options.sendWebmentions ?? true,
@@ -115,7 +123,15 @@ export function createPostr(options: PostrOptions) {
     /** `siteUrl` without a trailing slash. */
     siteUrl,
     posts,
-    media,
+    /**
+     * The media store, plus `backfill()`: records dimensions of existing local photos and
+     * adds them to posts. Needs local `media` options and sharp.
+     */
+    media: media && {
+      url: media.url,
+      save: (file: MediaFile) => media.save(file),
+      backfill: library.backfill,
+    },
     /** Hono app serving Micropub at the `endpointUrl` path, plus plugin routes. */
     app,
     /** Fetch handler for Node servers, Next.js route handlers or Astro endpoints. */

@@ -256,7 +256,7 @@ describe('Media endpoint', () => {
     assert.match(again.headers.get('location') ?? '', /passwd-1\.txt$/)
   })
 
-  it('writes configured image sizes for larger images', async () => {
+  it('writes configured image sizes for larger images and adds them to posts', async () => {
     const { default: sharp } = await import('sharp')
     const png = await sharp({
       create: { width: 40, height: 20, channels: 3, background: '#f00' },
@@ -288,6 +288,20 @@ describe('Media endpoint', () => {
       [10, 10]
     )
     await assert.rejects(readFile(small.replace('-small', '-huge')))
+
+    const post = await postr.posts.create({ type: ['h-entry'], properties: { photo: [location] } })
+    assert.deepEqual(post.properties.photo, [
+      {
+        value: location,
+        width: 40,
+        height: 20,
+        sizes: { small: { url: location.replace('.png', '-small.png'), width: 10, height: 10 } },
+      },
+    ])
+    const source = await (
+      await micropub(postr, `?q=source&properties[]=photo&url=${encodeURIComponent(post.url)}`)
+    ).json()
+    assert.deepEqual(source.properties.photo, post.properties.photo)
   })
 
   it('rejects uploads when media is not configured', async () => {
