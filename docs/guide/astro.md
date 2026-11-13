@@ -99,20 +99,20 @@ not thrown, and every result has a cache hint.
 `entry.id` is the post's permalink path without the leading slash, e.g. `2026/06/04/hello`.
 `entry.data` has:
 
-| Field                                           | Description                                                   |
-| ----------------------------------------------- | ------------------------------------------------------------- |
-| `url`, `path`                                   | Permalink and its path.                                       |
-| `type`, `postType`                              | mf2 type (`h-entry`) and discovered post type (`note`).       |
-| `name`, `summary`                               | Optional. `name` is dropped when it only repeats the content. |
-| `content`                                       | Optional `{ html, text }`.                                    |
-| `published`, `updated`                          | `Date`s.                                                      |
-| `status`, `visibility`                          | `published`/`draft` and `public`/`unlisted`/`private`.        |
-| `categories`                                    | Category names; person tags stay in `properties`.             |
-| `photos`, `videos`, `audio`, `featured`         | Media URLs; photos are `{ url, alt? }`.                       |
-| `inReplyTo`, `likeOf`, `repostOf`, `bookmarkOf` | URLs the post responds to.                                    |
-| `syndication`                                   | Syndicated copies.                                            |
-| `references`                                    | Fetched h-entries of those URLs, keyed by URL.                |
-| `properties`                                    | The full mf2 properties, as `q=source` returns them.          |
+| Field                                           | Description                                                      |
+| ----------------------------------------------- | ---------------------------------------------------------------- |
+| `url`, `path`                                   | Permalink and its path.                                          |
+| `type`, `postType`                              | mf2 type (`h-entry`) and discovered post type (`note`).          |
+| `name`, `summary`                               | Optional. `name` is dropped when it only repeats the content.    |
+| `content`                                       | Optional `{ html, text }`.                                       |
+| `published`, `updated`                          | `Date`s.                                                         |
+| `status`, `visibility`                          | `published`/`draft` and `public`/`unlisted`/`private`.           |
+| `categories`                                    | Category names; person tags stay in `properties`.                |
+| `photos`, `videos`, `audio`, `featured`         | Media URLs; photos are `{ url, alt?, width?, height?, sizes? }`. |
+| `inReplyTo`, `likeOf`, `repostOf`, `bookmarkOf` | URLs the post responds to.                                       |
+| `syndication`                                   | Syndicated copies.                                               |
+| `references`                                    | Fetched h-entries of those URLs, keyed by URL.                   |
+| `properties`                                    | The full mf2 properties, as `q=source` returns them.             |
 
 Posts with content have rendered HTML, so `render(entry)` and `<Content />` work.
 
@@ -199,4 +199,19 @@ Postr media URLs are absolute. To optimise them with `astro:assets`, allow the m
 <Image src={photo.url} alt={photo.alt ?? ''} inferSize />
 ```
 
-Otherwise use a plain `<img>`.
+Otherwise use a plain `<img>`. Photos in postr's local media store have `width`, `height` and
+`sizes` (the resized `imageSizes` copies), enough for a responsive image without layout shift:
+
+```astro
+<img
+  src={photo.url}
+  alt={photo.alt ?? ''}
+  width={photo.width}
+  height={photo.height}
+  srcset={Object.values(photo.sizes ?? {})
+    .map((size) => `${size.url} ${size.width}w`)
+    .concat(photo.width ? [`${photo.url} ${photo.width}w`] : [])
+    .join(', ') || undefined}
+  sizes="(min-width: 60rem) 60rem, 100vw"
+/>
+```

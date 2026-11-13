@@ -33,7 +33,15 @@ export async function seed(postr: ReturnType<typeof testPostr>) {
     name: ['An article'],
     content: ['Body text'],
     category: ['news', { type: ['h-card'], properties: { name: ['Someone'] } }],
-    photo: [{ value: 'https://example.com/media/a.jpg', alt: 'A photo' }],
+    photo: [
+      {
+        value: 'https://example.com/media/a.jpg',
+        alt: 'A photo',
+        width: 1200,
+        height: 800,
+        sizes: { '600': { url: 'https://example.com/media/a-600.jpg', width: 600, height: 400 } },
+      },
+    ],
     published: ['2026-01-02T10:00:00Z'],
   })
   const draft = await create({ content: ['draft'], 'post-status': ['draft'] })
