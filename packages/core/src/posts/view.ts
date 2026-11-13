@@ -7,6 +7,21 @@ export interface PostContent {
   text: string
 }
 
+export interface PhotoSize {
+  url: string
+  width: number
+  height: number
+}
+
+export interface PhotoView {
+  url: string
+  alt?: string
+  width?: number
+  height?: number
+  /** Resized copies by `imageSizes` name. */
+  sizes?: Record<string, PhotoSize>
+}
+
 /** A post's mf2 projected onto the fields templates and feeds need. */
 export interface PostView {
   /** mf2 type, e.g. `h-entry`. */
@@ -21,7 +36,8 @@ export interface PostView {
   visibility: PostVisibility
   /** Category names; person tags (h-cards) are left out. */
   categories: string[]
-  photos: Array<{ url: string; alt?: string }>
+  /** `width`, `height` and resized `sizes` are set for images in the local media store. */
+  photos: PhotoView[]
   videos: string[]
   audio: string[]
   featured?: string
@@ -53,6 +69,27 @@ export function contentValue(value: Mf2Value | undefined): PostContent | undefin
 /** HTML and text of a post's first `content` value. */
 export const postContent = (properties: Mf2Properties) => contentValue(properties.content?.[0])
 
+const isNumber = (value: unknown): value is number => typeof value === 'number'
+
+function photoView(value: Mf2Value): PhotoView | undefined {
+  const url = mediaUrl(value)
+  if (!url) return undefined
+  if (!isObject(value)) return { url }
+  const { alt, width, height, sizes } = value
+  const sizeEntries = Object.entries(isObject(sizes) ? sizes : {}).flatMap(([name, size]) =>
+    isObject(size) && typeof size.url === 'string' && isNumber(size.width) && isNumber(size.height)
+      ? [[name, { url: size.url, width: size.width, height: size.height }] as const]
+      : []
+  )
+  return {
+    url,
+    ...(typeof alt === 'string' && { alt }),
+    ...(isNumber(width) && { width }),
+    ...(isNumber(height) && { height }),
+    ...(sizeEntries.length && { sizes: Object.fromEntries(sizeEntries) }),
+  }
+}
+
 function mediaUrl(value: Mf2Value): string | undefined {
   if (typeof value === 'string') return value
   return isObject(value) && typeof value.value === 'string' ? value.value : undefined
@@ -83,11 +120,7 @@ export function toPostView(item: Mf2Item): PostView {
     status: firstString(properties, 'post-status') === 'draft' ? 'draft' : 'published',
     visibility: visibility === 'unlisted' || visibility === 'private' ? visibility : 'public',
     categories: (properties.category ?? []).filter((value) => typeof value === 'string'),
-    photos: (properties.photo ?? []).flatMap((value) => {
-      const url = mediaUrl(value)
-      if (!url) return []
-      return [isObject(value) && typeof value.alt === 'string' ? { url, alt: value.alt } : { url }]
-    }),
+    photos: (properties.photo ?? []).map(photoView).filter((photo) => photo !== undefined),
     videos: mediaUrls(properties, 'video'),
     audio: mediaUrls(properties, 'audio'),
     ...(featured !== undefined && { featured }),

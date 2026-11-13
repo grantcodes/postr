@@ -8,7 +8,9 @@ export {
   type MediaStore,
   type MediaFile,
   type LocalMediaOptions,
+  type SavedMediaFile,
 } from './media.ts'
+export type { BackfillResult } from './media-library.ts'
 export type {
   PostrPlugin,
   PluginContext,
@@ -39,7 +41,14 @@ export {
 export { fetchEntry, FetchError } from './services/fetch-entry.ts'
 export { sendWebmention, discoverEndpoint } from './services/webmention.ts'
 export { htmlToText } from './posts/content.ts'
-export { postContent, toPostView, type PostContent, type PostView } from './posts/view.ts'
+export {
+  postContent,
+  toPostView,
+  type PostContent,
+  type PostView,
+  type PhotoView,
+  type PhotoSize,
+} from './posts/view.ts'
 export {
   importLegacyPosts,
   type LegacyDoc,

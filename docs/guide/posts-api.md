@@ -24,6 +24,20 @@ await postr.posts.references(post) // fetched h-entries of the URLs the post res
 postr.posts.toMf2(post) // full mf2 JSON, as returned by q=source
 ```
 
+Photos are stored as objects. Images in the local media store also get their dimensions and
+resized copies (see [Image dimensions](./getting-started.md#image-dimensions)):
+
+```ts
+post.properties.photo
+// [{
+//   value: 'https://example.com/media/2026/06/04/cat.jpg',
+//   alt: 'A cat',
+//   width: 4000,
+//   height: 3000,
+//   sizes: { '1800': { url: 'https://example.com/media/2026/06/04/cat-1800.jpg', width: 1800, height: 1350 } },
+// }]
+```
+
 `list()` returns published, public posts by default; pass `includeHidden: true` to include
 drafts, unlisted and private posts. Deleted posts are never listed. Other filters: `exists`,
 `notExists`, `properties` (property contains a value) and `order` (`desc` by default).

@@ -24,8 +24,17 @@ export interface LocalMediaOptions {
   imageSizes?: Record<string, [width: number, height?: number]>
 }
 
+/** A file the local media store wrote. */
+export interface SavedMediaFile {
+  url: string
+  /** Path on disk. */
+  path: string
+  /** Detected or declared mime type. */
+  type: string
+}
+
 /** `name-extra.ext` */
-function appendToFilename(filename: string, extra: string | number) {
+export function appendToFilename(filename: string, extra: string | number) {
   const ext = extname(filename)
   return `${filename.slice(0, filename.length - ext.length)}-${extra}${ext}`
 }
@@ -48,7 +57,13 @@ async function writeImageSizes(
   }
 }
 
-export function localMediaStore(options: LocalMediaOptions): MediaStore {
+export const isImageType = (mime: string) => mime.startsWith('image/') && mime !== 'image/svg+xml'
+
+/** `onSave` runs after each file and its resized copies are written. */
+export function localMediaStore(
+  options: LocalMediaOptions,
+  onSave?: (file: SavedMediaFile) => Promise<void>
+): MediaStore {
   const baseUrl = options.url.replace(/\/$/, '')
   return {
     url: baseUrl,
@@ -81,10 +96,13 @@ export function localMediaStore(options: LocalMediaOptions): MediaStore {
       }
 
       const mime = detected?.mime ?? file.type ?? ''
-      if (options.imageSizes && mime.startsWith('image/') && mime !== 'image/svg+xml') {
-        await writeImageSizes(file.data, join(options.dir, folder, name), options.imageSizes)
+      const path = join(options.dir, folder, name)
+      if (options.imageSizes && isImageType(mime)) {
+        await writeImageSizes(file.data, path, options.imageSizes)
       }
-      return `${baseUrl}/${folder}/${name}`
+      const url = `${baseUrl}/${folder}/${name}`
+      await onSave?.({ url, path, type: mime })
+      return url
     },
   }
 }

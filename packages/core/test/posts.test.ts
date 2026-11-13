@@ -366,7 +366,16 @@ describe('toPostView', () => {
         published: ['2026-01-01T10:00:00Z'],
         visibility: ['unlisted'],
         category: ['a', { type: ['h-card'], properties: { name: ['Someone'] } }],
-        photo: ['https://example.com/a.jpg', { value: 'https://example.com/b.jpg', alt: 'B' }],
+        photo: [
+          { value: 'https://example.com/a.jpg', width: '10', sizes: { s: { url: 'x' } } },
+          {
+            value: 'https://example.com/b.jpg',
+            alt: 'B',
+            width: 40,
+            height: 20,
+            sizes: { s: { url: 'https://example.com/b-s.jpg', width: 20, height: 10 } },
+          },
+        ],
         'in-reply-to': [{ type: ['h-cite'], properties: { url: ['https://other.example/x'] } }],
       },
     })
@@ -382,7 +391,13 @@ describe('toPostView', () => {
     assert.deepEqual(view.categories, ['a'])
     assert.deepEqual(view.photos, [
       { url: 'https://example.com/a.jpg' },
-      { url: 'https://example.com/b.jpg', alt: 'B' },
+      {
+        url: 'https://example.com/b.jpg',
+        alt: 'B',
+        width: 40,
+        height: 20,
+        sizes: { s: { url: 'https://example.com/b-s.jpg', width: 20, height: 10 } },
+      },
     ])
     assert.deepEqual(view.inReplyTo, ['https://other.example/x'])
   })

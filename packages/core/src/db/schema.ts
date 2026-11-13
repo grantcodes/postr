@@ -64,5 +64,22 @@ export const jobs = sqliteTable(
   (t) => [index('jobs_run_at_idx').on(t.runAt)]
 )
 
+/** Dimensions of images in the local media store and of their resized copies. */
+export const media = sqliteTable('media', {
+  url: text('url').primaryKey(),
+  type: text('type').notNull(),
+  width: integer('width').notNull(),
+  height: integer('height').notNull(),
+  /** Resized copies by `imageSizes` name. */
+  sizes: text('sizes', { mode: 'json' }).$type<Record<string, ImageSize>>().notNull(),
+  createdAt: text('created_at').notNull(),
+})
+
+export interface ImageSize {
+  url: string
+  width: number
+  height: number
+}
+
 export type PostRow = typeof posts.$inferSelect
 export type JobRow = typeof jobs.$inferSelect

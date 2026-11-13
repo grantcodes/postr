@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import type { PostrPlugin } from '../src/index.ts'
@@ -230,5 +230,90 @@ describe('external media', () => {
     })
     assert.equal(saves, 0)
     assert.deepEqual(post.properties.photo, [{ value: 'https://media.example.com/pic.png' }])
+    await assert.rejects(postr.media!.backfill(), /needs local media options/)
+  })
+})
+
+const png = async (width: number, height: number) => {
+  const { default: sharp } = await import('sharp')
+  return sharp({ create: { width, height, channels: 3, background: '#f00' } })
+    .png()
+    .toBuffer()
+}
+
+describe('image dimensions', () => {
+  it('records downloaded images and leaves external photos URL-only', async () => {
+    const fetch = fakeFetch({
+      'https://cdn.example.org/pic.png': async () =>
+        new Response(new Uint8Array(await png(30, 60)), {
+          headers: { 'content-type': 'image/png' },
+        }),
+    })
+    const postr = testPostr({
+      fetch,
+      media: { dir: await tempDir(), url: 'https://example.com/media' },
+      fetchReferences: false,
+      sendWebmentions: false,
+    })
+    const post = await postr.posts.create({
+      type: ['h-entry'],
+      properties: {
+        photo: [
+          { value: 'https://cdn.example.org/pic.png', alt: 'Pic' },
+          'https://x.example/a.png',
+        ],
+      },
+    })
+    const [saved, external] = post.properties.photo as Array<Record<string, unknown>>
+    assert.match(String(saved?.value), /^https:\/\/example\.com\/media\/.*\/pic\.png$/)
+    assert.deepEqual({ ...saved, value: '' }, { value: '', alt: 'Pic', width: 30, height: 60 })
+    assert.deepEqual(external, { value: 'https://x.example/a.png' })
+  })
+
+  it('backfills existing media files into posts', async () => {
+    const dir = await tempDir()
+    const base = 'https://example.com/media/2019/05/01'
+    await mkdir(join(dir, '2019/05/01'), { recursive: true })
+    await writeFile(join(dir, '2019/05/01/a.png'), await png(40, 20))
+    await writeFile(join(dir, '2019/05/01/a-700.png'), await png(20, 10))
+    const postr = testPostr({
+      media: {
+        dir,
+        url: 'https://example.com/media/',
+        imageSizes: { '700': [20], '1800': [1800] },
+      },
+      fetchReferences: false,
+      sendWebmentions: false,
+    })
+    const post = await postr.posts.create(
+      {
+        type: ['h-entry'],
+        properties: {
+          photo: [{ value: `${base}/a.png`, alt: 'A' }, `${base}/missing.png`],
+          updated: ['2019-05-02T00:00:00Z'],
+        },
+      },
+      { origin: 'import' }
+    )
+
+    assert.deepEqual(await postr.media!.backfill(), {
+      scanned: 2,
+      recorded: 1,
+      skipped: 1,
+      posts: 1,
+    })
+    const updated = await postr.posts.get(post.id)
+    assert.deepEqual(updated?.properties.photo, [
+      {
+        value: `${base}/a.png`,
+        alt: 'A',
+        width: 40,
+        height: 20,
+        sizes: { '700': { url: `${base}/a-700.png`, width: 20, height: 10 } },
+      },
+      { value: `${base}/missing.png` },
+    ])
+    assert.equal(updated?.updated, '2019-05-02T00:00:00Z')
+    assert.equal((await postr.media!.backfill()).posts, 0)
   })
 })

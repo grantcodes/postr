@@ -39,29 +39,42 @@ export const POST = postr.fetch
 
 Postr does not serve the media directory; serve `media.dir` at `media.url` yourself.
 
+### Image dimensions
+
+With local `media` and `sharp` installed, postr records the width and height of every image it
+stores (uploads and downloaded external photos) and of its `imageSizes` copies. Photos that use
+those URLs get `width`, `height` and `sizes` when a post is saved, so pages can set `<img width
+height srcset>`. Photos hosted elsewhere stay URL-only.
+
+For images that were already on disk, such as after [importing 1.x data](./migrating.md), run
+`await postr.media.backfill()` once. It reads the files of local photo URLs and their existing
+`imageSizes` copies, re-saves the posts that gain dimensions without triggering webmentions or
+syndication, and returns `{ scanned, recorded, skipped, posts }`; missing files count as
+`skipped`.
+
 To build an Astro site from your posts, use the [Astro content loaders](./astro.md).
 
 ### Options
 
-| Option                  | Default                    | Description                                                                                                                    |
-| ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `siteUrl`               | required                   | Your site, e.g. `https://example.com`. Post URLs are `siteUrl + path`.                                                         |
-| `endpointUrl`           | required                   | Public URL of the Micropub endpoint. Its path is where the app serves Micropub.                                                |
-| `auth`                  | required                   | See [Authentication](#authentication).                                                                                         |
-| `database`              | `postr.db`                 | SQLite file path, or `:memory:`.                                                                                               |
-| `permalinkPattern`      | `/:year/:month/:day/:slug` | Path of new posts. Uses the date as written in `published`. Existing posts keep their path.                                    |
-| `media`                 | none                       | `{ dir, url, imageSizes? }` for local storage, or any object with `save(file): Promise<url>`. Without it uploads are rejected. |
-| `media.imageSizes`      | none                       | Resized copies, e.g. `{ thumbnail: [200, 200], large: [1800] }`, written as `name-thumbnail.jpg`. Needs `sharp` installed.     |
-| `plugins`               | `[]`                       | See [Plugins](./plugins.md).                                                                                                   |
-| `formatContent`         | `true`                     | Treat plain content as Markdown and store `{ html, value }`; add `#hashtags` to `category`.                                    |
-| `fetchReferences`       | `true`                     | Fetch and cache the posts you reply to, like, repost or bookmark.                                                              |
-| `sendWebmentions`       | `true`                     | Send webmentions to every URL a post links to.                                                                                 |
-| `downloadExternalMedia` | `true`                     | Copy external `photo`, `video` and `audio` URLs into the media store when a post is created.                                   |
-| `micropubConfig`        | `{}`                       | Extra values merged into the `q=config` response.                                                                              |
-| `runJobs`               | `true`                     | Run queued webmentions, reference fetches and syndication in the background.                                                   |
-| `readOnly`              | `false`                    | Open an existing database read-only: no migrations, no jobs, and every write fails with `forbidden`.                           |
-| `logger`                | `console`                  | Any object with `info`, `warn` and `error`.                                                                                    |
-| `fetch`                 | global `fetch`             | Used for every outgoing request.                                                                                               |
+| Option                  | Default                    | Description                                                                                                                                   |
+| ----------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `siteUrl`               | required                   | Your site, e.g. `https://example.com`. Post URLs are `siteUrl + path`.                                                                        |
+| `endpointUrl`           | required                   | Public URL of the Micropub endpoint. Its path is where the app serves Micropub.                                                               |
+| `auth`                  | required                   | See [Authentication](#authentication).                                                                                                        |
+| `database`              | `postr.db`                 | SQLite file path, or `:memory:`.                                                                                                              |
+| `permalinkPattern`      | `/:year/:month/:day/:slug` | Path of new posts. Uses the date as written in `published`. Existing posts keep their path.                                                   |
+| `media`                 | none                       | `{ dir, url, imageSizes? }` for local storage, or any object with `save(file): Promise<url>`. Without it uploads are rejected.                |
+| `media.imageSizes`      | none                       | Resized copies, e.g. `{ thumbnail: [200, 200], large: [1800] }`, written as `name-thumbnail.jpg` and added to photos' `sizes`. Needs `sharp`. |
+| `plugins`               | `[]`                       | See [Plugins](./plugins.md).                                                                                                                  |
+| `formatContent`         | `true`                     | Treat plain content as Markdown and store `{ html, value }`; add `#hashtags` to `category`.                                                   |
+| `fetchReferences`       | `true`                     | Fetch and cache the posts you reply to, like, repost or bookmark.                                                                             |
+| `sendWebmentions`       | `true`                     | Send webmentions to every URL a post links to.                                                                                                |
+| `downloadExternalMedia` | `true`                     | Copy external `photo`, `video` and `audio` URLs into the media store when a post is created.                                                  |
+| `micropubConfig`        | `{}`                       | Extra values merged into the `q=config` response.                                                                                             |
+| `runJobs`               | `true`                     | Run queued webmentions, reference fetches and syndication in the background.                                                                  |
+| `readOnly`              | `false`                    | Open an existing database read-only: no migrations, no jobs, and every write fails with `forbidden`.                                          |
+| `logger`                | `console`                  | Any object with `info`, `warn` and `error`.                                                                                                   |
+| `fetch`                 | global `fetch`             | Used for every outgoing request.                                                                                                              |
 
 ### Authentication
 
