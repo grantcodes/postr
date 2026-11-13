@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.0-alpha.5](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.4...astro-v0.1.0-alpha.5) (2026-11-13)
+
+
+### Features
+
+* **astro:** expose photo width, height and sizes ([3d8b045](https://github.com/grantcodes/postr/commit/3d8b0457fb0f765cff99473ed175ddfd7e89b935))
+* record image dimensions and resized copies ([d4388bb](https://github.com/grantcodes/postr/commit/d4388bbbff2da9a80b9bb3dcd74ba7eca1285950))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.4
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.4
+
 ## [0.1.0-alpha.4](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.3...astro-v0.1.0-alpha.4) (2026-11-10)
 
 

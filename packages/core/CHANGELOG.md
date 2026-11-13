@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.0-alpha.4](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.3...core-v2.0.0-alpha.4) (2026-11-13)
+
+
+### Features
+
+* **core:** discover oEmbed for fetched references ([e5f66c1](https://github.com/grantcodes/postr/commit/e5f66c15b6b92597cd8b9e8769465f9484741989))
+* **core:** discover oEmbed for fetched references ([888087e](https://github.com/grantcodes/postr/commit/888087ef389f1aa92d6ecc3d57a5af2b1c239cc1))
+* **core:** record image dimensions and resized copies ([126223d](https://github.com/grantcodes/postr/commit/126223dc2e025ec007e1dc75180572ef453be4fd))
+* record image dimensions and resized copies ([d4388bb](https://github.com/grantcodes/postr/commit/d4388bbbff2da9a80b9bb3dcd74ba7eca1285950))
+
 ## [2.0.0-alpha.3](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.2...core-v2.0.0-alpha.3) (2026-11-10)
 
 
