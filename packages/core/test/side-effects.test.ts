@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
-import type { PostrPlugin } from '../src/index.ts'
+import { fetchEntry, type PostrPlugin } from '../src/index.ts'
 import { fakeFetch, json, micropub, tempDir, testPostr } from './helpers.ts'
 
 const html = (body: string, headers: Record<string, string> = {}) =>
@@ -45,6 +45,107 @@ describe('references', () => {
     const ref = (await postr.posts.references(post))['https://news.example/a']
     assert.ok(ref?.properties.content)
     assert.deepEqual(ref?.properties.url, ['https://news.example/a'])
+  })
+
+  describe('oEmbed', () => {
+    const page = 'https://video.example/watch'
+    const endpoint = 'https://video.example/oembed?url=watch'
+    const discovery = html(
+      '<link rel="alternate" type="text/xml+oembed" href="/oembed.xml">' +
+        '<link rel="alternate" type="application/json+oembed" href="/oembed?url=watch">' +
+        '<article class="h-entry"><h1 class="p-name">Video</h1><a class="u-url" href="/watch">x</a></article>'
+    )
+
+    async function bookmark(
+      oembed: () => Response | Promise<Response>,
+      options: Parameters<typeof testPostr>[0] = {}
+    ) {
+      const fetch = fakeFetch({ [page]: () => discovery.clone(), [endpoint]: oembed })
+      const postr = testPostr({ fetch, sendWebmentions: false, ...options })
+      const post = await postr.posts.create({
+        type: ['h-entry'],
+        properties: { 'bookmark-of': [page] },
+      })
+      await postr.jobs.runDue()
+      const ref = (await postr.posts.references(post))[page]
+      return { ref, urls: fetch.requests.map((r) => r.url) }
+    }
+
+    it('stores the whitelisted fields of the discovered JSON endpoint', async () => {
+      const { ref, urls } = await bookmark(() =>
+        Response.json({
+          type: 'video',
+          version: '1.0',
+          html: '<iframe src="https://video.example/embed"></iframe>',
+          title: 'Video',
+          width: 640,
+          height: '360',
+          author_url: 'https://video.example/me',
+          cache_age: 3600,
+          thumbnail_url: { nested: true },
+        })
+      )
+      assert.deepEqual(urls, [page, endpoint])
+      assert.deepEqual(ref?.properties.name, ['Video'])
+      assert.equal(ref?.properties.content, undefined)
+      assert.deepEqual(ref?.properties.oembed, [
+        {
+          type: 'video',
+          html: '<iframe src="https://video.example/embed"></iframe>',
+          title: 'Video',
+          width: 640,
+          height: '360',
+        },
+      ])
+    })
+
+    it('adds oembed to Readability fallbacks too', async () => {
+      const fetch = fakeFetch({
+        [page]: () =>
+          html(
+            '<link rel="alternate" type="application/json+oembed" href="/oembed?url=watch"><p>Text</p>'
+          ),
+        [endpoint]: () => Response.json({ type: 'rich', html: '<p>x</p>' }),
+      })
+      const entry = await fetchEntry(page, fetch)
+      assert.deepEqual(entry.properties.url, [page])
+      assert.deepEqual(entry.properties.oembed, [{ type: 'rich', html: '<p>x</p>' }])
+    })
+
+    for (const [name, response] of [
+      [
+        'a timeout',
+        () => Promise.reject(new DOMException('The operation timed out.', 'TimeoutError')),
+      ],
+      ['a 500', () => new Response('error', { status: 500 })],
+      ['invalid JSON', () => new Response('<html>', { headers: { 'content-type': 'text/json' } })],
+      ['a response without type', () => Response.json({ html: '<p>x</p>' })],
+    ] as const) {
+      it(`stores the reference without oembed after ${name}`, async () => {
+        const { ref } = await bookmark(response)
+        assert.deepEqual(ref?.properties.name, ['Video'])
+        assert.equal(ref?.properties.oembed, undefined)
+      })
+    }
+
+    it('makes no oEmbed request with fetchReferences: { oembed: false }', async () => {
+      const { ref, urls } = await bookmark(() => Response.json({ type: 'link' }), {
+        fetchReferences: { oembed: false },
+      })
+      assert.deepEqual(urls, [page])
+      assert.deepEqual(ref?.properties.name, ['Video'])
+    })
+
+    it('makes no extra request for pages without a discovery link', async () => {
+      const fetch = fakeFetch({ [page]: () => html('<p class="h-entry p-name">Plain</p>') })
+      const postr = testPostr({ fetch, sendWebmentions: false })
+      await postr.posts.create({ type: ['h-entry'], properties: { 'like-of': [page] } })
+      await postr.jobs.runDue()
+      assert.deepEqual(
+        fetch.requests.map((r) => r.url),
+        [page]
+      )
+    })
   })
 })
 
