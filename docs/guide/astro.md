@@ -114,6 +114,21 @@ not thrown, and every result has a cache hint.
 | `references`                                    | Fetched h-entries of those URLs, keyed by URL.                |
 | `properties`                                    | The full mf2 properties, as `q=source` returns them.          |
 
+A reference whose page links to a JSON oEmbed endpoint has its response in
+`references[url].properties.oembed[0]`: `{ type, html?, url?, title?, author_name?, provider_name?, thumbnail_url?, width?, height? }`.
+postr stores the provider's `html` as is, so your site decides which iframes to trust. Render it
+only for hosts you allow:
+
+```astro
+---
+const trusted = new Set(['www.youtube.com', 'vimeo.com'])
+const url = entry.data.bookmarkOf[0]
+const oembed = entry.data.references[url]?.properties.oembed?.[0] as { html?: string } | undefined
+---
+
+{oembed?.html && trusted.has(new URL(url).hostname) ? <Fragment set:html={oembed.html} /> : <a href={url}>{url}</a>}
+```
+
 Posts with content have rendered HTML, so `render(entry)` and `<Content />` work.
 
 A collection `schema` replaces the loader's. Extend `postSchema` to keep its fields:
