@@ -1,8 +1,8 @@
 # Stable release workflow: release-please + OIDC publish to npm tag `latest`
 #
 # Flow:
-#   - Pushes to `master` ⟶ release-please opens/updates a Release PR against `master`
-#   - Merging that Release PR to `master` ⟶ release-please creates GitHub Releases + tags
+#   - Pushes to `main` ⟶ release-please opens/updates a Release PR on `main`
+#   - Merging that Release PR ⟶ release-please creates GitHub Releases + tags
 #   - Only when releases_created=true do we publish to npm with tag `latest`
 #   - Uses npm trusted publishing via OIDC (no long-lived tokens)
 #
@@ -13,7 +13,7 @@ name: release-please-stable
 on:
   push:
     branches:
-      - master
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -75,7 +75,7 @@ jobs:
         id: release
         with:
           manifest: true
-          target-branch: master
+          target-branch: main
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
