@@ -21,6 +21,9 @@
     },
     "packages/astro": {
       "release-type": "node"
+    },
+    "packages/plugin-webhooks": {
+      "release-type": "node"
     }
   }
 }

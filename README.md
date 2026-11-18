@@ -30,6 +30,8 @@ Documentation: [postr.dev](https://postr.dev) — [getting started](docs/guide/g
 | [`@postr/core`](packages/core)                                             | Storage, posts API, Micropub and media endpoints, plugin runtime |
 | [`@postr/plugin-feeds`](packages/plugin-feeds)                             | RSS, Atom, JSON Feed, JF2 and mf2 feeds                          |
 | [`@postr/plugin-webmention-endpoint`](packages/plugin-webmention-endpoint) | Receive webmentions                                              |
+| [`@postr/plugin-webhooks`](packages/plugin-webhooks)                       | Ping deploy hooks and other URLs when posts change               |
+| [`@postr/astro`](packages/astro)                                           | Astro content loaders                                            |
 | [`@postr/syndicator-telegram`](packages/syndicator-telegram)               | Syndicate to a Telegram channel                                  |
 | [`@postr/syndicator-instagram`](packages/syndicator-instagram)             | Syndicate photos to Instagram                                    |
 | [`@postr/syndicator-superfeedr`](packages/syndicator-superfeedr)           | WebSub publish pings                                             |

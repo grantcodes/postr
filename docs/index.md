@@ -23,5 +23,5 @@ features:
   - title: Astro content collections
     details: Load posts into Astro at build time or per request, from the database or a running postr server.
   - title: Plugins
-    details: Feeds, a webmention endpoint, and syndication to Telegram, Instagram and WebSub hubs.
+    details: Feeds, a webmention endpoint, deploy-hook webhooks, and syndication to Telegram, Instagram and WebSub hubs.
 ---

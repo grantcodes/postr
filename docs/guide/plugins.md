@@ -42,6 +42,41 @@ Receives webmentions at `<endpoint>/plugin/webmention`. The source must link to 
 h-entry is stored on the target post as `like`, `repost`, `bookmark`, `comment` or `mention`;
 repeated mentions replace the stored copy, and a `410 Gone` source removes it.
 
+## Webhooks
+
+```bash
+npm install @postr/plugin-webhooks
+```
+
+```ts
+import { webhooks } from '@postr/plugin-webhooks'
+
+createPostr({
+  ...options,
+  plugins: [
+    webhooks({
+      url: [
+        'https://api.netlify.com/build_hooks/abc123',
+        // Headers are sent to that URL only.
+        { url: 'https://example.com/rebuild', headers: { Authorization: 'Bearer secret' } },
+      ],
+    }),
+  ],
+})
+```
+
+POSTs `{ "action": "create" | "update" | "delete" | "undelete", "url": "<permalink>" }` as
+JSON to every URL when a post that is (or was) on the site changes: published, not deleted and
+not private. Edits to drafts and private posts are skipped. When an update moves the permalink,
+`previousUrl` holds the old one. Writes from plugins and syndicators ping too, so a rebuild
+after syndication picks up the `syndication` links. Bulk writes don't ping: legacy imports and
+media backfills, so trigger one rebuild yourself afterwards.
+
+Netlify, Vercel and Cloudflare Pages deploy hooks accept any POST, so their URLs work as they
+are. Saves wait for the pings so they complete on serverless hosts, which means a slow hook
+delays a save by up to the 5 second timeout. Failures are logged (host only, since deploy-hook
+URLs contain their secret) and not retried.
+
 ## Syndication
 
 Syndicators appear in `q=config` as `syndicate-to` targets. A post is syndicated when it is
