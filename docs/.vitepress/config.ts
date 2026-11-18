@@ -25,7 +25,7 @@ export default defineConfig({
     ],
     socialLinks: [{ icon: 'github', link: 'https://github.com/grantcodes/postr' }],
     editLink: {
-      pattern: 'https://github.com/grantcodes/postr/edit/master/docs/:path',
+      pattern: 'https://github.com/grantcodes/postr/edit/main/docs/:path',
     },
     search: { provider: 'local' },
   },

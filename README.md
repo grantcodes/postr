@@ -52,5 +52,5 @@ pnpm run test-server # Micropub on http://localhost:3000/micropub (PORT to chang
 regenerate the single init migration in `packages/core/drizzle/` instead of adding new ones (see `AGENTS.md`).
 
 Releases use release-please in manifest mode with npm trusted publishing: pushes to `dev`
-publish `-alpha.N` versions to the npm `alpha` tag, and pushes to `master` publish to `latest`.
+publish `-alpha.N` versions to the npm `alpha` tag, and pushes to `main` publish to `latest`.
 See `AGENTS.md` for how 2.0 moves from alpha to stable.

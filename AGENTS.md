@@ -4,7 +4,7 @@
 
 - pnpm workspace monorepo (`pnpm-workspace.yaml`). The root is private and holds orchestration scripts, `tests/server.ts` and `scripts/`.
 - Packages: `packages/core` (`@postr/core`), `plugin-feeds`, `plugin-webmention-endpoint`, `syndicator-telegram`, `syndicator-instagram`, `syndicator-superfeedr`. Plugins depend on `@postr/core` as a `workspace:^` peer + dev dependency.
-- 2.0 is a clean break from 1.x (RxDB/Express), which lives on `master`; the rebuild plan is `.planning/REBUILD.md` (gitignored).
+- 2.0 is a clean break from 1.x (RxDB/Express), which lives on `main`; the rebuild plan is `.planning/REBUILD.md` (gitignored).
 
 ## TypeScript everywhere
 
@@ -39,13 +39,13 @@
 
 - **`npm-prerelease.yml`**: pushes to `dev` → release-please (`release-please-config.dev.json`: `versioning: prerelease`, `prerelease-type: alpha.0`) → publish released packages to the npm `alpha` dist-tag via OIDC trusted publishing (`scripts/publish-release-please-packages.ts`, which refuses non-alpha versions). 2.0 is released this way until it is ready; `npm install @postr/core` keeps resolving to 1.x on `latest`.
 - The first alpha of each package is forced by a `Release-As:` footer on that package's `docs(<pkg>): add a package README` commit (core, feeds, webmention-endpoint and telegram → `2.0.0-alpha.0`; superfeedr and instagram → `3.0.0-alpha.0`). Merge `feature/rebuild` into `dev` with a merge commit, not a squash, so each footer stays on a commit that only touches its package. Later alphas count up automatically (`-alpha.1`, …).
-- To ship 2.0 stable: merge `dev` into `master` and add one commit per package, touching only that package, with a `Release-As: <x.y.z>` footer (prerelease versions would otherwise bump to the next major).
-- **`release-please-stable.yml`**: pushes to `master` → release-please (`release-please-config.json`) → publish to `latest` (1.x until 2.0 ships).
+- To ship 2.0 stable: merge `dev` into `main` and add one commit per package, touching only that package, with a `Release-As: <x.y.z>` footer (prerelease versions would otherwise bump to the next major).
+- **`release-please-stable.yml`**: pushes to `main` → release-please (`release-please-config.json`) → publish to `latest` (1.x until 2.0 ships).
 - A new package must be added to both release-please configs, `.release-please-manifest.json` and `PACKAGE_MAP` in the publish script.
 
 ## Docs
 
-- `docs/` is a VitePress site (`pnpm run docs:dev`, `pnpm run docs:build`) published to postr.dev by `.github/workflows/docs.yml` on pushes to `master`. Guide pages live in `docs/guide/`; add new pages to the sidebar in `docs/.vitepress/config.ts`. VitePress is pinned to a 2.0 alpha (Vite 8) because 1.x pulls in a vulnerable Vite 5.
+- `docs/` is a VitePress site (`pnpm run docs:dev`, `pnpm run docs:build`) published to postr.dev by `.github/workflows/docs.yml` on pushes to `main`. Guide pages live in `docs/guide/`; add new pages to the sidebar in `docs/.vitepress/config.ts`. VitePress is pinned to a 2.0 alpha (Vite 8) because 1.x pulls in a vulnerable Vite 5.
 
 ## Env and compatibility
 
