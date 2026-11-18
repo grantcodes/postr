@@ -32,6 +32,7 @@ const PACKAGE_MAP: Record<string, string> = {
   'packages/core': '@postr/core',
   'packages/plugin-feeds': '@postr/plugin-feeds',
   'packages/plugin-webmention-endpoint': '@postr/plugin-webmention-endpoint',
+  'packages/plugin-webhooks': '@postr/plugin-webhooks',
   'packages/syndicator-instagram': '@postr/syndicator-instagram',
   'packages/syndicator-superfeedr': '@postr/syndicator-superfeedr',
   'packages/syndicator-telegram': '@postr/syndicator-telegram',

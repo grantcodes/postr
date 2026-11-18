@@ -15,6 +15,9 @@
     "packages/syndicator-telegram": {},
     "packages/astro": {
       "initial-version": "0.1.0-alpha.0"
+    },
+    "packages/plugin-webhooks": {
+      "initial-version": "0.1.0-alpha.0"
     }
   }
 }

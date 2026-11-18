@@ -3,7 +3,7 @@
 ## Repo shape
 
 - pnpm workspace monorepo (`pnpm-workspace.yaml`). The root is private and holds orchestration scripts, `tests/server.ts` and `scripts/`.
-- Packages: `packages/core` (`@postr/core`), `plugin-feeds`, `plugin-webmention-endpoint`, `syndicator-telegram`, `syndicator-instagram`, `syndicator-superfeedr`. Plugins depend on `@postr/core` as a `workspace:^` peer + dev dependency.
+- Packages: `packages/core` (`@postr/core`), `plugin-feeds`, `plugin-webmention-endpoint`, `plugin-webhooks`, `syndicator-telegram`, `syndicator-instagram`, `syndicator-superfeedr`. Plugins depend on `@postr/core` as a `workspace:^` peer + dev dependency.
 - 2.0 is a clean break from 1.x (RxDB/Express), which lives on `main`; the rebuild plan is `.planning/REBUILD.md` (gitignored).
 
 ## TypeScript everywhere
