@@ -7,8 +7,11 @@ export interface LegacyDoc {
   type: string[]
   properties: Mf2Properties
   children?: string[]
-  /** 1.x metadata; `references` holds the fetched h-entries of the URLs the post responds to. */
-  cms?: { references?: Mf2Item[] }
+  /**
+   * 1.x metadata; `references` holds the fetched h-entries of the URLs the post responds to,
+   * `children` the 1.x ids of a collection's posts.
+   */
+  cms?: { references?: Mf2Item[]; children?: string[] }
 }
 
 export interface LegacyImportOptions {
@@ -28,6 +31,11 @@ export interface LegacyImportReport {
   /** Deleted posts left out because another post already has their permalink. */
   skipped: Array<{ id?: string; path: string }>
   failed: Array<{ id?: string; error: string }>
+  /**
+   * Collection children (1.x ids) without an imported post: dropped from the collection, or still
+   * linked when the child failed to import after it.
+   */
+  missingChildren: Array<{ id?: string; child: string }>
 }
 
 function replacePlaceholders<T>(value: T, replacements: Record<string, string>): T {
@@ -82,6 +90,47 @@ function cleanProperties(properties: Mf2Properties): Mf2Properties {
   return cleaned
 }
 
+const isDeleted = (doc: LegacyDoc) => doc.properties['post-status']?.[0] === 'deleted'
+
+/** A 1.x post's cleaned properties and the path it is imported at. */
+function legacyPost(
+  doc: LegacyDoc,
+  replacements: Record<string, string>,
+  options: LegacyImportOptions
+) {
+  const properties = cleanProperties(replacePlaceholders(doc.properties, replacements))
+  const deleted = isDeleted(doc)
+  if (deleted) properties['post-status'] = ['published']
+  // 1.x showed a post without `updated` as last changed when it was published.
+  if (!properties.updated && properties.published) properties.updated = properties.published
+  return { properties, deleted, path: legacyPath(properties, options) }
+}
+
+/**
+ * The path each 1.x id will be imported at, so a collection can link children imported after it.
+ * The first post with a path keeps it; later ones are skipped or fail.
+ */
+function planPaths(
+  ordered: LegacyDoc[],
+  replacements: Record<string, string>,
+  options: LegacyImportOptions
+) {
+  const planned = new Map<string, string>()
+  const claimed = new Set<string>()
+  for (const doc of ordered) {
+    let path: string | undefined
+    try {
+      path = legacyPost(doc, replacements, options).path
+    } catch {
+      continue
+    }
+    if (!path || claimed.has(path)) continue
+    claimed.add(path)
+    if (doc._id) planned.set(doc._id, path)
+  }
+  return planned
+}
+
 /**
  * Imports posts from a postr 1.x dump, keeping ids, permalinks, dates and received mentions.
  * Imports use the `import` origin, so no webmentions or syndication are sent.
@@ -95,21 +144,23 @@ export async function importLegacyPosts(
     siteBaseUrl: options.siteBaseUrl.replace(/\/$/, ''),
   }
   if (options.mediaBaseUrl) replacements.mediaBaseUrl = options.mediaBaseUrl.replace(/\/$/, '')
-  const report: LegacyImportReport = { imported: 0, deleted: 0, skipped: [], failed: [] }
+  const report: LegacyImportReport = {
+    imported: 0,
+    deleted: 0,
+    skipped: [],
+    failed: [],
+    missingChildren: [],
+  }
 
-  const isDeleted = (doc: LegacyDoc) => doc.properties['post-status']?.[0] === 'deleted'
   // Live posts first, so a deleted duplicate never takes a live post's permalink.
   const ordered = [...docs.filter((doc) => !isDeleted(doc)), ...docs.filter(isDeleted)]
 
+  const plannedPaths = planPaths(ordered, replacements, options)
+  const childLinks: Array<{ id?: string; child: string; path?: string }> = []
+
   for (const doc of ordered) {
-    let path: string | undefined
     try {
-      const properties = cleanProperties(replacePlaceholders(doc.properties, replacements))
-      const deleted = isDeleted(doc)
-      if (deleted) properties['post-status'] = ['published']
-      // 1.x showed a post without `updated` as last changed when it was published.
-      if (!properties.updated && properties.published) properties.updated = properties.published
-      path = legacyPath(properties, options)
+      const { properties, deleted, path } = legacyPost(doc, replacements, options)
       if (
         deleted &&
         path &&
@@ -119,7 +170,17 @@ export async function importLegacyPosts(
         continue
       }
       const input: Mf2Input = { type: doc.type, properties }
-      if (doc.children) input.children = replacePlaceholders(doc.children, replacements)
+      // 1.x linked children by id; the URLs in `doc.children` can carry a different date.
+      const links = []
+      for (const child of doc.cms?.children ?? []) {
+        const childPath = (await postr.posts.get(child))?.path ?? plannedPaths.get(child)
+        links.push({ id: doc._id, child, path: childPath })
+      }
+      if (doc.cms?.children) {
+        input.children = links.flatMap(({ path }) => (path ? [postr.siteUrl + path] : []))
+      } else if (doc.children) {
+        input.children = replacePlaceholders(doc.children, replacements)
+      }
 
       await postr.posts.create(input, {
         origin: 'import',
@@ -134,10 +195,16 @@ export async function importLegacyPosts(
           await postr.posts.saveReference(url, entry)
         }
       }
+      childLinks.push(...links)
       report.imported++
       if (deleted) report.deleted++
     } catch (err) {
       report.failed.push({ id: doc._id, error: err instanceof Error ? err.message : String(err) })
+    }
+  }
+  for (const { id, child, path } of childLinks) {
+    if (!path || (await postr.posts.get(child))?.path !== path) {
+      report.missingChildren.push({ id, child })
     }
   }
   return report
