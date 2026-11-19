@@ -131,6 +131,47 @@ describe('importLegacyPosts', () => {
     assert.deepEqual((await postr.posts.get('nulls'))?.properties.category, ['a'])
   })
 
+  it('links collection children by their 1.x ids', async () => {
+    const postr = testPostr()
+    const entry = (id: string, published: string, extra: Partial<LegacyDoc> = {}): LegacyDoc => ({
+      _id: id,
+      type: ['h-entry'],
+      properties: { 'mp-slug': [id], published: [published] },
+      ...extra,
+    })
+    const report = await importLegacyPosts(
+      postr,
+      [
+        entry('gallery', '2017-09-12T10:00:00Z', {
+          // 1.x wrote these URLs with local dates; the ids are authoritative.
+          children: ['{{siteBaseUrl}}/2017/09/12/early', '{{siteBaseUrl}}/2017/09/13/later'],
+          cms: { children: ['early', 'gone', 'later', 'twin'] },
+        }),
+        entry('early', '2017-09-12T00:16:50+01:00'),
+        entry('later', '2017-09-13T10:00:00Z'),
+        {
+          ...entry('twin', '2017-09-13T10:00:00Z'),
+          properties: { 'mp-slug': ['later'], published: ['2017-09-13T10:00:00Z'] },
+        },
+        entry('old', '2016-01-01T10:00:00Z', { children: ['{{siteBaseUrl}}/2016/01/01/x'] }),
+      ],
+      { siteBaseUrl: siteUrl, createdDateInPermalinks: true }
+    )
+
+    assert.deepEqual(
+      report.failed.map((f) => f.id),
+      ['twin']
+    )
+    assert.deepEqual(report.missingChildren, [
+      { id: 'gallery', child: 'gone' },
+      { id: 'gallery', child: 'twin' },
+    ])
+    const url = async (id: string) => (await postr.posts.get(id))?.url
+    const gallery = await postr.posts.get('gallery')
+    assert.deepEqual(gallery?.children, [await url('early'), await url('later')])
+    assert.equal((await postr.posts.get('old'))?.children?.[0], `${siteUrl}/2016/01/01/x`)
+  })
+
   it('runs as a CLI with --dry-run', async () => {
     const dir = await tempDir()
     const dump = join(dir, 'dump.json')

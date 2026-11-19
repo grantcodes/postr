@@ -21,7 +21,8 @@ objects. To move your posts:
 
    Drop `--dry-run` to write the database. Ids, permalinks, dates, received webmentions and
    deleted posts are kept; nothing is re-sent. A deleted post whose permalink another post
-   already uses is skipped and listed under `skipped` in the report.
+   already uses is skipped and listed under `skipped` in the report. Collections link their
+   children by 1.x id; ids with no imported post are listed under `missingChildren`.
 
    The CLI only knows the built-in post types. If you use custom ones, import from code with
    `importLegacyPosts(postr, docs, options)`, passing a postr instance created with your plugins.
