@@ -11,7 +11,9 @@ function markdownToHtml(markdown: string): string {
   return (marked.parse(markdown, { async: false }) as string).trim()
 }
 
-const hashtag = /\B#(\w{2,})\b/g
+// A `#` that starts the text or follows whitespace or opening punctuation, so URL
+// fragments (`/#delete`) and glued text (`night.#10`) are skipped; tags need a letter.
+const hashtag = /(?<=^|[\s\p{Ps}\p{Pi}"'])#(?=[\p{L}\p{M}\p{N}_]*\p{L})([\p{L}\p{M}\p{N}_]{2,})/gu
 
 function formatValue(content: Mf2Value): Mf2Value {
   if (typeof content === 'string') {
