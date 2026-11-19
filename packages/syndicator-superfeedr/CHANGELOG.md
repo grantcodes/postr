@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0-alpha.7](https://github.com/grantcodes/postr/compare/syndicator-superfeedr-v3.0.0-alpha.6...syndicator-superfeedr-v3.0.0-alpha.7) (2026-11-19)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.7
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.7
+
 ## [3.0.0-alpha.6](https://github.com/grantcodes/postr/compare/syndicator-superfeedr-v3.0.0-alpha.5...syndicator-superfeedr-v3.0.0-alpha.6) (2026-11-19)
 
 

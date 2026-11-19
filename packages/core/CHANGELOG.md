@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0-alpha.7](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.6...core-v2.0.0-alpha.7) (2026-11-19)
+
+
+### Bug Fixes
+
+* **core:** only collect hashtags that stand alone ([41e828a](https://github.com/grantcodes/postr/commit/41e828a82cd4890e56c0108756fbebbe9041415e))
+* **core:** only collect hashtags that stand alone ([4b3eb06](https://github.com/grantcodes/postr/commit/4b3eb06b5a72dc5cbdddd17dfd636bc683b9056c))
+
 ## [2.0.0-alpha.6](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.5...core-v2.0.0-alpha.6) (2026-11-19)
 
 
