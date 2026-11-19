@@ -3,6 +3,23 @@ import { describe, it } from 'node:test'
 import { PostrError, toPostView, type PostrPlugin, type SaveEvent } from '../src/index.ts'
 import { join } from 'node:path'
 import { endpointUrl, fakeFetch, siteUrl, tempDir, testPostr } from './helpers.ts'
+import { formatContent } from '../src/posts/content.ts'
+
+describe('formatContent hashtags', () => {
+  const tagsOf = (text: string) => formatContent({ content: [text] }).category
+
+  it('collects hashtags that stand alone', () => {
+    assert.deepEqual(tagsOf('#100days of code'), ['100days'])
+    assert.deepEqual(tagsOf('Hello #indieweb friends'), ['indieweb'])
+    assert.deepEqual(tagsOf('Hello (#tag) and #café'), ['tag', 'café'])
+  })
+
+  it('ignores URL fragments, glued text and numbers', () => {
+    assert.equal(tagsOf('See https://www.w3.org/TR/micropub/#delete'), undefined)
+    assert.equal(tagsOf('word#tag'), undefined)
+    assert.equal(tagsOf('Good night.#10 and #21 or #1'), undefined)
+  })
+})
 
 describe('posts.create', () => {
   it('stores a note with defaults, formatted content and hashtags', async () => {
@@ -133,6 +150,19 @@ describe('posts.update', () => {
     const removed = await postr.posts.update(post.id, { delete: ['summary', 'category'] })
     assert.equal(removed.properties.summary, undefined)
     assert.equal(removed.properties.category, undefined)
+  })
+
+  it('does not re-add a removed category from a URL fragment in the content', async () => {
+    const postr = testPostr()
+    const post = await postr.posts.create({
+      type: ['h-entry'],
+      properties: {
+        content: ['See https://www.w3.org/TR/micropub/#delete'],
+        category: ['micropub', 'delete'],
+      },
+    })
+    const updated = await postr.posts.update(post.url, { delete: { category: ['delete'] } })
+    assert.deepEqual(updated.properties.category, ['micropub'])
   })
 
   it('moves the permalink when mp-slug or the published date changes', async () => {
