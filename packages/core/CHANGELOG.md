@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0-alpha.5](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.4...core-v2.0.0-alpha.5) (2026-11-19)
+
+
+### Bug Fixes
+
+* **core:** look up legacy ids that parse as URLs ([48bba31](https://github.com/grantcodes/postr/commit/48bba3160337bf8194e294073d72f87485eda4a6))
+* **core:** look up legacy ids that parse as URLs ([2c310bd](https://github.com/grantcodes/postr/commit/2c310bd42867102fd6933e77800cf0149234aa28))
+
 ## [2.0.0-alpha.4](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.3...core-v2.0.0-alpha.4) (2026-11-13)
 
 
