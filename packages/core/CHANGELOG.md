@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0-alpha.6](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.5...core-v2.0.0-alpha.6) (2026-11-19)
+
+
+### Bug Fixes
+
+* **core:** import 1.x collection children from their ids ([a4e1593](https://github.com/grantcodes/postr/commit/a4e15932c01c11ea9f6c4afaf06c9a412849c022))
+* **core:** import 1.x collection children from their ids ([c79888c](https://github.com/grantcodes/postr/commit/c79888ce97f20c46f4141e66c0c371d6dd8699d1))
+
 ## [2.0.0-alpha.5](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.4...core-v2.0.0-alpha.5) (2026-11-19)
 
 
