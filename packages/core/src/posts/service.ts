@@ -130,9 +130,10 @@ export function createPostService(deps: PostServiceDeps) {
   }
 
   async function find(urlOrId: string): Promise<Post> {
-    const post = URL.canParse(urlOrId)
-      ? await getByUrl(urlOrId, { includeDeleted: true })
-      : await get(urlOrId)
+    // Ids come first: legacy 1.x ids like `i8kx96xnxa:1539123888294` also parse as URLs.
+    const post =
+      (await get(urlOrId)) ??
+      (URL.canParse(urlOrId) ? await getByUrl(urlOrId, { includeDeleted: true }) : undefined)
     if (!post) throw new PostrError('not_found', `Post not found: ${urlOrId}`)
     return post
   }

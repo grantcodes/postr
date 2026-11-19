@@ -151,6 +151,15 @@ describe('posts.update', () => {
     assert.equal(await postr.posts.getByUrl(post.url), undefined)
   })
 
+  it('finds legacy 1.x ids that also parse as URLs', async () => {
+    const postr = testPostr()
+    const id = 'i8kx96xnxa:1539123888294'
+    await postr.posts.create({ type: ['h-entry'], properties: { content: ['x'] } }, { id })
+    const updated = await postr.posts.update(id, { replace: { name: ['Legacy'] } })
+    assert.equal(updated.id, id)
+    assert.ok((await postr.posts.delete(id)).deletedAt)
+  })
+
   it('throws not_found for unknown posts', async () => {
     const postr = testPostr()
     await assert.rejects(

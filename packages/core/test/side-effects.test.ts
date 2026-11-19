@@ -394,7 +394,8 @@ describe('image dimensions', () => {
           updated: ['2019-05-02T00:00:00Z'],
         },
       },
-      { origin: 'import' }
+      // A 1.x id that also parses as a URL.
+      { origin: 'import', id: 'i8kx96xnxa:1539123888294' }
     )
 
     assert.deepEqual(await postr.media!.backfill(), {
