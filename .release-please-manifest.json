@@ -1,9 +1,9 @@
 {
-  "packages/core": "2.0.0-alpha.7",
-  "packages/plugin-feeds": "2.0.0-alpha.7",
-  "packages/plugin-webmention-endpoint": "2.0.0-alpha.7",
-  "packages/syndicator-instagram": "3.0.0-alpha.7",
-  "packages/syndicator-superfeedr": "3.0.0-alpha.7",
-  "packages/syndicator-telegram": "2.0.0-alpha.7",
-  "packages/astro": "0.1.0-alpha.8"
+  "packages/core": "2.0.0-alpha.8",
+  "packages/plugin-feeds": "2.0.0-alpha.8",
+  "packages/plugin-webmention-endpoint": "2.0.0-alpha.8",
+  "packages/syndicator-instagram": "3.0.0-alpha.8",
+  "packages/syndicator-superfeedr": "3.0.0-alpha.8",
+  "packages/syndicator-telegram": "2.0.0-alpha.8",
+  "packages/astro": "0.1.0-alpha.9"
 }
