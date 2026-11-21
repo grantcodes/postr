@@ -39,6 +39,56 @@ describe('postrLiveLoader', () => {
     )
   })
 
+  it('filters by published date and counts the posts a filter matches', async () => {
+    const postr = testPostr()
+    const { note, article } = await seed(postr)
+    const loader = postrLiveLoader({ postr })
+    const published = { from: '2026-01-02', to: new Date('2026-01-03T00:00:00Z') }
+
+    const dated = await loader.loadCollection({ collection, filter: { published } })
+    assert.ok('entries' in dated)
+    assert.deepEqual(
+      dated.entries.map((entry) => entry.id),
+      [article.path.slice(1)]
+    )
+    const before = await loader.loadCollection({
+      collection,
+      filter: { published: { to: '2026-01-02' } },
+    })
+    assert.ok('entries' in before)
+    assert.deepEqual(
+      before.entries.map((entry) => entry.id),
+      [note.path.slice(1)]
+    )
+
+    assert.equal(await loader.count(), 2)
+    assert.equal(await loader.count({ published }), 1)
+    assert.equal(await loader.count({ postType: 'note' }), 1)
+    assert.equal(await postrLiveLoader({ postr, postType: 'note' }).count(), 1)
+    assert.equal(await postrLiveLoader({ postr, visibility: ['public', 'unlisted'] }).count(), 3)
+    assert.equal(await postrLiveLoader({ postr, drafts: true }).count(), 3)
+  })
+
+  it('pages through visible posts with offsets', async () => {
+    const postr = testPostr()
+    await seed(postr)
+    for (let i = 0; i < 5; i++) {
+      await postr.posts.create({
+        type: ['h-entry'],
+        properties: { content: [`Post ${i}`], published: [`2025-01-0${i + 1}T00:00:00Z`] },
+      })
+    }
+    const loader = postrLiveLoader({ postr, visibility: ['public', 'unlisted'] })
+    const texts = async (limit: number, offset: number) => {
+      const page = await loader.loadCollection({ collection, filter: { limit, offset } })
+      assert.ok('entries' in page)
+      return page.entries.map((entry) => entry.data.content?.text)
+    }
+    assert.equal(await loader.count(), 8)
+    assert.deepEqual(await texts(2, 3), ['Post 4', 'Post 3'])
+    assert.deepEqual(await texts(3, 7), ['Post 0'])
+  })
+
   it('loads one entry by id or url, hiding missing and filtered posts', async () => {
     const postr = testPostr()
     const { note, unlisted } = await seed(postr)

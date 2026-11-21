@@ -40,10 +40,15 @@ export async function collectPosts(
   { limit = Infinity, offset = 0 } = {}
 ): Promise<SourceItem[]> {
   const visibilities = options.visibility ?? ['public']
+  const sourceQuery = { ...query, visibility: visibilities, drafts: options.drafts }
+  // A source with count() applies every filter, so the source can do the paging.
+  const exact = 'count' in source
   const results: SourceItem[] = []
-  let skipped = 0
-  for (let sourceOffset = 0; results.length < limit; sourceOffset += pageSize) {
-    const page = await source.list(query, pageSize, sourceOffset)
+  let skipped = exact ? offset : 0
+  for (let sourceOffset = skipped; results.length < limit;) {
+    const size = exact ? Math.min(pageSize, limit - results.length) : pageSize
+    const page = await source.list(sourceQuery, size, sourceOffset)
+    sourceOffset += size
     for (const post of page.items) {
       if (!isVisible(post, visibilities, options.drafts)) continue
       if (skipped < offset) skipped++
@@ -52,6 +57,17 @@ export async function collectPosts(
     if (!page.more) break
   }
   return results
+}
+
+/** Number of posts `collectPosts()` returns without `limit` and `offset`. */
+export async function countPosts(
+  source: PostSource,
+  options: PostFilterOptions,
+  query: SourceQuery
+): Promise<number> {
+  if (!source.count) return (await collectPosts(source, options, query)).length
+  const visibility = options.visibility ?? ['public']
+  return source.count({ ...query, visibility, drafts: options.drafts })
 }
 
 export function isVisible(post: SourceItem, visibilities: PostVisibility[], drafts = false) {

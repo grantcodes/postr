@@ -4,6 +4,12 @@ export {
   type PostrLiveLoaderOptions,
   type PostFilterOptions,
 } from './loader.ts'
-export { postrLiveLoader, type PostEntryFilter, type PostCollectionFilter } from './live-loader.ts'
+export {
+  postrLiveLoader,
+  type PostrLiveLoader,
+  type PostEntryFilter,
+  type PostCollectionFilter,
+  type PostCountFilter,
+} from './live-loader.ts'
 export { postSchema, type PostData } from './entry.ts'
-export type { SourceOptions } from './source.ts'
+export type { PublishedRange, SourceOptions } from './source.ts'

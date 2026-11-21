@@ -90,9 +90,67 @@ const { entries: results } = await getLiveCollection('posts', { search: Astro.ur
 ---
 ```
 
-Collection filters are `postType`, `category`, `search`, `limit` and `offset`. Entries are
-looked up by `id` or `url`; missing and filtered-out posts are not found. Errors are returned,
-not thrown, and every result has a cache hint.
+Collection filters are `postType`, `category`, `search`, `published`, `limit` and `offset`.
+Entries are looked up by `id` or `url`; missing and filtered-out posts are not found. Errors are
+returned, not thrown, and every result has a cache hint.
+
+`published` keeps posts published from `from` (inclusive) to `to` (exclusive), given as `Date`s or
+date strings and compared in UTC, e.g. a year archive:
+
+```ts
+const { entries } = await getLiveCollection('posts', {
+  published: { from: '2019', to: '2020' },
+  limit: 20,
+  offset: 20,
+})
+```
+
+### Paging
+
+Astro's live collection results have no room for a total, so the loader has a `count(filter)`
+method. It takes the collection filters except `limit` and `offset`, and counts the posts
+`getLiveCollection()` would return without them. Define the loader in a module of its own to call
+it from pages:
+
+```ts
+// src/lib/posts.ts
+import { postrLiveLoader } from '@postr/astro'
+import { postr } from './postr'
+
+export const posts = postrLiveLoader({ postr })
+```
+
+```ts
+// src/live.config.ts
+import { defineLiveCollection } from 'astro:content'
+import { posts } from './lib/posts'
+
+export const collections = { posts: defineLiveCollection({ loader: posts }) }
+```
+
+```astro
+---
+// src/pages/notes/page/[page].astro
+import { getLiveCollection } from 'astro:content'
+import { posts } from '../../../lib/posts'
+
+const perPage = 20
+const page = Number(Astro.params.page)
+const filter = { postType: 'note' }
+const [{ entries }, total] = await Promise.all([
+  getLiveCollection('posts', { ...filter, limit: perPage, offset: (page - 1) * perPage }),
+  posts.count(filter),
+])
+const lastPage = Math.ceil(total / perPage)
+---
+```
+
+`count()` throws when the source fails. The `postr` and `database` sources apply every filter,
+including visibility, drafts and `published`, in the database: `count()` is one `COUNT` query and
+`offset` skips posts without loading them. The HTTP source sends `published` as
+`published-from`/`published-to` and also checks it on the returned posts, for servers that ignore
+those parameters, but filters visibility and drafts itself: its `count()` and `offset` read every
+matching page.
 
 ## Entries
 
