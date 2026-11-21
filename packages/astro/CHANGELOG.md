@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.0-alpha.9](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.8...astro-v0.1.0-alpha.9) (2026-11-21)
+
+
+### Features
+
+* **astro:** paging totals and published-date filter for the live loader ([e37d703](https://github.com/grantcodes/postr/commit/e37d703f1cb2f3aed6bd2ee7db0f394e800d7839))
+* **astro:** paging totals and published-date filter for the live loader ([e558336](https://github.com/grantcodes/postr/commit/e5583361350bef6dcdeb4775628ba527a2fa8eaa))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @postr/core bumped to 2.0.0-alpha.8
+  * peerDependencies
+    * @postr/core bumped to 2.0.0-alpha.8
+
 ## [0.1.0-alpha.8](https://github.com/grantcodes/postr/compare/astro-v0.1.0-alpha.7...astro-v0.1.0-alpha.8) (2026-11-19)
 
 

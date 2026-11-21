@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0-alpha.8](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.7...core-v2.0.0-alpha.8) (2026-11-21)
+
+
+### Features
+
+* **astro:** paging totals and published-date filter for the live loader ([e37d703](https://github.com/grantcodes/postr/commit/e37d703f1cb2f3aed6bd2ee7db0f394e800d7839))
+* **core:** published range, status/visibility filters and posts.count() ([bbc5309](https://github.com/grantcodes/postr/commit/bbc5309093d80832d991879bc6eee39cfddc68f4))
+
 ## [2.0.0-alpha.7](https://github.com/grantcodes/postr/compare/core-v2.0.0-alpha.6...core-v2.0.0-alpha.7) (2026-11-19)
 
 
