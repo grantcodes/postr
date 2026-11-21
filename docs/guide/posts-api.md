@@ -19,6 +19,8 @@ await postr.posts.get(post.id)
 await postr.posts.getByUrl(post.url)
 await postr.posts.list({ postType: 'note', category: 'indieweb', limit: 20, offset: 0 })
 await postr.posts.list({ search: 'creme brul' }) // full-text search
+await postr.posts.list({ published: { from: '2019', to: '2020' } }) // posts from 2019
+await postr.posts.count({ postType: 'note' }) // same filters as list(), without paging
 await postr.posts.categories()
 await postr.posts.references(post) // fetched h-entries of the URLs the post responds to
 postr.posts.toMf2(post) // full mf2 JSON, as returned by q=source
@@ -39,8 +41,13 @@ post.properties.photo
 ```
 
 `list()` returns published, public posts by default; pass `includeHidden: true` to include
-drafts, unlisted and private posts. Deleted posts are never listed. Other filters: `exists`,
-`notExists`, `properties` (property contains a value) and `order` (`desc` by default).
+drafts, unlisted and private posts, and narrow them with `status` and `visibility` (one value or
+an array). Deleted posts are never listed. Other filters: `exists`, `notExists`, `properties`
+(property contains a value), `published` and `order` (`desc` by default).
+
+`published` takes a `from` (inclusive) and a `to` (exclusive), as `Date`s or date strings, compared
+in UTC; `'2019'` is 1 January 2019 UTC. Micropub clients get the same through
+`q=source&published-from=<date>&published-to=<date>`.
 
 `search` matches the words of `name`, `summary`, `content` and `category`, using SQLite's
 full-text index. Every word must match, as a prefix, ignoring case and accents; results stay in

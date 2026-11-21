@@ -1,9 +1,11 @@
 import {
   createPostr,
   discoverPostType,
+  firstString,
   type Mf2Item,
   type Postr,
   type PostTypeDefinition,
+  type PostVisibility,
 } from '@postr/core'
 
 /** Where the loader reads posts from. */
@@ -28,10 +30,21 @@ export type SourceOptions =
       postTypes?: PostTypeDefinition[]
     }
 
+/** A `published` range: `from` inclusive, `to` exclusive. */
+export interface PublishedRange {
+  from?: string | Date
+  to?: string | Date
+}
+
 export interface SourceQuery {
   postType?: string
   category?: string
   search?: string
+  published?: PublishedRange
+  /** Visibilities to include; every one when omitted. */
+  visibility?: PostVisibility[]
+  /** Include drafts. */
+  drafts?: boolean
 }
 
 /** A post as read from a source: full mf2 plus what the projection needs. */
@@ -46,12 +59,17 @@ export interface SourceItem {
 export type EntryLookup = { id: string } | { url: string }
 
 export interface PostSource {
-  /** One page, newest first, including hidden posts. */
+  /**
+   * One page, newest first. Sources with `count()` apply every query filter; others may
+   * return posts outside `visibility` and `drafts`, which callers filter out.
+   */
   list(
     query: SourceQuery,
     limit: number,
     offset: number
   ): Promise<{ items: SourceItem[]; more: boolean }>
+  /** Number of posts `list()` returns for the query, without loading them. */
+  count?(query: SourceQuery): Promise<number>
   get(lookup: EntryLookup): Promise<SourceItem | undefined>
   close(): void
 }
@@ -67,11 +85,17 @@ function postrSource(postr: Pick<Postr, 'posts' | 'siteUrl'>, close = () => {}):
     postType: post.postType,
     references: await posts.references(post),
   })
+  const toListOptions = ({ drafts, ...query }: SourceQuery) => ({
+    ...query,
+    includeHidden: true,
+    ...(!drafts && { status: 'published' as const }),
+  })
   return {
     async list(query, limit, offset) {
-      const page = await posts.list({ ...query, includeHidden: true, limit, offset })
+      const page = await posts.list({ ...toListOptions(query), limit, offset })
       return { items: await Promise.all(page.map(toItem)), more: page.length === limit }
     },
+    count: (query) => posts.count(toListOptions(query)),
     async get(lookup) {
       const url = 'url' in lookup ? lookup.url : `${siteUrl}/${lookup.id}`
       const post = await posts.getByUrl(url)
@@ -118,18 +142,30 @@ function httpSource(options: Extract<SourceOptions, { endpoint: string }>): Post
     }
   }
 
+  const iso = (value?: string | Date) => value && new Date(value).toISOString()
+
   return {
     async list(query, limit, offset) {
+      const from = iso(query.published?.from)
+      const to = iso(query.published?.to)
       const response = await request({
         limit: String(limit),
         after: offset ? String(offset) : undefined,
         'post-type': query.postType,
         'property-category': query.category,
         search: query.search,
+        'published-from': from,
+        'published-to': to,
       })
       if (!response.ok) failed(response)
       const body = (await response.json()) as { items?: Mf2Item[]; paging?: { after?: string } }
-      return { items: (body.items ?? []).map(toItem), more: Boolean(body.paging?.after) }
+      // Servers older than `published-from`/`published-to` ignore them.
+      const inRange = (item: Mf2Item) => {
+        const time = Date.parse(firstString(item.properties, 'published') ?? '')
+        return !(from && time < Date.parse(from)) && !(to && time >= Date.parse(to))
+      }
+      const items = (body.items ?? []).filter(inRange).map(toItem)
+      return { items, more: Boolean(body.paging?.after) }
     },
     async get(lookup) {
       const url = 'url' in lookup ? lookup.url : `${siteUrl}/${lookup.id}`

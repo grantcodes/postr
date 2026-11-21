@@ -241,8 +241,45 @@ describe('posts.list', () => {
       ids([note, photo, draft])
     )
     assert.equal((await postr.posts.list({ limit: 1, offset: 1 })).length, 1)
+    assert.deepEqual(ids(await postr.posts.list({ includeHidden: true, status: 'draft' })), [
+      draft.id,
+    ])
+    assert.equal(await postr.posts.count(), 2)
+    assert.equal(await postr.posts.count({ includeHidden: true }), 3)
+    assert.equal(await postr.posts.count({ includeHidden: true, status: ['draft'] }), 1)
+    assert.equal(await postr.posts.count({ category: 'x', search: 'n' }), 1)
+    assert.equal(await postr.posts.count({ search: '") OR ("' }), 0)
     assert.deepEqual(await postr.posts.categories(), ['x', 'y'])
     assert.deepEqual(await postr.posts.categories({ includeHidden: true }), ['x', 'y', 'z'])
+  })
+
+  it('filters by published range and visibility', async () => {
+    const postr = testPostr()
+    const create = (published: string, visibility = 'public') =>
+      postr.posts.create({
+        type: ['h-entry'],
+        properties: { content: [published], published: [published], visibility: [visibility] },
+      })
+    const old = await create('2018-12-31T23:00:00Z')
+    const start = await create('2019-01-01T00:00:00Z')
+    const unlisted = await create('2019-06-01T00:00:00+02:00', 'unlisted')
+    await create('2020-01-01T00:00:00Z')
+    const ids = (posts: Array<{ id: string }>) => posts.map((p) => p.id)
+    const in2019 = { from: '2019', to: new Date('2020-01-01T00:00:00Z') }
+
+    assert.deepEqual(ids(await postr.posts.list({ published: in2019 })), [start.id])
+    assert.deepEqual(ids(await postr.posts.list({ published: in2019, includeHidden: true })), [
+      unlisted.id,
+      start.id,
+    ])
+    assert.deepEqual(ids(await postr.posts.list({ published: { to: '2019' } })), [old.id])
+    assert.equal(await postr.posts.count({ published: { from: '2019' } }), 2)
+    assert.equal(
+      await postr.posts.count({ includeHidden: true, visibility: ['public', 'unlisted'] }),
+      4
+    )
+    assert.equal(await postr.posts.count({ includeHidden: true, visibility: 'unlisted' }), 1)
+    await assert.rejects(postr.posts.list({ published: { from: 'nope' } }), /published.from/)
   })
 
   it('searches name, summary, content and category text', async () => {

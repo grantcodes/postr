@@ -44,6 +44,33 @@ describe('HTTP source', () => {
     assert.equal(last.searchParams.get('post-type'), 'photo')
   })
 
+  it('sends the published range and counts by reading pages', async () => {
+    const postr = testPostr()
+    const { note, article } = await seed(postr)
+    const fetch = postrFetch(postr)
+    const live = postrLiveLoader({ endpoint: endpointUrl, token, fetch })
+    const published = { from: '2026-01-02' }
+    const found = await live.loadCollection({ collection: 'posts', filter: { published } })
+    assert.ok('entries' in found)
+    assert.deepEqual(
+      found.entries.map((entry) => entry.id),
+      [article.path.slice(1)]
+    )
+    const url = new URL(fetch.urls.at(-1) ?? '')
+    assert.equal(url.searchParams.get('published-from'), '2026-01-02T00:00:00.000Z')
+    assert.equal(url.searchParams.has('published-to'), false)
+    assert.equal(await live.count(), 2)
+    assert.equal(await live.count({ published }), 1)
+
+    // A server that ignores the range parameters.
+    const ignoring = (async () =>
+      Response.json({
+        items: [postr.posts.toMf2(article), postr.posts.toMf2(note)],
+      })) as unknown as typeof globalThis.fetch
+    const old = postrLiveLoader({ endpoint: endpointUrl, token, fetch: ignoring })
+    assert.equal(await old.count({ published: { to: '2026-01-02' } }), 1)
+  })
+
   it('sends the token as a bearer header', async () => {
     const seen: Array<string | null> = []
     const fetch = (async (input: string | URL | Request, init?: RequestInit) => {

@@ -235,6 +235,14 @@ describe('Micropub queries', () => {
     const found = await (await micropub(postr, '?q=source&search=cat')).json()
     assert.deepEqual(found.items[0].properties.url, [first.url])
     assert.equal(found.items.length, 1)
+    const dated = await (
+      await micropub(postr, '?q=source&published-from=2026-01-01&published-to=2026-01-02')
+    ).json()
+    assert.deepEqual(
+      dated.items.map((item: { properties: { url: string[] } }) => item.properties.url[0]),
+      [first.url]
+    )
+    assert.equal((await micropub(postr, '?q=source&published-from=nope')).status, 400)
 
     const categories = await (await micropub(postr, '?q=category&search=CA')).json()
     assert.deepEqual(categories, { categories: ['Cats'] })
