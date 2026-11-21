@@ -22,6 +22,7 @@ export type {
 export type {
   Post,
   ListOptions,
+  CountOptions,
   WriteOptions,
   CreateOptions,
   PostService,

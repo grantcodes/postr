@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { and, asc, desc, eq, inArray, isNull, ne, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gte, inArray, isNull, lt, ne, sql, type SQL } from 'drizzle-orm'
 import type { Database } from '../db/index.ts'
 import { postRefs, posts, refs, type PostRow } from '../db/schema.ts'
 import { PostrError } from '../errors.ts'
@@ -13,7 +13,12 @@ import {
 } from '../mf2.ts'
 import type { SaveAction, SaveEvent } from '../plugins.ts'
 import { getLinks } from './links.ts'
-import { normalizePost, type NormalizedPost } from './normalize.ts'
+import {
+  normalizePost,
+  type NormalizedPost,
+  type PostStatus,
+  type PostVisibility,
+} from './normalize.ts'
 import { buildPath } from './permalink.ts'
 import { ftsTable, searchFields, toMatchQuery } from './search.ts'
 import type { PostTypeDefinition } from './post-type.ts'
@@ -42,9 +47,17 @@ export interface ListOptions {
   properties?: Record<string, string>
   /** Include drafts and unlisted/private posts. Deleted posts are never listed. */
   includeHidden?: boolean
+  /** Only posts with one of these statuses. Needs `includeHidden` for drafts. */
+  status?: PostStatus | PostStatus[]
+  /** Only posts with one of these visibilities. Needs `includeHidden` for unlisted/private. */
+  visibility?: PostVisibility | PostVisibility[]
+  /** Only posts published in this range: `from` inclusive, `to` exclusive. */
+  published?: { from?: string | Date; to?: string | Date }
   /** Full-text search of name, summary, content and category; every word must match as a prefix. */
   search?: string
 }
+
+export type CountOptions = Omit<ListOptions, 'limit' | 'offset' | 'order'>
 
 export interface WriteOptions {
   /** Recorded on the save event; anything other than `user` skips built-in side effects. */
@@ -72,6 +85,12 @@ export interface PostServiceDeps {
 }
 
 const propertyPath = (key: string) => `$."${key.replaceAll('"', '')}"`
+
+function toTime(value: string | Date, name: string): number {
+  const time = new Date(value).getTime()
+  if (Number.isNaN(time)) throw new PostrError('invalid_request', `Invalid published.${name} date`)
+  return time
+}
 
 function sameValue(a: unknown, b: unknown) {
   return JSON.stringify(a) === JSON.stringify(b)
@@ -286,19 +305,27 @@ export function createPostService(deps: PostServiceDeps) {
     return emit(deleted ? 'delete' : 'undelete', post, previous, {}, options)
   }
 
-  async function list(options: ListOptions = {}): Promise<Post[]> {
+  /** The `where` clause for list filters; `false` when nothing can match. */
+  function listWhere(options: CountOptions): SQL | undefined | false {
     const conditions: Array<SQL | undefined> = [isNull(posts.deletedAt)]
     if (!options.includeHidden) {
       conditions.push(eq(posts.status, 'published'), eq(posts.visibility, 'public'))
+    }
+    if (options.status) conditions.push(inArray(posts.status, [options.status].flat()))
+    if (options.visibility) {
+      conditions.push(inArray(posts.visibility, [options.visibility].flat()))
     }
     if (typeof options.postType === 'string') {
       conditions.push(eq(posts.postType, options.postType))
     } else if (options.postType?.length) {
       conditions.push(inArray(posts.postType, options.postType))
     }
+    const { from, to } = options.published ?? {}
+    if (from !== undefined) conditions.push(gte(posts.publishedAt, toTime(from, 'from')))
+    if (to !== undefined) conditions.push(lt(posts.publishedAt, toTime(to, 'to')))
     if (options.search?.trim()) {
       const match = toMatchQuery(options.search)
-      if (!match) return []
+      if (!match) return false
       conditions.push(
         sql`${posts.id} in (select post_id from ${ftsTable} where ${ftsTable} match ${match})`
       )
@@ -315,15 +342,28 @@ export function createPostService(deps: PostServiceDeps) {
     for (const key of options.notExists ?? []) {
       conditions.push(sql`json_type(${posts.properties}, ${propertyPath(key)}) is null`)
     }
+    return and(...conditions)
+  }
+
+  async function list(options: ListOptions = {}): Promise<Post[]> {
+    const where = listWhere(options)
+    if (where === false) return []
     const order = options.order === 'asc' ? asc : desc
     const rows = await db
       .select()
       .from(posts)
-      .where(and(...conditions))
+      .where(where)
       .orderBy(order(posts.publishedAt), order(posts.id))
       .limit(options.limit ?? 20)
       .offset(options.offset ?? 0)
     return rows.map(toPost)
+  }
+
+  /** Number of posts `list()` returns for the same filters, without paging. */
+  async function count(options: CountOptions = {}): Promise<number> {
+    const where = listWhere(options)
+    if (where === false) return 0
+    return db.$count(posts, where)
   }
 
   /** Every category used by a listed post (or any post with `includeHidden`), sorted. */
@@ -368,6 +408,7 @@ export function createPostService(deps: PostServiceDeps) {
     get,
     getByUrl,
     list,
+    count,
     saveReference,
     categories,
     references,

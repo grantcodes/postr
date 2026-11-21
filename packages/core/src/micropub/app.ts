@@ -160,6 +160,10 @@ export function createMicropubApp(deps: MicropubDeps) {
         order: c.req.query('order') === 'reverse' ? 'asc' : 'desc',
         postType: c.req.query('post-type'),
         search: c.req.query('search'),
+        published: {
+          from: c.req.query('published-from'),
+          to: c.req.query('published-to'),
+        },
         exists: [...(c.req.queries('exists') ?? []), ...(c.req.queries('exists[]') ?? [])],
         notExists: [
           ...(c.req.queries('not-exists') ?? []),
